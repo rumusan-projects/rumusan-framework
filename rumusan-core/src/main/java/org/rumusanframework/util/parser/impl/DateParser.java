@@ -1,0 +1,34 @@
+package org.rumusanframework.util.parser.impl;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.rumusanframework.util.parser.IParser;
+import org.rumusanframework.util.parser.ParseException;
+
+/**
+ * 
+ * @author Harvan Irsyadi
+ * @since 1.0.0
+ *
+ */
+public class DateParser implements IParser<Date> {
+	private SimpleDateFormat simpleDateFormat;
+
+	public DateParser(String pattern) {
+		simpleDateFormat = new SimpleDateFormat(pattern);
+	}
+
+	@Override
+	public Date parse(Object object) {
+		try {
+			return simpleDateFormat.parse(object.toString());
+		} catch (Exception e) {
+			throw new ParseException(e);
+		}
+	}
+
+	public void setSimpleDateFormat(SimpleDateFormat simpleDateFormat) {
+		this.simpleDateFormat = simpleDateFormat;
+	}
+}
