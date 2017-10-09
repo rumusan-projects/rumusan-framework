@@ -1,9 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.rumusan</groupId>
+	<parent>
+		<groupId>org.rumusan</groupId>
+		<artifactId>rumusan-framework</artifactId>
+		<version>1.0.0-${version.phase}</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
 	<artifactId>rumusan-core</artifactId>
-	<version>1.0.0-${version.phase}</version>
 	<packaging>jar</packaging>
 	<build>
 		<finalName>rumusan-core</finalName>
@@ -64,11 +68,13 @@
 	<distributionManagement>
 		<repository>
 			<id>${repo.release.id}</id>
+			<layout>default</layout>
 			<url>${repo.release.url}</url>
 		</repository>
 		<snapshotRepository>
 			<id>${repo.snapshot.id}</id>
 			<url>${repo.snapshot.url}</url>
+			<layout>default</layout>
 		</snapshotRepository>
 	</distributionManagement>
 	<properties>
@@ -80,7 +86,6 @@
 		<maven-compiler.version>3.1</maven-compiler.version>
 		<maven-resources.version>3.0.1</maven-resources.version>
 		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
-		<version.phase>SNAPSHOT</version.phase>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 </project>
