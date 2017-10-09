@@ -11,8 +11,8 @@
 	<distributionManagement>
 		<repository>
 			<id>${repo.release.id}</id>
-			<layout>default</layout>
 			<url>${repo.release.url}</url>
+			<layout>default</layout>
 		</repository>
 		<snapshotRepository>
 			<id>${repo.snapshot.id}</id>
