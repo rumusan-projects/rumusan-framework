@@ -43,6 +43,23 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>${mockito-all.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<distributionManagement>
 		<snapshotRepository>
@@ -53,6 +70,9 @@
 	<properties>
 		<commons-logging.version>1.2</commons-logging.version>
 		<jackson.version>2.6.1</jackson.version>
+		<spring.version>4.1.6.RELEASE</spring.version>
+		<junit.version>4.12</junit.version>
+		<mockito-all.version>1.9.5</mockito-all.version>
 		<maven-compiler.version>3.1</maven-compiler.version>
 		<maven-resources.version>3.0.1</maven-resources.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
