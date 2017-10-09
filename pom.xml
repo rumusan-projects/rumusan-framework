@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.rumusan</groupId>
 	<artifactId>rumusan-framework</artifactId>
-	<version>1.0.0-RELEASE</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
 		<module>rumusan-core</module>
@@ -21,7 +21,6 @@
 		</snapshotRepository>
 	</distributionManagement>
 	<properties>
-		<version.phase>SNAPSHOT</version.phase>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 </project>
