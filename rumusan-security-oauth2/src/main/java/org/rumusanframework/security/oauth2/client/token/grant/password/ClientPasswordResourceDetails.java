@@ -9,8 +9,8 @@ import org.springframework.security.oauth2.client.token.grant.password.ResourceO
  * @since 1.0.0
  *
  */
-public class ClientResourceOwnerPasswordResourceDetails extends ResourceOwnerPasswordResourceDetails {
-    public ClientResourceOwnerPasswordResourceDetails() {
+public class ClientPasswordResourceDetails extends ResourceOwnerPasswordResourceDetails {
+    public ClientPasswordResourceDetails() {
 	super();
     }
 
