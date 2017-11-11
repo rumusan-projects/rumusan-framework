@@ -8,6 +8,10 @@ package org.rumusanframework.reflect.field;
  *
  */
 public class ResolverUtils {
+    private ResolverUtils() {
+	// hide
+    }
+
     public static String concate(FieldResolver... resolvers) {
 	StringBuilder buff = new StringBuilder();
 

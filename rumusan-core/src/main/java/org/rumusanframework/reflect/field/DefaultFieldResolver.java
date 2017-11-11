@@ -44,8 +44,9 @@ abstract class DefaultFieldResolver implements FieldResolver {
 
     public String getCacheFieldName(Class<? extends Annotation> annotationField) {
 	Map<Object, String> cacheField = getClassCache().get(classUsage);
+	String fieldName = cacheField.get(annotationField);
 
-	if (!cacheField.containsKey(annotationField)) {
+	if (fieldName == null) {
 	    Class<?> parent = annotationField.getEnclosingClass();
 
 	    if (parent != null) {
@@ -54,13 +55,13 @@ abstract class DefaultFieldResolver implements FieldResolver {
 		for (Field field : fields) {
 		    if (field.isAnnotationPresent(annotationField)) {
 			cacheField.put(annotationField, field.getName());
-			break;
+			return field.getName();
 		    }
 		}
 	    }
 	}
 
-	return cacheField.get(annotationField);
+	return fieldName;
     }
 
     protected abstract Map<Class<?>, Map<Object, String>> getClassCache();
