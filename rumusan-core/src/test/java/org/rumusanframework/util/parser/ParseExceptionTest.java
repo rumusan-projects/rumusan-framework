@@ -85,6 +85,6 @@ public class ParseExceptionTest {
     private void printMethod(Object obj, String additionalString) {
 	String name = obj.getClass().getEnclosingMethod().getName();
 
-	System.out.println("End " + name + additionalString);
+	System.out.println("End " + name + (additionalString != null ? additionalString : ""));
     }
 }
