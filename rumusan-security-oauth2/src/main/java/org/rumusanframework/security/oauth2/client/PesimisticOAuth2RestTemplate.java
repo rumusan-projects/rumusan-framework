@@ -14,6 +14,9 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
  */
 public class PesimisticOAuth2RestTemplate extends OAuth2RestTemplate {
     private int retryError = 3;
+    private int expirationRange = 5;
+    private int nextExpiredSec = 2;
+    private boolean isSleepOnExpirationRange = true;
 
     public PesimisticOAuth2RestTemplate(OAuth2ProtectedResourceDetails resource) {
 	super(resource);
@@ -38,7 +41,9 @@ public class PesimisticOAuth2RestTemplate extends OAuth2RestTemplate {
 	try {
 	    accessToken = getCheckedAccessToken(super.getAccessToken());
 	} catch (Exception e) {
-	    logger.error("Error Acquire or renew an access token.", e);
+	    if (logger.isErrorEnabled()) {
+		logger.error("Error Acquire or renew an access token.", e);
+	    }
 
 	    getOAuth2ClientContext().setAccessToken(null);
 
@@ -63,15 +68,18 @@ public class PesimisticOAuth2RestTemplate extends OAuth2RestTemplate {
 
     private OAuth2AccessToken getCheckedAccessToken(OAuth2AccessToken currentAccessToken) {
 	OAuth2AccessToken accessToken = currentAccessToken;
+	int expiredIn = currentAccessToken.getExpiresIn();
 
-	if (currentAccessToken.getExpiresIn() <= 5) {
+	if (expiredIn <= expirationRange) {
 	    try {
-		int seconds = currentAccessToken.getExpiresIn() + 2;
+		int seconds = expiredIn + nextExpiredSec;
 		if (logger.isInfoEnabled()) {
 		    logger.info("Get next accessToken in : " + seconds + " seconds.");
 		}
 
-		Thread.sleep(seconds * 1000L);
+		if (isSleepOnExpirationRange) {
+		    Thread.sleep(seconds * 1000L);
+		}
 		accessToken = super.getAccessToken();
 	    } catch (InterruptedException e) {
 		logger.error("Error while Thread.sleep.", e);
