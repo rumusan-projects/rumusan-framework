@@ -33,8 +33,4 @@ public class DateParser implements IParser<Date> {
 	    throw new ParseException(e);
 	}
     }
-
-    public void setSimpleDateFormat(SimpleDateFormat simpleDateFormat) {
-	this.simpleDateFormat = simpleDateFormat;
-    }
 }
