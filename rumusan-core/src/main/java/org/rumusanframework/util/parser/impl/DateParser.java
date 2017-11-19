@@ -9,31 +9,32 @@ import org.rumusanframework.util.parser.ParseException;
 /**
  * 
  * @author Harvan Irsyadi
+ * @version 1.0.0
  * @since 1.0.0
  *
  */
 public class DateParser implements IParser<Date> {
-	private SimpleDateFormat simpleDateFormat;
+    private SimpleDateFormat simpleDateFormat;
 
-	@SuppressWarnings("unused")
-	private DateParser() {
-		// hidden
-	}
+    @SuppressWarnings("unused")
+    private DateParser() {
+	// hidden
+    }
 
-	public DateParser(String pattern) {
-		simpleDateFormat = new SimpleDateFormat(pattern);
-	}
+    public DateParser(String pattern) {
+	simpleDateFormat = new SimpleDateFormat(pattern);
+    }
 
-	@Override
-	public Date parse(Object object) {
-		try {
-			return simpleDateFormat.parse(object.toString());
-		} catch (Exception e) {
-			throw new ParseException(e);
-		}
+    @Override
+    public Date parse(Object object) {
+	try {
+	    return simpleDateFormat.parse(object.toString());
+	} catch (Exception e) {
+	    throw new ParseException(e);
 	}
+    }
 
-	public void setSimpleDateFormat(SimpleDateFormat simpleDateFormat) {
-		this.simpleDateFormat = simpleDateFormat;
-	}
+    public void setSimpleDateFormat(SimpleDateFormat simpleDateFormat) {
+	this.simpleDateFormat = simpleDateFormat;
+    }
 }
