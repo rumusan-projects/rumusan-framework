@@ -13,14 +13,15 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  */
 abstract class DefaultFieldResolver implements FieldResolver {
-    private Class<? extends Annotation>[] annotationFields;
-    private Class<?> classUsage;
-    protected String concater;
+    private final Class<? extends Annotation>[] annotationFields;
+    private final Class<?> classUsage;
+    private final String concater;
 
     @SuppressWarnings("unchecked")
-    protected DefaultFieldResolver(Class<?> classUsage, Class<?>[] annotationFields) {
+    DefaultFieldResolver(Class<?> classUsage, Class<?>[] annotationFields, String concater) {
 	this.classUsage = classUsage;
 	this.annotationFields = (Class<? extends Annotation>[]) annotationFields;
+	this.concater = concater;
 	getClassCache().put(classUsage, new ConcurrentHashMap<>());
     }
 
@@ -64,5 +65,5 @@ abstract class DefaultFieldResolver implements FieldResolver {
 	return fieldName;
     }
 
-    protected abstract Map<Class<?>, Map<Object, String>> getClassCache();
+    abstract Map<Class<?>, Map<Object, String>> getClassCache();
 }

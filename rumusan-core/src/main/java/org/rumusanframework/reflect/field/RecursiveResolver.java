@@ -51,12 +51,11 @@ public class RecursiveResolver extends DefaultFieldResolver {
      * @param annotationFields
      */
     public RecursiveResolver(Class<?> classUsage, Class<?>[] annotationFields) {
-	super(classUsage, annotationFields);
-	concater = ".";
+	super(classUsage, annotationFields, ".");
     }
 
     @Override
-    protected Map<Class<?>, Map<Object, String>> getClassCache() {
+    Map<Class<?>, Map<Object, String>> getClassCache() {
 	return CACHE_CLASS_FIELD;
     }
 }
