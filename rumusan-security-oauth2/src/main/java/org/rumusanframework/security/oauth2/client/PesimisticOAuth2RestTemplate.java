@@ -91,7 +91,7 @@ public class PesimisticOAuth2RestTemplate extends OAuth2RestTemplate {
     }
 
     private void printAccessTokenInfo(OAuth2AccessToken accessToken) {
-	if (accessToken != null && logger.isInfoEnabled()) {
+	if (logger.isInfoEnabled() && accessToken != null) {
 	    StringBuilder buff = new StringBuilder();
 
 	    buff.append("accessToken : " + accessToken.getValue());
