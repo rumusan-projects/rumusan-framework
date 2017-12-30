@@ -8,6 +8,7 @@
 	<modules>
 		<module>rumusan-core</module>
 		<module>rumusan-security-oauth2</module>
+		<module>rumusan-context</module>
 	</modules>
 	<distributionManagement>
 		<repository>
