@@ -2,6 +2,9 @@ package org.rumusanframework.util;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,7 +23,20 @@ public class ClassUtils {
 
     @SuppressWarnings("unchecked")
     public static Field getFieldByAnnotation(Class<?> classToScan, Class<?> annotationClass) {
-	Field[] fields = classToScan.getDeclaredFields();
+	List<Field> fieldList = new ArrayList<>();
+	fieldList.addAll(Arrays.asList(getClassField(classToScan)));
+
+	Class<?> superClass = classToScan.getSuperclass();
+	boolean isObjectClass = superClass.equals(Object.class);
+
+	while (!isObjectClass) {
+	    fieldList.addAll(Arrays.asList(getClassField(superClass)));
+
+	    superClass = superClass.getSuperclass();
+	    isObjectClass = superClass.equals(Object.class);
+	}
+
+	Field[] fields = fieldList.toArray(new Field[fieldList.size()]);
 
 	for (Field field : fields) {
 	    if (field.isAnnotationPresent((Class<? extends Annotation>) annotationClass)) {
@@ -29,6 +45,10 @@ public class ClassUtils {
 	}
 
 	return null;
+    }
+
+    private static Field[] getClassField(Class<?> clazz) {
+	return clazz.getDeclaredFields();
     }
 
     public static Class<?> loadClass(String name) {
