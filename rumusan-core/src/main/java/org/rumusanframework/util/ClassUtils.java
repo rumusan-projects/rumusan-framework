@@ -2,9 +2,9 @@ package org.rumusanframework.util;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,22 +21,28 @@ public class ClassUtils {
     private ClassUtils() {
     }
 
-    @SuppressWarnings("unchecked")
-    public static Field getFieldByAnnotation(Class<?> classToScan, Class<?> annotationClass) {
-	List<Field> fieldList = new ArrayList<>();
-	fieldList.addAll(Arrays.asList(getClassField(classToScan)));
+    public static Field[] getAllField(Class<?> classToScan) {
+	Set<Field> fieldSet = new HashSet<>();
+	fieldSet.addAll(Arrays.asList(classToScan.getDeclaredFields()));
 
 	Class<?> superClass = classToScan.getSuperclass();
-	boolean isObjectClass = superClass.equals(Object.class);
 
-	while (!isObjectClass) {
-	    fieldList.addAll(Arrays.asList(getClassField(superClass)));
+	while (isValidClassToScan(superClass)) {
+	    fieldSet.addAll(Arrays.asList(superClass.getDeclaredFields()));
 
 	    superClass = superClass.getSuperclass();
-	    isObjectClass = superClass.equals(Object.class);
 	}
 
-	Field[] fields = fieldList.toArray(new Field[fieldList.size()]);
+	return fieldSet.toArray(new Field[fieldSet.size()]);
+    }
+
+    private static boolean isValidClassToScan(Class<?> classToScan) {
+	return !classToScan.equals(Object.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Field getFieldByAnnotation(Class<?> classToScan, Class<?> annotationClass) {
+	Field[] fields = getAllField(classToScan);
 
 	for (Field field : fields) {
 	    if (field.isAnnotationPresent((Class<? extends Annotation>) annotationClass)) {
@@ -47,8 +53,31 @@ public class ClassUtils {
 	return null;
     }
 
-    private static Field[] getClassField(Class<?> clazz) {
-	return clazz.getDeclaredFields();
+    @SuppressWarnings("unchecked")
+    public static Field[] getFieldsByAnnotations(Class<?> classToScan, Class<?>[] annotationClasses) {
+	Field[] fields = getAllField(classToScan);
+	Set<Field> fieldSet = new HashSet<>();
+
+	for (Field field : fields) {
+	    for (Class<?> annotationClass : annotationClasses) {
+		if (field.isAnnotationPresent((Class<? extends Annotation>) annotationClass)) {
+		    fieldSet.add(field);
+		}
+	    }
+	}
+
+	return fieldSet.toArray(new Field[fieldSet.size()]);
+    }
+
+    public static String[] getFieldNamesByAnnotations(Class<?> classToScan, Class<?>[] annotationClasses) {
+	Field[] fields = getFieldsByAnnotations(classToScan, annotationClasses);
+	Set<String> fieldNames = new HashSet<>();
+
+	for (Field field : fields) {
+	    fieldNames.add(field.getName());
+	}
+
+	return fieldNames.toArray(new String[fieldNames.size()]);
     }
 
     public static Class<?> loadClass(String name) {
