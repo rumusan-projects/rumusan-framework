@@ -31,7 +31,7 @@ import org.rumusanframework.validation.constraintvalidator.StringDateValidator;
 @Documented
 @Constraint(validatedBy = StringDateValidator.class)
 public @interface StringDate {
-    String message() default "APP_00001";
+    String message() default ConstraintViolationMessage.DATE_NOT_VALID;
 
     Class<?>[] groups() default {};
 
@@ -42,7 +42,7 @@ public @interface StringDate {
     /**
      * Defines several {@link StringDate} annotations on the same element.
      *
-     * @see org.rumusanframework.validation.constraint.constraint.StringDate
+     * @see StringDate
      */
     @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
     @Retention(RUNTIME)

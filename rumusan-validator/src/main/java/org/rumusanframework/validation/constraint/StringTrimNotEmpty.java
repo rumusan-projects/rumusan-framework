@@ -31,7 +31,7 @@ import org.rumusanframework.validation.constraintvalidator.StringTrimValidator;
 @Documented
 @Constraint(validatedBy = StringTrimValidator.class)
 public @interface StringTrimNotEmpty {
-    String message() default "APP_00002";
+    String message() default ConstraintViolationMessage.STRING_EMPTY;
 
     Class<?>[] groups() default {};
 
@@ -40,7 +40,7 @@ public @interface StringTrimNotEmpty {
     /**
      * Defines several {@link StringTrimNotEmpty} annotations on the same element.
      *
-     * @see com.pasarsengget.core.validation.constraint.StringTrimNotEmpty
+     * @see StringTrimNotEmpty
      */
     @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
     @Retention(RUNTIME)
