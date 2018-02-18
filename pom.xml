@@ -9,6 +9,7 @@
 		<module>rumusan-core</module>
 		<module>rumusan-security-oauth2</module>
 		<module>rumusan-context</module>
+		<module>rumusan-validator</module>
 	</modules>
 	<distributionManagement>
 		<repository>
@@ -34,5 +35,6 @@
 		<jackson.version>2.9.2</jackson.version>
 		<mockito-all.version>1.9.5</mockito-all.version>
 		<log4j.version>2.9.1</log4j.version>
+		<validation-api.version>2.0.1.Final</validation-api.version>
 	</properties>
 </project>
