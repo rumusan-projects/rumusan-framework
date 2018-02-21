@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * For performance perspective, please ensure the instance of this class
+ * instantiate only once for each entity.
  * 
  * @author Harvan Irsyadi
  * @version 1.0.0
