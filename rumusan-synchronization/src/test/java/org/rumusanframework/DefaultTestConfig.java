@@ -6,6 +6,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.hibernate.cfg.AvailableSettings;
+import org.rumusanframework.orm.jpa.validation.BeanValidationExceptionTranslator;
+import org.rumusanframework.orm.jpa.vendor.ChainedHibernateJpaDialect;
 import org.rumusanframework.repository.dao.BasePackageRumusanRepositoryDao;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,10 +16,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.jpa.JpaDialect;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
-import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
@@ -88,8 +90,11 @@ public abstract class DefaultTestConfig {
 	return properties;
     }
 
-    public HibernateJpaDialect jpaDialect() {
-	return new HibernateJpaDialect();
+    public JpaDialect jpaDialect() {
+	ChainedHibernateJpaDialect dialect = new ChainedHibernateJpaDialect();
+	dialect.addTranslator(new BeanValidationExceptionTranslator());
+
+	return dialect;
     }
 
     public HibernateJpaVendorAdapter jpaVendorAdapter() {
@@ -117,6 +122,8 @@ public abstract class DefaultTestConfig {
     public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
 	JpaTransactionManager txManager = new JpaTransactionManager();
 	txManager.setEntityManagerFactory(entityManagerFactory);
+	txManager.setJpaDialect(jpaDialect());
+
 	return txManager;
     }
 

@@ -3,7 +3,7 @@ create table GROUP_LOCK (
    GROUP_NAME           varchar(5) not null,
    PROCESS_NAME         varchar(255),
    MACHINE_NAME         varchar(255),
-   PROCESS_ID           varchar(36) not null,
+   PROCESS_ID           varchar(36),
    LAST_UPDATE_TIME     timestamp,
    LAST_UPDATE_PROCESS_ID varchar(36),
    LAST_UPDATE_PROCESS_NAME varchar(255),

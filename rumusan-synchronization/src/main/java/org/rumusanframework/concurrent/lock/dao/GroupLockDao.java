@@ -1,5 +1,7 @@
 package org.rumusanframework.concurrent.lock.dao;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
 
 import org.hibernate.Criteria;
@@ -26,6 +28,15 @@ public class GroupLockDao extends DaoTemplate<GroupLock, GroupLock> implements I
     private AliasToBeanResultTransformer findGroupTransformers = new AliasToBeanResultTransformer(GroupLock.class);
     private ProjectionList findAllProjection;
 
+    @PersistenceContext(unitName = "entityManagerFactory")
+    @Override
+    protected void setEntityManager(EntityManager entityManager) {
+	setRootEntityManager(entityManager);
+    }
+
+    /**
+     * @deprecated Update later. TODO : Harvan Irsyadi
+     */
     @Override
     public GroupLock findGroup(Long groupId, Class<?> processClass, boolean ignoreSameProcess) {
 	Criteria criteria = getSession().createCriteria(GroupLock.class);
