@@ -1,4 +1,4 @@
-package org.rumusanframework.orm.jpa.translator;
+package org.rumusanframework.orm.jpa.validation;
 
 import javax.validation.ValidationException;
 

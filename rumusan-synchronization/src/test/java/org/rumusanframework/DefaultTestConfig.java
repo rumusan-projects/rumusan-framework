@@ -6,7 +6,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.hibernate.cfg.AvailableSettings;
-import org.rumusanframework.orm.jpa.translator.BeanValidationExceptionTranslator;
+import org.rumusanframework.orm.jpa.validation.BeanValidationExceptionTranslator;
 import org.rumusanframework.orm.jpa.vendor.ChainedHibernateJpaDialect;
 import org.rumusanframework.repository.dao.BasePackageRumusanRepositoryDao;
 import org.springframework.beans.factory.annotation.Value;
