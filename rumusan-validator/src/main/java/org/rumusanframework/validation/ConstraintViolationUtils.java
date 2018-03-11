@@ -16,7 +16,7 @@ public class ConstraintViolationUtils {
     }
 
     /**
-     * Will throw ConstraintViolationException if set not empty.
+     * Throw ConstraintViolationException on exist violations.
      * 
      * @param constraintViolations
      */
