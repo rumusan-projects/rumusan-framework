@@ -10,6 +10,8 @@
 		<module>rumusan-security-oauth2</module>
 		<module>rumusan-context</module>
 		<module>rumusan-validator</module>
+		<module>rumusan-synchronization</module>
+		<module>rumusan-repository</module>
 	</modules>
 	<distributionManagement>
 		<repository>
@@ -36,5 +38,13 @@
 		<mockito-all.version>1.9.5</mockito-all.version>
 		<log4j.version>2.9.1</log4j.version>
 		<validation-api.version>2.0.1.Final</validation-api.version>
+		<rumusan.version>1.0.0-SNAPSHOT</rumusan.version>
+		<mysql-connector-java.version>5.1.44</mysql-connector-java.version>
+		<disruptor.version>3.3.7</disruptor.version>
+		<hibernate.version>5.2.12.Final</hibernate.version>
+		<hibernate-validator.version>6.0.7.Final</hibernate-validator.version>
+		<hibernate-jpa-2.1-api.version>1.0.2.Final</hibernate-jpa-2.1-api.version>
+		<javax.el-api-test.version>3.0.0</javax.el-api-test.version>
+		<javax.el-test.version>3.0.0</javax.el-test.version>
 	</properties>
 </project>
