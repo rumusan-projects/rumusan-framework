@@ -36,16 +36,24 @@ public abstract class DaoTemplate<E extends Serializable, R> implements IGeneric
     private static final String QUERY_ROOT_NOT_FOUND = "Query Root not found.";
     private static final String ATTRIBUTE_ID_NOT_FOUND = "Attribute Id not found.";
     private DaoUtils daoUtils = new DaoUtils();
-    EntityManager entityManager;
+    private EntityManager entityManager;
     private Class<E> entityType = getEntityClass();
     // Note : Ensure your meta model class in the same package with entity class
     private String entityPackage = entityType.getPackage().getName();
     private Validator validator;
 
-    @PersistenceContext
-    public void setEntityManager(EntityManager entityManager) {
+    public void setRootEntityManager(EntityManager entityManager) {
 	this.entityManager = entityManager;
     }
+
+    /**
+     * This method is a dispatcher to call
+     * {@link #setRootEntityManager(EntityManager)}. Please add an annotation
+     * {@link PersistenceContext} with specific unitName.
+     * 
+     * @param entityManager
+     */
+    protected abstract void setEntityManager(EntityManager entityManager);
 
     @SuppressWarnings("unchecked")
     private Class<E> getEntityClass() {
