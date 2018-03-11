@@ -19,11 +19,15 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public abstract class BaseOptimisticLockingProcess implements LockingProcess<GroupLock> {
     private final Log logger = LogFactory.getLog(getClass());
-    @Autowired
-    private QueueGuard queueGuardLockImpl;
+    private QueueGuard optimisticLockingQueueGuard;
     private GroupLockEnum groupLockEnum;
     private boolean ignoreSameProcess = false;
     private boolean init = false;
+
+    @Autowired
+    public void setOptimisticLockingQueueGuard(QueueGuard optimisticLockingQueueGuard) {
+	this.optimisticLockingQueueGuard = optimisticLockingQueueGuard;
+    }
 
     Log logger() {
 	return logger;
@@ -43,9 +47,10 @@ public abstract class BaseOptimisticLockingProcess implements LockingProcess<Gro
 		groupLockEnum = synchronize.groupEnum();
 		ignoreSameProcess = synchronize.ignoreSameProcess();
 
-		if (logger().isDebugEnabled()) {
-		    logger().debug("GroupLockEnum : " + groupLockEnum);
-		    logger().debug("IgnoreSameProcess : " + ignoreSameProcess);
+		if (logger().isInfoEnabled()) {
+		    logger().info("Initializing...");
+		    logger().info("GroupLockEnum : " + groupLockEnum);
+		    logger().info("IgnoreSameProcess : " + ignoreSameProcess);
 		}
 	    }
 	}
@@ -65,11 +70,11 @@ public abstract class BaseOptimisticLockingProcess implements LockingProcess<Gro
 
     @Override
     public void execute(ProcessContext<GroupLock> context) throws ConcurrentAccessException {
-	GroupLock object = queueGuardLockImpl.checkIn(getClass(), getGroupLockEnum(), isIgnoreSameProcess());
+	GroupLock object = optimisticLockingQueueGuard.checkIn(getClass(), getGroupLockEnum(), isIgnoreSameProcess());
 	context.setObject(object);
 
 	executeInternal(context);
 
-	queueGuardLockImpl.checkOut(object);
+	optimisticLockingQueueGuard.checkOut(object);
     }
 }

@@ -17,7 +17,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "GROUP_LOCK")
 public class GroupLock implements Serializable {
-    private static final long serialVersionUID = 4483617774089333750L;
+    private static final long serialVersionUID = 9209874185121844799L;
     @Id
     @Column(name = "group_id")
     private Long groupId;

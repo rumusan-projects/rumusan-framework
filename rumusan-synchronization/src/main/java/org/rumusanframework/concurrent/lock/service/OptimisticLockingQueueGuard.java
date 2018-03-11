@@ -35,7 +35,7 @@ public class OptimisticLockingQueueGuard implements QueueGuard {
     private final Log logger = LogFactory.getLog(getClass());
     private IGroupLockDao groupLockDao;
     private String hostName;
-    private ISystemDate dbSystemDate;
+    private ISystemDate systemDate;
 
     @Autowired
     public void setSyncDao(IGroupLockDao groupLockDao) {
@@ -49,7 +49,7 @@ public class OptimisticLockingQueueGuard implements QueueGuard {
     @PostConstruct
     public void init() {
 	initHostName();
-	dbSystemDate = new DbSystemDate();
+	systemDate = new DbSystemDate();
     }
 
     private void initHostName() {
@@ -109,7 +109,7 @@ public class OptimisticLockingQueueGuard implements QueueGuard {
 	groupLock.setProcessName(classCaller.getName());
 	groupLock.setProcessId(UUID.randomUUID().toString());
 	groupLock.setMachineName(hostName);
-	groupLock.setLastUpdateTime(dbSystemDate.getSystemDate(((DaoTemplate<?, ?>) groupLockDao).getSession()));
+	groupLock.setLastUpdateTime(systemDate.getSystemDate(((DaoTemplate<?, ?>) groupLockDao).getSession()));
 	groupLock.setLastUpdateProcessName(classCaller.getName());
 	groupLock.setLastUpdateProcessId(groupLock.getProcessId());
 
@@ -126,7 +126,7 @@ public class OptimisticLockingQueueGuard implements QueueGuard {
 }
 
 interface ISystemDate {
-    Date getSystemDate(Session dao);
+    Date getSystemDate(Session session);
 }
 
 /**
@@ -139,7 +139,7 @@ class DbSystemDate implements ISystemDate {
     private VersionType<Date> dbTimeStamp = new DbTimestampType();
 
     @Override
-    public Date getSystemDate(Session dao) {
-	return dbTimeStamp.seed((SessionImplementor) dao);
+    public Date getSystemDate(Session session) {
+	return dbTimeStamp.seed((SessionImplementor) session);
     }
 }
