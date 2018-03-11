@@ -12,6 +12,7 @@
 		<module>rumusan-validator</module>
 		<module>rumusan-synchronization</module>
 		<module>rumusan-repository</module>
+		<module>rumusan-orm</module>
 	</modules>
 	<distributionManagement>
 		<repository>
