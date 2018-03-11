@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="debug" monitorInterval="5">
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level [%logger{36}:%L] : %msg%n" />
+		</Console>
+		<RollingRandomAccessFile 
+			name="server" 
+			fileName="/log/synchronize/server.log" 
+			filePattern="/log/synchronize/server.%d{yyyy-MM-dd-hhmm}.log.zip" 
+			immediateFlush="false" 
+			append="true">
+            <PatternLayout pattern="%d{yyyy/MM/dd HH:mm:ss:SSS} [%t] %-5level [%logger{36}:%L] : %msg%n"/>
+			  <Policies>
+				<SizeBasedTriggeringPolicy size="20 MB"/>
+			  </Policies>
+			<DefaultRolloverStrategy max="10"/>
+        </RollingRandomAccessFile>
+		<RollingRandomAccessFile 
+			name="app" 
+			fileName="/log/synchronize/app.log" 
+			filePattern="/log/synchronize/app.%d{yyyy-MM-dd-hhmm}.log.zip" 
+			immediateFlush="false" 
+			append="true">
+            <PatternLayout pattern="%d{yyyy/MM/dd HH:mm:ss:SSS} [%t] %-5level [%logger{36}:%L] : %msg%n"/>
+			  <Policies>
+				<SizeBasedTriggeringPolicy size="20 MB"/>
+			  </Policies>
+			<DefaultRolloverStrategy max="10"/>
+        </RollingRandomAccessFile>
+		<RollingRandomAccessFile 
+			name="requestresponselog" 
+			fileName="/log/synchronize/requestresponselog.log" 
+			filePattern="/log/synchronize/requestresponselog.%d{yyyy-MM-dd-hhmm}.log.zip" 
+			immediateFlush="false" 
+			append="true">
+            <PatternLayout pattern="%d{yyyy/MM/dd HH:mm:ss:SSS} [%t] %-5level [%logger{36}:%L] : %msg%n"/>
+			  <Policies>
+				<SizeBasedTriggeringPolicy size="20 MB"/>
+			  </Policies>
+			<DefaultRolloverStrategy max="10"/>
+        </RollingRandomAccessFile>
+		<RollingRandomAccessFile 
+			name="appspring" 
+			fileName="/log/synchronize/appspring.log" 
+			filePattern="/log/synchronize/appspring.%d{yyyy-MM-dd-hhmm}.log.zip" 
+			immediateFlush="false" 
+			append="true">
+            <PatternLayout pattern="%d{yyyy/MM/dd HH:mm:ss:SSS} [%t] %-5level [%logger{36}:%L] : %msg%n"/>
+			  <Policies>
+				<SizeBasedTriggeringPolicy size="20 MB"/>
+			  </Policies>
+			<DefaultRolloverStrategy max="10"/>
+        </RollingRandomAccessFile>
+		<RollingRandomAccessFile 
+			name="com" 
+			fileName="/log/synchronize/com.log" 
+			filePattern="/log/synchronize/com.%d{yyyy-MM-dd-hhmm}.log.zip" 
+			immediateFlush="false" 
+			append="true">
+            <PatternLayout pattern="%d{yyyy/MM/dd HH:mm:ss:SSS} [%t] %-5level [%logger{36}:%L] : %msg%n"/>
+			  <Policies>
+				<SizeBasedTriggeringPolicy size="20 MB"/>
+			  </Policies>
+			<DefaultRolloverStrategy max="10"/>
+        </RollingRandomAccessFile>
+		<RollingRandomAccessFile 
+			name="rumusan" 
+			fileName="/log/synchronize/rumusan.log" 
+			filePattern="/log/synchronize/rumusan.%d{yyyy-MM-dd-hhmm}.log.zip" 
+			immediateFlush="false" 
+			append="true">
+            <PatternLayout pattern="%d{yyyy/MM/dd HH:mm:ss:SSS} [%t] %-5level [%logger{36}:%L] : %msg%n"/>
+			  <Policies>
+				<SizeBasedTriggeringPolicy size="20 MB"/>
+			  </Policies>
+			<DefaultRolloverStrategy max="10"/>
+        </RollingRandomAccessFile>
+		<RollingRandomAccessFile 
+			name="hibernate" 
+			fileName="/log/synchronize/hibernate.log" 
+			filePattern="/log/synchronize/hibernate.%d{yyyy-MM-dd-hhmm}.log.zip" 
+			immediateFlush="false" 
+			append="true">
+            <PatternLayout pattern="%d{yyyy/MM/dd HH:mm:ss:SSS} [%t] %-5level [%logger{36}:%L] : %msg%n"/>
+			  <Policies>
+				<SizeBasedTriggeringPolicy size="20 MB"/>
+			  </Policies>
+			<DefaultRolloverStrategy max="10"/>
+        </RollingRandomAccessFile>
+	</Appenders>
+	<Loggers>
+		<AsyncLogger name="org.springframework" level="error" additivity="false" includeLocation="true">
+			<AppenderRef ref="appspring" />
+		</AsyncLogger>
+		<AsyncLogger name="com" level="info" additivity="false" includeLocation="true">
+			<AppenderRef ref="com" />
+		</AsyncLogger>
+		<AsyncLogger name="org.rumusanframework" level="debug" additivity="false" includeLocation="true">
+			<AppenderRef ref="rumusan" />
+		</AsyncLogger>
+		<AsyncLogger name="org.hibernate" level="error" additivity="false" includeLocation="true">
+			<AppenderRef ref="hibernate" />
+		</AsyncLogger>
+		<AsyncRoot level="info" includeLocation="true">
+			<AppenderRef ref="server" />
+			<AppenderRef ref="Console" />
+		</AsyncRoot>
+	</Loggers>
+</Configuration>
