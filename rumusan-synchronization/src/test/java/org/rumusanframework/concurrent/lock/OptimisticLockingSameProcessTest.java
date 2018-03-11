@@ -69,6 +69,7 @@ public class OptimisticLockingSameProcessTest {
 			addSet(failedSet, id);
 
 			System.err.println("Failed due an exception : " + e.toString());
+			e.printStackTrace();
 		    }
 		}
 	    };
