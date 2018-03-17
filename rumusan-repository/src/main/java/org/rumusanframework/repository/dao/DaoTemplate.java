@@ -4,14 +4,11 @@ import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.SingularAttribute;
 import javax.validation.Validator;
 
 import org.apache.commons.logging.Log;
@@ -19,7 +16,6 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.rumusanframework.validation.ConstraintViolationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 
 /**
  * 
@@ -28,18 +24,12 @@ import org.springframework.util.Assert;
  *
  * @param <E>
  *            Entity type
- * @param <R>
- *            Return type
  */
-public abstract class DaoTemplate<E extends Serializable, R> implements IGenericDao<E, R> {
+public abstract class DaoTemplate<E extends Serializable> implements IGenericDao<E> {
     private final Log logger = LogFactory.getLog(DaoTemplate.class);
-    private static final String QUERY_ROOT_NOT_FOUND = "Query Root not found.";
-    private static final String ATTRIBUTE_ID_NOT_FOUND = "Attribute Id not found.";
-    private DaoUtils daoUtils = new DaoUtils();
     private EntityManager entityManager;
-    private Class<E> entityType = getEntityClass();
-    // Note : Ensure your meta model class in the same package with entity class
-    private String entityPackage = entityType.getPackage().getName();
+    protected Class<E> entityType = getEntityClass();
+    protected DaoUtils daoUtils = new DaoUtils();
     private Validator validator;
 
     public void setRootEntityManager(EntityManager entityManager) {
@@ -127,47 +117,6 @@ public abstract class DaoTemplate<E extends Serializable, R> implements IGeneric
     @Override
     public List<E> findAll() {
 	return getSession().createQuery(getEntityCriteriaQuery()).getResultList();
-    }
-
-    protected abstract CriteriaQuery<R> getVoCriteriaQuery();
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public R findVoById(Serializable id) {
-	CriteriaBuilder cb = getSession().getCriteriaBuilder();
-	CriteriaQuery<R> query = getVoCriteriaQuery();
-	Set<Root<?>> roots = query.getRoots();
-	Root<E> queryRoot = null;
-
-	for (Root<?> root : roots) {
-	    if (logger().isDebugEnabled()) {
-		logger().debug("Dao entityType : " + entityType);
-		logger().debug("Query Root javaType : " + root.getJavaType());
-	    }
-	    if (root.getJavaType().equals(entityType)) {
-		queryRoot = (Root<E>) root;
-		break;
-	    }
-	}
-
-	Assert.notNull(queryRoot, QUERY_ROOT_NOT_FOUND);
-
-	SingularAttribute<E, Class<?>> attributeId = getAttributeId();
-	Assert.notNull(attributeId, ATTRIBUTE_ID_NOT_FOUND);
-
-	query.where(cb.equal(queryRoot.get(attributeId), id));
-
-	return getSession().createQuery(query).uniqueResult();
-    }
-
-    @Override
-    public List<R> findAllVo() {
-	return getSession().createQuery(getVoCriteriaQuery()).getResultList();
-    }
-
-    @SuppressWarnings("unchecked")
-    private SingularAttribute<E, Class<?>> getAttributeId() {
-	return (SingularAttribute<E, Class<?>>) daoUtils.getMetaAttributeId(entityPackage, entityType);
     }
 
     @Override

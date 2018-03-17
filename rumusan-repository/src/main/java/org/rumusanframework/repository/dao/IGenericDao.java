@@ -11,10 +11,8 @@ import java.util.List;
  *
  * @param <E>
  *            Entity type
- * @param <R>
- *            Return type
  */
-public interface IGenericDao<E, R> {
+public interface IGenericDao<E> {
     public void refresh(E object);
 
     public Serializable save(E object);
@@ -26,10 +24,6 @@ public interface IGenericDao<E, R> {
     public E findById(Serializable id);
 
     public List<E> findAll();
-
-    public R findVoById(Serializable id);
-
-    public List<R> findAllVo();
 
     public Date getSystemDate();
 }
