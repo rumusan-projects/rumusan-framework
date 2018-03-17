@@ -2,7 +2,6 @@ package org.rumusanframework.concurrent.lock.dao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaQuery;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.ProjectionList;
@@ -24,7 +23,7 @@ import org.springframework.stereotype.Repository;
  *
  */
 @Repository
-public class GroupLockDao extends DaoTemplate<GroupLock, GroupLock> implements IGroupLockDao {
+public class GroupLockDao extends DaoTemplate<GroupLock> implements IGroupLockDao {
     private AliasToBeanResultTransformer findGroupTransformers = new AliasToBeanResultTransformer(GroupLock.class);
     private ProjectionList findAllProjection;
 
@@ -130,11 +129,6 @@ public class GroupLockDao extends DaoTemplate<GroupLock, GroupLock> implements I
 	query.setParameter("key", groupLock.getProcessId());
 
 	return query.executeUpdate();
-    }
-
-    @Override
-    protected CriteriaQuery<GroupLock> getVoCriteriaQuery() {
-	return null;
     }
 
     @Override

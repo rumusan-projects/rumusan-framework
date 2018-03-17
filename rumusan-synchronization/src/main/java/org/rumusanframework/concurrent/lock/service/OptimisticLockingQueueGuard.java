@@ -109,7 +109,7 @@ public class OptimisticLockingQueueGuard implements QueueGuard {
 	groupLock.setProcessName(classCaller.getName());
 	groupLock.setProcessId(UUID.randomUUID().toString());
 	groupLock.setMachineName(hostName);
-	groupLock.setLastUpdateTime(systemDate.getSystemDate(((DaoTemplate<?, ?>) groupLockDao).getSession()));
+	groupLock.setLastUpdateTime(systemDate.getSystemDate(((DaoTemplate<?>) groupLockDao).getSession()));
 	groupLock.setLastUpdateProcessName(classCaller.getName());
 	groupLock.setLastUpdateProcessId(groupLock.getProcessId());
 
