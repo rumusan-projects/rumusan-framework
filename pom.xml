@@ -47,5 +47,7 @@
 		<hibernate-jpa-2.1-api.version>1.0.2.Final</hibernate-jpa-2.1-api.version>
 		<javax.el-api-test.version>3.0.0</javax.el-api-test.version>
 		<javax.el-test.version>3.0.0</javax.el-test.version>
+		<jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version>
+		<maven-surefire-plugin.version>2.20</maven-surefire-plugin.version>
 	</properties>
 </project>
