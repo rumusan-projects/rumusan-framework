@@ -12,17 +12,17 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
  * @since 1.0.0
  *
  */
-public class PesimisticOAuth2RestTemplate extends OAuth2RestTemplate {
+public class OptimisticOAuth2RestTemplate extends OAuth2RestTemplate {
     private int retryError = 3;
     private int expirationRange = 5;
     private int nextExpiredSec = 2;
     private boolean isSleepOnExpirationRange = true;
 
-    public PesimisticOAuth2RestTemplate(OAuth2ProtectedResourceDetails resource) {
+    public OptimisticOAuth2RestTemplate(OAuth2ProtectedResourceDetails resource) {
 	super(resource);
     }
 
-    public PesimisticOAuth2RestTemplate(OAuth2ProtectedResourceDetails resource, OAuth2ClientContext context) {
+    public OptimisticOAuth2RestTemplate(OAuth2ProtectedResourceDetails resource, OAuth2ClientContext context) {
 	super(resource, context);
     }
 
