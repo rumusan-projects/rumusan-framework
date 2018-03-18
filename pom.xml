@@ -3,16 +3,22 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.rumusan</groupId>
 	<artifactId>rumusan-framework</artifactId>
-	<version>1.0.0-RELEASE</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
 		<module>rumusan-core</module>
+		<module>rumusan-security-oauth2</module>
+		<module>rumusan-context</module>
+		<module>rumusan-validator</module>
+		<module>rumusan-synchronization</module>
+		<module>rumusan-repository</module>
+		<module>rumusan-orm</module>
 	</modules>
 	<distributionManagement>
 		<repository>
 			<id>${repo.release.id}</id>
-			<layout>default</layout>
 			<url>${repo.release.url}</url>
+			<layout>default</layout>
 		</repository>
 		<snapshotRepository>
 			<id>${repo.snapshot.id}</id>
@@ -21,7 +27,27 @@
 		</snapshotRepository>
 	</distributionManagement>
 	<properties>
-		<version.phase>SNAPSHOT</version.phase>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jdk.version>1.8</jdk.version>
+		<maven-compiler.version>3.7.0</maven-compiler.version>
+		<maven-resources.version>3.0.1</maven-resources.version>
+		<spring.version>4.3.12.RELEASE</spring.version>
+		<spring-security-oauth2.version>2.2.0.RELEASE</spring-security-oauth2.version>
+		<spring-security-web.version>4.2.3.RELEASE</spring-security-web.version>
+		<junit.version>4.12</junit.version>
+		<jackson.version>2.9.2</jackson.version>
+		<mockito-all.version>1.9.5</mockito-all.version>
+		<log4j.version>2.9.1</log4j.version>
+		<validation-api.version>2.0.1.Final</validation-api.version>
+		<rumusan.version>1.0.0-SNAPSHOT</rumusan.version>
+		<mysql-connector-java.version>5.1.44</mysql-connector-java.version>
+		<disruptor.version>3.3.7</disruptor.version>
+		<hibernate.version>5.2.12.Final</hibernate.version>
+		<hibernate-validator.version>6.0.8.Final</hibernate-validator.version>
+		<hibernate-jpa-2.1-api.version>1.0.2.Final</hibernate-jpa-2.1-api.version>
+		<javax.el-api-test.version>3.0.0</javax.el-api-test.version>
+		<javax.el-test.version>3.0.0</javax.el-test.version>
+		<jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version>
+		<maven-surefire-plugin.version>2.20</maven-surefire-plugin.version>
 	</properties>
 </project>
