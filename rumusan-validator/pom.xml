@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.rumusan</groupId>
 		<artifactId>rumusan-framework</artifactId>
-		<version>1.0.x.SNAPSHOT</version>
+		<version>1.0.x-SNAPSHOT</version>
 	</parent>
 	<artifactId>rumusan-validator</artifactId>
 	<build>
