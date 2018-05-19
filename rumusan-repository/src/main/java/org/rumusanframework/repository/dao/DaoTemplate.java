@@ -28,23 +28,18 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public abstract class DaoTemplate<E extends Serializable> implements IGenericDao<E> {
 	private final Log logger = LogFactory.getLog(DaoTemplate.class);
-	private EntityManager entityManager;
 	protected Class<E> entityType = getEntityClass();
 	protected DaoUtils daoUtils = new DaoUtils();
 	private Validator validator;
 
-	public void setRootEntityManager(EntityManager entityManager) {
-		this.entityManager = entityManager;
-	}
-
 	/**
-	 * This method is a dispatcher to call
-	 * {@link #setRootEntityManager(EntityManager)}. Please add an annotation
-	 * {@link PersistenceContext} with specific unitName.
+	 * Please add an annotation {@link PersistenceContext} with specific unitName.
 	 * 
 	 * @param entityManager
 	 */
 	protected abstract void setEntityManager(EntityManager entityManager);
+
+	protected abstract EntityManager getEntityManager();
 
 	@SuppressWarnings("unchecked")
 	private Class<E> getEntityClass() {
@@ -57,7 +52,7 @@ public abstract class DaoTemplate<E extends Serializable> implements IGenericDao
 	}
 
 	public Session getSession() {
-		return (Session) entityManager.getDelegate();
+		return (Session) getEntityManager().getDelegate();
 	}
 
 	@Autowired
