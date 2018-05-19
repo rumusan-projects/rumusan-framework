@@ -11,29 +11,30 @@ import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
  * 
  * @author Harvan Irsyadi
  * @version 1.0.0
+ * @since 1.0.0 (12 Mar 2018)
  *
  */
 public class ChainedHibernateJpaDialect extends HibernateJpaDialect {
-    private static final long serialVersionUID = 4425692243075506813L;
-    private transient Set<PersistenceExceptionTranslator> translators;
+	private static final long serialVersionUID = 4425692243075506813L;
+	private transient Set<PersistenceExceptionTranslator> translators;
 
-    public void addTranslator(PersistenceExceptionTranslator translator) {
-	if (translators == null) {
-	    translators = new HashSet<>();
+	public void addTranslator(PersistenceExceptionTranslator translator) {
+		if (translators == null) {
+			translators = new HashSet<>();
+		}
+
+		translators.add(translator);
 	}
 
-	translators.add(translator);
-    }
+	@Override
+	public DataAccessException translateExceptionIfPossible(RuntimeException ex) {
+		for (PersistenceExceptionTranslator pet : translators) {
+			DataAccessException dae = pet.translateExceptionIfPossible(ex);
+			if (dae != null) {
+				return dae;
+			}
+		}
 
-    @Override
-    public DataAccessException translateExceptionIfPossible(RuntimeException ex) {
-	for (PersistenceExceptionTranslator pet : translators) {
-	    DataAccessException dae = pet.translateExceptionIfPossible(ex);
-	    if (dae != null) {
-		return dae;
-	    }
+		return super.translateExceptionIfPossible(ex);
 	}
-
-	return super.translateExceptionIfPossible(ex);
-    }
 }

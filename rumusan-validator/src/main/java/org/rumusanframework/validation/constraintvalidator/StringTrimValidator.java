@@ -11,24 +11,25 @@ import org.rumusanframework.validation.constraint.StringTrimNotEmpty;
  * 
  * @author Harvan Irsyadi
  * @version 1.0.0
+ * @since 1.0.0 (18 Feb 2018)
  *
  */
 public class StringTrimValidator implements ConstraintValidator<StringTrimNotEmpty, CharSequence> {
-    private static final Log LOGGER = LogFactory.getLog(StringTrimValidator.class);
+	private static final Log LOGGER = LogFactory.getLog(StringTrimValidator.class);
 
-    @Override
-    public boolean isValid(CharSequence charSequence, ConstraintValidatorContext constraintValidatorContext) {
-	if (logger().isDebugEnabled()) {
-	    logger().debug("Validating : " + charSequence);
+	@Override
+	public boolean isValid(CharSequence charSequence, ConstraintValidatorContext constraintValidatorContext) {
+		if (logger().isDebugEnabled()) {
+			logger().debug("Validating : " + charSequence);
+		}
+
+		if (charSequence == null) {
+			return false;
+		}
+		return charSequence.toString().trim().length() > 0;
 	}
 
-	if (charSequence == null) {
-	    return false;
+	Log logger() {
+		return LOGGER;
 	}
-	return charSequence.toString().trim().length() > 0;
-    }
-
-    Log logger() {
-	return LOGGER;
-    }
 }
