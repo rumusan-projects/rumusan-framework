@@ -8,5 +8,5 @@ package org.rumusanframework.reflect.field;
  *
  */
 public interface FieldResolver {
-    public String resolve();
+	public String resolve();
 }

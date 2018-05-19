@@ -45,1802 +45,1802 @@ import org.rumusanframework.util.parser.impl.ParseToNonFloatingChain;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ParserUtilsTest {
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+	@Rule
+	public ExpectedException expectedException = ExpectedException.none();
 
-    private class UnknownClass {
-	private String number;
+	private class UnknownClass {
+		private String number;
 
-	public UnknownClass() {
+		public UnknownClass() {
+		}
+
+		public UnknownClass(String number) {
+			this.number = number;
+		}
+
+		@Override
+		public String toString() {
+			return number;
+		}
 	}
 
-	public UnknownClass(String number) {
-	    this.number = number;
+	private class NewNumberClass extends Number {
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public int intValue() {
+			return 0;
+		}
+
+		@Override
+		public long longValue() {
+			return 0;
+		}
+
+		@Override
+		public float floatValue() {
+			return 0;
+		}
+
+		@Override
+		public double doubleValue() {
+			return 0;
+		}
 	}
 
-	@Override
-	public String toString() {
-	    return number;
-	}
-    }
-
-    private class NewNumberClass extends Number {
-	private static final long serialVersionUID = 1L;
-
-	@Override
-	public int intValue() {
-	    return 0;
+	private class NewDateClass extends Date {
+		private static final long serialVersionUID = 1L;
 	}
 
-	@Override
-	public long longValue() {
-	    return 0;
+	private String getMethodName(Object obj) {
+		return obj.getClass().getEnclosingMethod().getName();
 	}
 
-	@Override
-	public float floatValue() {
-	    return 0;
+	@Test
+	public void testPrivateConstructor() throws Exception {
+		Constructor<ParserUtils> constructor = ParserUtils.class.getDeclaredConstructor();
+		Assert.assertTrue(Modifier.isPrivate(constructor.getModifiers()));
+		constructor.setAccessible(true);
+		constructor.newInstance();
 	}
 
-	@Override
-	public double doubleValue() {
-	    return 0;
+	@Test
+	public void testPrivateConstructorDateParser() throws Exception {
+		Constructor<DateParser> constructor = DateParser.class.getDeclaredConstructor();
+		Assert.assertTrue(Modifier.isPrivate(constructor.getModifiers()));
+		constructor.setAccessible(true);
+		constructor.newInstance();
 	}
-    }
-
-    private class NewDateClass extends Date {
-	private static final long serialVersionUID = 1L;
-    }
-
-    private String getMethodName(Object obj) {
-	return obj.getClass().getEnclosingMethod().getName();
-    }
-
-    @Test
-    public void testPrivateConstructor() throws Exception {
-	Constructor<ParserUtils> constructor = ParserUtils.class.getDeclaredConstructor();
-	Assert.assertTrue(Modifier.isPrivate(constructor.getModifiers()));
-	constructor.setAccessible(true);
-	constructor.newInstance();
-    }
-
-    @Test
-    public void testPrivateConstructorDateParser() throws Exception {
-	Constructor<DateParser> constructor = DateParser.class.getDeclaredConstructor();
-	Assert.assertTrue(Modifier.isPrivate(constructor.getModifiers()));
-	constructor.setAccessible(true);
-	constructor.newInstance();
-    }
-
-    @Test
-    public void testParseNullTargetClass() {
-	System.out.println("End " + getMethodName(new Object() {
-	}));
-	expectedException.expect(IllegalArgumentException.class);
-	expectedException.expectMessage("Target class cannot be null.");
-
-	Class<?> target = null;
-	ParserUtils.parse("", target);
-    }
-
-    @Test
-    public void testParseNullObject() {
-	Object obj = ParserUtils.parse(null, Object.class);
-
-	Assert.assertEquals(null, obj);
-    }
-
-    @Test
-    public void testParseToUnknownClassFromString() {
-	System.out.println("End " + getMethodName(new Object() {
-	}));
-	expectedException.expect(ParseException.class);
-	expectedException.expectMessage("No wrapper found for target class : " + UnknownClass.class);
-
-	String src = "UnknownClass";
-	ParserUtils.parse(src, UnknownClass.class);
-    }
-
-    @Test
-    public void testParseToByteFromStringEquals() {
-	String src = "111";
-	Byte parsed = ParserUtils.parse(src, Byte.class);
-
-	Assert.assertEquals(src, parsed.toString());
-
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
-
-    @Test
-    public void testParseToByteFromUnknownClass() {
-	Byte src = 111;
-	UnknownClass obj = new UnknownClass(src.toString());
-	Byte parsed = ParserUtils.parse(obj, Byte.class);
-
-	Assert.assertEquals(new Byte(obj.toString()), parsed);
-
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
-
-    @Test
-    public void testParseToByteFromByteEquals() {
-	Byte src = 111;
-	Byte parsed = ParserUtils.parse(src, Byte.class);
-
-	Assert.assertEquals(src, parsed);
-
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
-
-    @Test
-    public void testParseToByteFromShortEquals() {
-	Short src = 111;
-	Byte parsed = ParserUtils.parse(src, Byte.class);
-
-	Assert.assertEquals((Byte) src.byteValue(), parsed);
-
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
-
-    @Test
-    public void testParseToByteFromIntegerEquals() {
-	Integer src = 111;
-	Byte parsed = ParserUtils.parse(src, Byte.class);
 
-	Assert.assertEquals((Byte) src.byteValue(), parsed);
+	@Test
+	public void testParseNullTargetClass() {
+		System.out.println("End " + getMethodName(new Object() {
+		}));
+		expectedException.expect(IllegalArgumentException.class);
+		expectedException.expectMessage("Target class cannot be null.");
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Class<?> target = null;
+		ParserUtils.parse("", target);
+	}
 
-    @Test
-    public void testParseToByteFromLongEquals() {
-	Long src = 111L;
-	Byte parsed = ParserUtils.parse(src, Byte.class);
+	@Test
+	public void testParseNullObject() {
+		Object obj = ParserUtils.parse(null, Object.class);
 
-	Assert.assertEquals((Byte) src.byteValue(), parsed);
+		Assert.assertEquals(null, obj);
+	}
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+	@Test
+	public void testParseToUnknownClassFromString() {
+		System.out.println("End " + getMethodName(new Object() {
+		}));
+		expectedException.expect(ParseException.class);
+		expectedException.expectMessage("No wrapper found for target class : " + UnknownClass.class);
 
-    @Test
-    public void testParseToByteFromFloatEquals() {
-	Float src = 11.1F;
-	Byte parsed = ParserUtils.parse(src, Byte.class);
+		String src = "UnknownClass";
+		ParserUtils.parse(src, UnknownClass.class);
+	}
 
-	Assert.assertEquals((Byte) src.byteValue(), parsed);
+	@Test
+	public void testParseToByteFromStringEquals() {
+		String src = "111";
+		Byte parsed = ParserUtils.parse(src, Byte.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed.toString());
 
-    @Test
-    public void testParseToByteFromDoubleEquals() {
-	Double src = 11.1D;
-	Byte parsed = ParserUtils.parse(src, Byte.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Byte) src.byteValue(), parsed);
+	@Test
+	public void testParseToByteFromUnknownClass() {
+		Byte src = 111;
+		UnknownClass obj = new UnknownClass(src.toString());
+		Byte parsed = ParserUtils.parse(obj, Byte.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new Byte(obj.toString()), parsed);
 
-    @Test
-    public void testParseToByteFromBigIntegerEquals() {
-	BigInteger src = new BigInteger(new Long(11L).toString());
-	Byte parsed = ParserUtils.parse(src, Byte.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Byte) src.byteValue(), parsed);
+	@Test
+	public void testParseToByteFromByteEquals() {
+		Byte src = 111;
+		Byte parsed = ParserUtils.parse(src, Byte.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed);
 
-    @Test
-    public void testParseToByteFromBigDecimalEquals() {
-	BigDecimal src = new BigDecimal(new Double(11.1D).toString());
-	Byte parsed = ParserUtils.parse(src, Byte.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Byte) src.byteValue(), parsed);
+	@Test
+	public void testParseToByteFromShortEquals() {
+		Short src = 111;
+		Byte parsed = ParserUtils.parse(src, Byte.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Byte) src.byteValue(), parsed);
 
-    @Test
-    public void testParseToShortFromStringEquals() {
-	String src = "11111";
-	Short parsed = ParserUtils.parse(src, Short.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed.toString());
+	@Test
+	public void testParseToByteFromIntegerEquals() {
+		Integer src = 111;
+		Byte parsed = ParserUtils.parse(src, Byte.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Byte) src.byteValue(), parsed);
 
-    @Test
-    public void testParseToShortFromUnknownClass() {
-	Short src = 11111;
-	UnknownClass obj = new UnknownClass(src.toString());
-	Short parsed = ParserUtils.parse(obj, Short.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new Short(obj.toString()), parsed);
+	@Test
+	public void testParseToByteFromLongEquals() {
+		Long src = 111L;
+		Byte parsed = ParserUtils.parse(src, Byte.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Byte) src.byteValue(), parsed);
 
-    @Test
-    public void testParseToShortFromByteEquals() {
-	Byte src = 111;
-	Short parsed = ParserUtils.parse(src, Short.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Short) src.shortValue(), parsed);
+	@Test
+	public void testParseToByteFromFloatEquals() {
+		Float src = 11.1F;
+		Byte parsed = ParserUtils.parse(src, Byte.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Byte) src.byteValue(), parsed);
 
-    @Test
-    public void testParseToShortFromShortEquals() {
-	Short src = 11111;
-	Short parsed = ParserUtils.parse(src, Short.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToByteFromDoubleEquals() {
+		Double src = 11.1D;
+		Byte parsed = ParserUtils.parse(src, Byte.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Byte) src.byteValue(), parsed);
 
-    @Test
-    public void testParseToShortFromIntegerEquals() {
-	Integer src = 11111;
-	Short parsed = ParserUtils.parse(src, Short.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Short) src.shortValue(), parsed);
+	@Test
+	public void testParseToByteFromBigIntegerEquals() {
+		BigInteger src = new BigInteger(new Long(11L).toString());
+		Byte parsed = ParserUtils.parse(src, Byte.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Byte) src.byteValue(), parsed);
 
-    @Test
-    public void testParseToShortFromLongEquals() {
-	Long src = 11111L;
-	Short parsed = ParserUtils.parse(src, Short.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Short) src.shortValue(), parsed);
+	@Test
+	public void testParseToByteFromBigDecimalEquals() {
+		BigDecimal src = new BigDecimal(new Double(11.1D).toString());
+		Byte parsed = ParserUtils.parse(src, Byte.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Byte) src.byteValue(), parsed);
 
-    @Test
-    public void testParseToShortFromFloatEquals() {
-	Float src = 1111.1F;
-	Short parsed = ParserUtils.parse(src, Short.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Short) src.shortValue(), parsed);
+	@Test
+	public void testParseToShortFromStringEquals() {
+		String src = "11111";
+		Short parsed = ParserUtils.parse(src, Short.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed.toString());
 
-    @Test
-    public void testParseToShortFromDoubleEquals() {
-	Double src = 1111.1D;
-	Short parsed = ParserUtils.parse(src, Short.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Short) src.shortValue(), parsed);
+	@Test
+	public void testParseToShortFromUnknownClass() {
+		Short src = 11111;
+		UnknownClass obj = new UnknownClass(src.toString());
+		Short parsed = ParserUtils.parse(obj, Short.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new Short(obj.toString()), parsed);
 
-    @Test
-    public void testParseToShortFromBigIntegerEquals() {
-	BigInteger src = new BigInteger(new Integer(11111).toString());
-	Short parsed = ParserUtils.parse(src, Short.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Short) src.shortValue(), parsed);
+	@Test
+	public void testParseToShortFromByteEquals() {
+		Byte src = 111;
+		Short parsed = ParserUtils.parse(src, Short.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Short) src.shortValue(), parsed);
 
-    @Test
-    public void testParseToShortFromBigDecimalEquals() {
-	BigDecimal src = new BigDecimal(new Float(1111.1).toString());
-	Short parsed = ParserUtils.parse(src, Short.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Short) src.shortValue(), parsed);
+	@Test
+	public void testParseToShortFromShortEquals() {
+		Short src = 11111;
+		Short parsed = ParserUtils.parse(src, Short.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed);
 
-    @Test
-    public void testParseToIntegerFromStringEquals() {
-	String src = "1111111111";
-	Integer parsed = ParserUtils.parse(src, Integer.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed.toString());
+	@Test
+	public void testParseToShortFromIntegerEquals() {
+		Integer src = 11111;
+		Short parsed = ParserUtils.parse(src, Short.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Short) src.shortValue(), parsed);
 
-    @Test
-    public void testParseToIntegerFromUnknownClass() {
-	Integer src = 1111111111;
-	UnknownClass obj = new UnknownClass(src.toString());
-	Integer parsed = ParserUtils.parse(obj, Integer.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new Integer(obj.toString()), parsed);
+	@Test
+	public void testParseToShortFromLongEquals() {
+		Long src = 11111L;
+		Short parsed = ParserUtils.parse(src, Short.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Short) src.shortValue(), parsed);
 
-    @Test
-    public void testParseToIntegerFromByteEquals() {
-	Byte src = 111;
-	Integer parsed = ParserUtils.parse(src, Integer.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Integer) src.intValue(), parsed);
+	@Test
+	public void testParseToShortFromFloatEquals() {
+		Float src = 1111.1F;
+		Short parsed = ParserUtils.parse(src, Short.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Short) src.shortValue(), parsed);
 
-    @Test
-    public void testParseToIntegerFromShortEquals() {
-	Short src = 1111;
-	Integer parsed = ParserUtils.parse(src, Integer.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Integer) src.intValue(), parsed);
+	@Test
+	public void testParseToShortFromDoubleEquals() {
+		Double src = 1111.1D;
+		Short parsed = ParserUtils.parse(src, Short.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Short) src.shortValue(), parsed);
 
-    @Test
-    public void testParseToIntegerFromIntegerEquals() {
-	Integer src = 1111111111;
-	Integer parsed = ParserUtils.parse(src, Integer.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToShortFromBigIntegerEquals() {
+		BigInteger src = new BigInteger(new Integer(11111).toString());
+		Short parsed = ParserUtils.parse(src, Short.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Short) src.shortValue(), parsed);
 
-    @Test
-    public void testParseToIntegerFromLongEquals() {
-	Long src = 1111111111L;
-	Integer parsed = ParserUtils.parse(src, Integer.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Integer) src.intValue(), parsed);
+	@Test
+	public void testParseToShortFromBigDecimalEquals() {
+		BigDecimal src = new BigDecimal(new Float(1111.1).toString());
+		Short parsed = ParserUtils.parse(src, Short.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Short) src.shortValue(), parsed);
 
-    @Test
-    public void testParseToIntegerFromFloatEquals() {
-	Float src = 1111111.1F;
-	Integer parsed = ParserUtils.parse(src, Integer.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Integer) src.intValue(), parsed);
+	@Test
+	public void testParseToIntegerFromStringEquals() {
+		String src = "1111111111";
+		Integer parsed = ParserUtils.parse(src, Integer.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed.toString());
 
-    @Test
-    public void testParseToIntegerFromDoubleEquals() {
-	Double src = 1111111.1D;
-	Integer parsed = ParserUtils.parse(src, Integer.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Integer) src.intValue(), parsed);
+	@Test
+	public void testParseToIntegerFromUnknownClass() {
+		Integer src = 1111111111;
+		UnknownClass obj = new UnknownClass(src.toString());
+		Integer parsed = ParserUtils.parse(obj, Integer.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new Integer(obj.toString()), parsed);
 
-    @Test
-    public void testParseToIntegerFromBigIntegerEquals() {
-	BigInteger src = new BigInteger(new Long(1111111111).toString());
-	Integer parsed = ParserUtils.parse(src, Integer.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Integer) src.intValue(), parsed);
+	@Test
+	public void testParseToIntegerFromByteEquals() {
+		Byte src = 111;
+		Integer parsed = ParserUtils.parse(src, Integer.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Integer) src.intValue(), parsed);
 
-    @Test
-    public void testParseToIntegerFromBigDecimalEquals() {
-	BigDecimal src = new BigDecimal(new Double(1111111111D).toString());
-	Integer parsed = ParserUtils.parse(src, Integer.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Integer) src.intValue(), parsed);
+	@Test
+	public void testParseToIntegerFromShortEquals() {
+		Short src = 1111;
+		Integer parsed = ParserUtils.parse(src, Integer.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Integer) src.intValue(), parsed);
 
-    @Test
-    public void testParseToLongFromStringEquals() {
-	String src = "1111111111";
-	Long parsed = ParserUtils.parse(src, Long.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed.toString());
+	@Test
+	public void testParseToIntegerFromIntegerEquals() {
+		Integer src = 1111111111;
+		Integer parsed = ParserUtils.parse(src, Integer.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed);
 
-    @Test
-    public void testParseToLongFromUnknownClass() {
-	Long src = 1111111111L;
-	UnknownClass obj = new UnknownClass(src.toString());
-	Long parsed = ParserUtils.parse(obj, Long.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new Long(obj.toString()), parsed);
+	@Test
+	public void testParseToIntegerFromLongEquals() {
+		Long src = 1111111111L;
+		Integer parsed = ParserUtils.parse(src, Integer.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Integer) src.intValue(), parsed);
 
-    @Test
-    public void testParseToLongFromByteEquals() {
-	Byte src = 111;
-	Long parsed = ParserUtils.parse(src, Long.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Long) src.longValue(), parsed);
+	@Test
+	public void testParseToIntegerFromFloatEquals() {
+		Float src = 1111111.1F;
+		Integer parsed = ParserUtils.parse(src, Integer.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Integer) src.intValue(), parsed);
 
-    @Test
-    public void testParseToLongFromShortEquals() {
-	Short src = 1111;
-	Long parsed = ParserUtils.parse(src, Long.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Long) src.longValue(), parsed);
+	@Test
+	public void testParseToIntegerFromDoubleEquals() {
+		Double src = 1111111.1D;
+		Integer parsed = ParserUtils.parse(src, Integer.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Integer) src.intValue(), parsed);
 
-    @Test
-    public void testParseToLongFromIntegerEquals() {
-	Integer src = 1111111111;
-	Long parsed = ParserUtils.parse(src, Long.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Long) src.longValue(), parsed);
+	@Test
+	public void testParseToIntegerFromBigIntegerEquals() {
+		BigInteger src = new BigInteger(new Long(1111111111).toString());
+		Integer parsed = ParserUtils.parse(src, Integer.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Integer) src.intValue(), parsed);
 
-    @Test
-    public void testParseToLongFromLongEquals() {
-	Long src = 1111111111L;
-	Long parsed = ParserUtils.parse(src, Long.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToIntegerFromBigDecimalEquals() {
+		BigDecimal src = new BigDecimal(new Double(1111111111D).toString());
+		Integer parsed = ParserUtils.parse(src, Integer.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Integer) src.intValue(), parsed);
 
-    @Test
-    public void testParseToLongFromFloatEquals() {
-	Float src = 1111111111F;
-	Long parsed = ParserUtils.parse(src, Long.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Long) src.longValue(), parsed);
+	@Test
+	public void testParseToLongFromStringEquals() {
+		String src = "1111111111";
+		Long parsed = ParserUtils.parse(src, Long.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed.toString());
 
-    @Test
-    public void testParseToLongFromDoubleEquals() {
-	Double src = 1111111111D;
-	Long parsed = ParserUtils.parse(src, Long.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Long) src.longValue(), parsed);
+	@Test
+	public void testParseToLongFromUnknownClass() {
+		Long src = 1111111111L;
+		UnknownClass obj = new UnknownClass(src.toString());
+		Long parsed = ParserUtils.parse(obj, Long.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new Long(obj.toString()), parsed);
 
-    @Test
-    public void testParseToLongFromBigIntegerEquals() {
-	BigInteger src = new BigInteger(new Long(1111111111L).toString());
-	Long parsed = ParserUtils.parse(src, Long.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Long) src.longValue(), parsed);
+	@Test
+	public void testParseToLongFromByteEquals() {
+		Byte src = 111;
+		Long parsed = ParserUtils.parse(src, Long.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Long) src.longValue(), parsed);
 
-    @Test
-    public void testParseToLongFromBigDecimalEquals() {
-	BigDecimal src = new BigDecimal(new Double(1111111111D).toString());
-	Long parsed = ParserUtils.parse(src, Long.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Long) src.longValue(), parsed);
+	@Test
+	public void testParseToLongFromShortEquals() {
+		Short src = 1111;
+		Long parsed = ParserUtils.parse(src, Long.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Long) src.longValue(), parsed);
 
-    @Test
-    public void testParseToFloatFromStringEquals() {
-	String src = "111111.11";
-	Float parsed = ParserUtils.parse(src, Float.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new Float(src), parsed);
+	@Test
+	public void testParseToLongFromIntegerEquals() {
+		Integer src = 1111111111;
+		Long parsed = ParserUtils.parse(src, Long.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Long) src.longValue(), parsed);
 
-    @Test
-    public void testParseToFloatFromUnknownClass() {
-	Float src = 11111.11F;
-	UnknownClass obj = new UnknownClass(src.toString());
-	Float parsed = ParserUtils.parse(obj, Float.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new Float(obj.toString()), parsed);
+	@Test
+	public void testParseToLongFromLongEquals() {
+		Long src = 1111111111L;
+		Long parsed = ParserUtils.parse(src, Long.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed);
 
-    @Test
-    public void testParseToFloatFromByteEquals() {
-	Byte src = 111;
-	Float parsed = ParserUtils.parse(src, Float.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Float) src.floatValue(), parsed);
+	@Test
+	public void testParseToLongFromFloatEquals() {
+		Float src = 1111111111F;
+		Long parsed = ParserUtils.parse(src, Long.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Long) src.longValue(), parsed);
 
-    @Test
-    public void testParseToFloatFromShortEquals() {
-	Short src = 1111;
-	Float parsed = ParserUtils.parse(src, Float.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Float) src.floatValue(), parsed);
+	@Test
+	public void testParseToLongFromDoubleEquals() {
+		Double src = 1111111111D;
+		Long parsed = ParserUtils.parse(src, Long.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Long) src.longValue(), parsed);
 
-    @Test
-    public void testParseToFloatFromIntegerEquals() {
-	Integer src = 1111111;
-	Float parsed = ParserUtils.parse(src, Float.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Float) src.floatValue(), parsed);
+	@Test
+	public void testParseToLongFromBigIntegerEquals() {
+		BigInteger src = new BigInteger(new Long(1111111111L).toString());
+		Long parsed = ParserUtils.parse(src, Long.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Long) src.longValue(), parsed);
 
-    @Test
-    public void testParseToFloatFromLongEquals() {
-	Long src = 1111111L;
-	Float parsed = ParserUtils.parse(src, Float.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Float) src.floatValue(), parsed);
+	@Test
+	public void testParseToLongFromBigDecimalEquals() {
+		BigDecimal src = new BigDecimal(new Double(1111111111D).toString());
+		Long parsed = ParserUtils.parse(src, Long.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Long) src.longValue(), parsed);
 
-    @Test
-    public void testParseToFloatFromFloatEquals() {
-	Float src = 111.11F;
-	Float parsed = ParserUtils.parse(src, Float.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToFloatFromStringEquals() {
+		String src = "111111.11";
+		Float parsed = ParserUtils.parse(src, Float.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new Float(src), parsed);
 
-    @Test
-    public void testParseToFloatFromDoubleEquals() {
-	Double src = 111111.1D;
-	Float parsed = ParserUtils.parse(src, Float.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Float) src.floatValue(), parsed);
+	@Test
+	public void testParseToFloatFromUnknownClass() {
+		Float src = 11111.11F;
+		UnknownClass obj = new UnknownClass(src.toString());
+		Float parsed = ParserUtils.parse(obj, Float.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new Float(obj.toString()), parsed);
 
-    @Test
-    public void testParseToFloatFromBigIntegerEquals() {
-	BigInteger src = new BigInteger(((Long) 1111111L).toString());
-	Float parsed = ParserUtils.parse(src, Float.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Float) src.floatValue(), parsed);
+	@Test
+	public void testParseToFloatFromByteEquals() {
+		Byte src = 111;
+		Float parsed = ParserUtils.parse(src, Float.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Float) src.floatValue(), parsed);
 
-    @Test
-    public void testParseToFloatFromBigDecimalEquals() {
-	BigDecimal src = new BigDecimal(((Double) 111111.1D).toString());
-	Float parsed = ParserUtils.parse(src, Float.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Float) src.floatValue(), parsed);
+	@Test
+	public void testParseToFloatFromShortEquals() {
+		Short src = 1111;
+		Float parsed = ParserUtils.parse(src, Float.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Float) src.floatValue(), parsed);
 
-    @Test
-    public void testParseToDoubleFromStringEquals() {
-	String src = "111.11";
-	Double parsed = ParserUtils.parse(src, Double.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new Double(src), parsed);
+	@Test
+	public void testParseToFloatFromIntegerEquals() {
+		Integer src = 1111111;
+		Float parsed = ParserUtils.parse(src, Float.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Float) src.floatValue(), parsed);
 
-    @Test
-    public void testParseToDoubleFromUnknownClass() {
-	Double src = 11111.11D;
-	UnknownClass obj = new UnknownClass(src.toString());
-	Double parsed = ParserUtils.parse(obj, Double.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new Double(obj.toString()), parsed);
+	@Test
+	public void testParseToFloatFromLongEquals() {
+		Long src = 1111111L;
+		Float parsed = ParserUtils.parse(src, Float.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Float) src.floatValue(), parsed);
 
-    @Test
-    public void testParseToDoubleFromDoubleEquals() {
-	Double src = 111.11D;
-	Double parsed = ParserUtils.parse(src, Double.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToFloatFromFloatEquals() {
+		Float src = 111.11F;
+		Float parsed = ParserUtils.parse(src, Float.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed);
 
-    @Test
-    public void testParseToDoubleFromByteEquals() {
-	Byte src = 111;
-	Double parsed = ParserUtils.parse(src, Double.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Double) src.doubleValue(), parsed);
+	@Test
+	public void testParseToFloatFromDoubleEquals() {
+		Double src = 111111.1D;
+		Float parsed = ParserUtils.parse(src, Float.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Float) src.floatValue(), parsed);
 
-    @Test
-    public void testParseToDoubleFromShortEquals() {
-	Short src = 11111;
-	Double parsed = ParserUtils.parse(src, Double.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Double) src.doubleValue(), parsed);
+	@Test
+	public void testParseToFloatFromBigIntegerEquals() {
+		BigInteger src = new BigInteger(((Long) 1111111L).toString());
+		Float parsed = ParserUtils.parse(src, Float.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Float) src.floatValue(), parsed);
 
-    @Test
-    public void testParseToDoubleFromIntegerEquals() {
-	Integer src = 111111;
-	Double parsed = ParserUtils.parse(src, Double.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Double) src.doubleValue(), parsed);
+	@Test
+	public void testParseToFloatFromBigDecimalEquals() {
+		BigDecimal src = new BigDecimal(((Double) 111111.1D).toString());
+		Float parsed = ParserUtils.parse(src, Float.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Float) src.floatValue(), parsed);
 
-    @Test
-    public void testParseToDoubleFromLongEquals() {
-	Long src = 11111L;
-	Double parsed = ParserUtils.parse(src, Double.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Double) src.doubleValue(), parsed);
+	@Test
+	public void testParseToDoubleFromStringEquals() {
+		String src = "111.11";
+		Double parsed = ParserUtils.parse(src, Double.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new Double(src), parsed);
 
-    @Test
-    public void testParseToDoubleFromFloatEquals() {
-	Float src = 11111F;
-	Double parsed = ParserUtils.parse(src, Double.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Double) src.doubleValue(), parsed);
+	@Test
+	public void testParseToDoubleFromUnknownClass() {
+		Double src = 11111.11D;
+		UnknownClass obj = new UnknownClass(src.toString());
+		Double parsed = ParserUtils.parse(obj, Double.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new Double(obj.toString()), parsed);
 
-    @Test
-    public void testParseToDoubleFromBigIntegerEquals() {
-	BigInteger src = new BigInteger(new Long(11111L).toString());
-	Double parsed = ParserUtils.parse(src, Double.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Double) src.doubleValue(), parsed);
+	@Test
+	public void testParseToDoubleFromDoubleEquals() {
+		Double src = 111.11D;
+		Double parsed = ParserUtils.parse(src, Double.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed);
 
-    @Test
-    public void testParseToDoubleFromBigDecimalEquals() {
-	BigDecimal src = new BigDecimal(new Float(1111.1F).toString());
-	Double parsed = ParserUtils.parse(src, Double.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Double) src.doubleValue(), parsed);
+	@Test
+	public void testParseToDoubleFromByteEquals() {
+		Byte src = 111;
+		Double parsed = ParserUtils.parse(src, Double.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Double) src.doubleValue(), parsed);
 
-    @Test
-    public void testParseToBigIntegerFromStringEquals() {
-	String src = "1111111";
-	BigInteger parsed = ParserUtils.parse(src, BigInteger.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new BigInteger(src), parsed);
+	@Test
+	public void testParseToDoubleFromShortEquals() {
+		Short src = 11111;
+		Double parsed = ParserUtils.parse(src, Double.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Double) src.doubleValue(), parsed);
 
-    @Test
-    public void testParseToBigIntegerFromUnknownClass() {
-	BigInteger src = new BigInteger("1111111");
-	UnknownClass obj = new UnknownClass(src.toString());
-	BigInteger parsed = ParserUtils.parse(obj, BigInteger.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new BigInteger(obj.toString()), parsed);
+	@Test
+	public void testParseToDoubleFromIntegerEquals() {
+		Integer src = 111111;
+		Double parsed = ParserUtils.parse(src, Double.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Double) src.doubleValue(), parsed);
 
-    @Test
-    public void testParseToBigIntegerFromByteEquals() {
-	Byte src = 111;
-	BigInteger parsed = ParserUtils.parse(src, BigInteger.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new BigInteger(src.toString()), parsed);
+	@Test
+	public void testParseToDoubleFromLongEquals() {
+		Long src = 11111L;
+		Double parsed = ParserUtils.parse(src, Double.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Double) src.doubleValue(), parsed);
 
-    @Test
-    public void testParseToBigIntegerFromShortEquals() {
-	Short src = 11111;
-	BigInteger parsed = ParserUtils.parse(src, BigInteger.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new BigInteger(src.toString()), parsed);
+	@Test
+	public void testParseToDoubleFromFloatEquals() {
+		Float src = 11111F;
+		Double parsed = ParserUtils.parse(src, Double.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Double) src.doubleValue(), parsed);
 
-    @Test
-    public void testParseToBigIntegerFromIntegerEquals() {
-	Integer src = 1111111111;
-	BigInteger parsed = ParserUtils.parse(src, BigInteger.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new BigInteger(src.toString()), parsed);
+	@Test
+	public void testParseToDoubleFromBigIntegerEquals() {
+		BigInteger src = new BigInteger(new Long(11111L).toString());
+		Double parsed = ParserUtils.parse(src, Double.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Double) src.doubleValue(), parsed);
 
-    @Test
-    public void testParseToBigIntegerFromLongEquals() {
-	Long src = 1111111111L;
-	BigInteger parsed = ParserUtils.parse(src, BigInteger.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new BigInteger(src.toString()), parsed);
+	@Test
+	public void testParseToDoubleFromBigDecimalEquals() {
+		BigDecimal src = new BigDecimal(new Float(1111.1F).toString());
+		Double parsed = ParserUtils.parse(src, Double.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals((Double) src.doubleValue(), parsed);
 
-    @Test
-    public void testParseToBigIntegerFromFloatEquals() {
-	Float src = 1111111F;
-	BigInteger parsed = ParserUtils.parse(src, BigInteger.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(BigInteger.valueOf(src.longValue()), parsed);
+	@Test
+	public void testParseToBigIntegerFromStringEquals() {
+		String src = "1111111";
+		BigInteger parsed = ParserUtils.parse(src, BigInteger.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new BigInteger(src), parsed);
 
-    @Test
-    public void testParseToBigIntegerFromDoubleEquals() {
-	Double src = 1111111D;
-	BigInteger parsed = ParserUtils.parse(src, BigInteger.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(BigInteger.valueOf(src.longValue()), parsed);
+	@Test
+	public void testParseToBigIntegerFromUnknownClass() {
+		BigInteger src = new BigInteger("1111111");
+		UnknownClass obj = new UnknownClass(src.toString());
+		BigInteger parsed = ParserUtils.parse(obj, BigInteger.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new BigInteger(obj.toString()), parsed);
 
-    @Test
-    public void testParseToBigIntegerFromBigIntegerEquals() {
-	BigInteger src = new BigInteger("1111111");
-	BigInteger parsed = ParserUtils.parse(src, BigInteger.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToBigIntegerFromByteEquals() {
+		Byte src = 111;
+		BigInteger parsed = ParserUtils.parse(src, BigInteger.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new BigInteger(src.toString()), parsed);
 
-    @Test
-    public void testParseToBigIntegerFromBigDecimalEquals() {
-	BigDecimal src = new BigDecimal("111111111111111111111111111111111111111111");
-	BigInteger parsed = ParserUtils.parse(src, BigInteger.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src.toBigInteger(), parsed);
+	@Test
+	public void testParseToBigIntegerFromShortEquals() {
+		Short src = 11111;
+		BigInteger parsed = ParserUtils.parse(src, BigInteger.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new BigInteger(src.toString()), parsed);
 
-    @Test
-    public void testParseToBigDecimalFromStringIntegerEquals() {
-	String src = "11111111111111111111111111111111111111111111111111111111111111111111111";
-	BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new BigDecimal(src), parsed);
+	@Test
+	public void testParseToBigIntegerFromIntegerEquals() {
+		Integer src = 1111111111;
+		BigInteger parsed = ParserUtils.parse(src, BigInteger.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new BigInteger(src.toString()), parsed);
 
-    @Test
-    public void testParseToBigDecimalFromStringDoubleEquals() {
-	String src = "111111111111.11";
-	BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new BigDecimal(src), parsed);
+	@Test
+	public void testParseToBigIntegerFromLongEquals() {
+		Long src = 1111111111L;
+		BigInteger parsed = ParserUtils.parse(src, BigInteger.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new BigInteger(src.toString()), parsed);
 
-    @Test
-    public void testParseToBigDecimalFromUnknownClass() {
-	BigDecimal src = new BigDecimal("111111111.1111111111111111");
-	UnknownClass obj = new UnknownClass(src.toString());
-	BigDecimal parsed = ParserUtils.parse(obj, BigDecimal.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new BigDecimal(obj.toString()), parsed);
+	@Test
+	public void testParseToBigIntegerFromFloatEquals() {
+		Float src = 1111111F;
+		BigInteger parsed = ParserUtils.parse(src, BigInteger.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(BigInteger.valueOf(src.longValue()), parsed);
 
-    @Test
-    public void testParseToBigDecimalFromByteEquals() {
-	Byte src = 111;
-	BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new BigDecimal(src), parsed);
+	@Test
+	public void testParseToBigIntegerFromDoubleEquals() {
+		Double src = 1111111D;
+		BigInteger parsed = ParserUtils.parse(src, BigInteger.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(BigInteger.valueOf(src.longValue()), parsed);
 
-    @Test
-    public void testParseToBigDecimalFromShortEquals() {
-	Short src = 11111;
-	BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new BigDecimal(src), parsed);
+	@Test
+	public void testParseToBigIntegerFromBigIntegerEquals() {
+		BigInteger src = new BigInteger("1111111");
+		BigInteger parsed = ParserUtils.parse(src, BigInteger.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed);
 
-    @Test
-    public void testParseToBigDecimalFromIntegerEquals() {
-	Integer src = 111111111;
-	BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new BigDecimal(src), parsed);
+	@Test
+	public void testParseToBigIntegerFromBigDecimalEquals() {
+		BigDecimal src = new BigDecimal("111111111111111111111111111111111111111111");
+		BigInteger parsed = ParserUtils.parse(src, BigInteger.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src.toBigInteger(), parsed);
 
-    @Test
-    public void testParseToBigDecimalFromLongEquals() {
-	Long src = 1111111111L;
-	BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new BigDecimal(src), parsed);
+	@Test
+	public void testParseToBigDecimalFromStringIntegerEquals() {
+		String src = "11111111111111111111111111111111111111111111111111111111111111111111111";
+		BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new BigDecimal(src), parsed);
 
-    @Test
-    public void testParseToBigDecimalFromFloatEquals() {
-	Float src = 1111111.11F;
-	BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new BigDecimal(src), parsed);
+	@Test
+	public void testParseToBigDecimalFromStringDoubleEquals() {
+		String src = "111111111111.11";
+		BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new BigDecimal(src), parsed);
 
-    @Test
-    public void testParseToBigDecimalFromDoubleEquals() {
-	Double src = 1111111.111D;
-	BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new BigDecimal(src), parsed);
+	@Test
+	public void testParseToBigDecimalFromUnknownClass() {
+		BigDecimal src = new BigDecimal("111111111.1111111111111111");
+		UnknownClass obj = new UnknownClass(src.toString());
+		BigDecimal parsed = ParserUtils.parse(obj, BigDecimal.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new BigDecimal(obj.toString()), parsed);
 
-    @Test
-    public void testParseToBigDecimalFromBigIntegerEquals() {
-	BigInteger src = new BigInteger("111111111111111111111111111111111111111111111111111111111111111111111111");
-	BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new BigDecimal(src), parsed);
+	@Test
+	public void testParseToBigDecimalFromByteEquals() {
+		Byte src = 111;
+		BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new BigDecimal(src), parsed);
 
-    @Test
-    public void testParseToBigDecimalFromBigDecimalEquals() {
-	BigDecimal src = new BigDecimal("1111111111111.111111111111111111");
-	BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToBigDecimalFromShortEquals() {
+		Short src = 11111;
+		BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new BigDecimal(src), parsed);
 
-    @Test
-    public void testParseToCharFromStringEquals() {
-	String src = "C";
-	Character parsed = ParserUtils.parse(src, Character.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals((Character) src.toCharArray()[0], parsed);
+	@Test
+	public void testParseToBigDecimalFromIntegerEquals() {
+		Integer src = 111111111;
+		BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new BigDecimal(src), parsed);
 
-    @Test
-    public void testParseToCharFromCharEquals() {
-	Character src = 'D';
-	Character parsed = ParserUtils.parse(src, Character.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToBigDecimalFromLongEquals() {
+		Long src = 1111111111L;
+		BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new BigDecimal(src), parsed);
 
-    @Test
-    public void testParseToCharFromStringMoreEquals() {
-	String src = "CC";
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + src);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	expectedException.expect(IllegalArgumentException.class);
-	expectedException.expectMessage("Invalid character constant");
+	@Test
+	public void testParseToBigDecimalFromFloatEquals() {
+		Float src = 1111111.11F;
+		BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
 
-	ParserUtils.parse(src, Character.class);
-    }
+		Assert.assertEquals(new BigDecimal(src), parsed);
 
-    @Test
-    public void testParseToCharFromStringLessEquals() {
-	String src = "";
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + src);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	expectedException.expect(IllegalArgumentException.class);
-	expectedException.expectMessage("Invalid character constant");
+	@Test
+	public void testParseToBigDecimalFromDoubleEquals() {
+		Double src = 1111111.111D;
+		BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
 
-	ParserUtils.parse(src, Character.class);
-    }
+		Assert.assertEquals(new BigDecimal(src), parsed);
 
-    @Test
-    public void testParseToStringFromStringEquals() {
-	String src = "1";
-	String parsed = ParserUtils.parse(src, String.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToBigDecimalFromBigIntegerEquals() {
+		BigInteger src = new BigInteger("111111111111111111111111111111111111111111111111111111111111111111111111");
+		BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(new BigDecimal(src), parsed);
 
-    @Test
-    public void testParseToBooleanFromBooleanEquals() {
-	Boolean src = true;
-	Boolean parsed = ParserUtils.parse(src, Boolean.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToBigDecimalFromBigDecimalEquals() {
+		BigDecimal src = new BigDecimal("1111111111111.111111111111111111");
+		BigDecimal parsed = ParserUtils.parse(src, BigDecimal.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed);
 
-    @Test
-    public void testParseToBooleanFromStringFalseEquals() {
-	String src = "false";
-	Boolean parsed = ParserUtils.parse(src, Boolean.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed.toString());
+	@Test
+	public void testParseToCharFromStringEquals() {
+		String src = "C";
+		Character parsed = ParserUtils.parse(src, Character.class);
 
-	src = "FALSE";
-	Assert.assertFalse(ParserUtils.parse(src, Boolean.class));
+		Assert.assertEquals((Character) src.toCharArray()[0], parsed);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-    @Test
-    public void testParseToBooleanFromStringTrueEquals() {
-	String src = "true";
-	Boolean parsed = ParserUtils.parse(src, Boolean.class);
+	@Test
+	public void testParseToCharFromCharEquals() {
+		Character src = 'D';
+		Character parsed = ParserUtils.parse(src, Character.class);
 
-	Assert.assertEquals(src, parsed.toString());
+		Assert.assertEquals(src, parsed);
 
-	src = "TRUE";
-	Assert.assertTrue(ParserUtils.parse(src, Boolean.class));
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+	@Test
+	public void testParseToCharFromStringMoreEquals() {
+		String src = "CC";
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + src);
 
-    @Test
-    public void testParseToBooleanFromStringRandomFalse() {
-	String src = "lkfdklasdlfkja";
-	Boolean parsed = ParserUtils.parse(src, Boolean.class);
+		expectedException.expect(IllegalArgumentException.class);
+		expectedException.expectMessage("Invalid character constant");
 
-	Assert.assertFalse(parsed);
+		ParserUtils.parse(src, Character.class);
+	}
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+	@Test
+	public void testParseToCharFromStringLessEquals() {
+		String src = "";
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + src);
 
-    @Test
-    public void testParseToBooleanFromString1Equals() {
-	String src = "1";
-	Boolean parsed = ParserUtils.parse(src, Boolean.class);
+		expectedException.expect(IllegalArgumentException.class);
+		expectedException.expectMessage("Invalid character constant");
 
-	Assert.assertEquals(Boolean.TRUE.toString(), parsed.toString());
+		ParserUtils.parse(src, Character.class);
+	}
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+	@Test
+	public void testParseToStringFromStringEquals() {
+		String src = "1";
+		String parsed = ParserUtils.parse(src, String.class);
 
-    @Test
-    public void testParseToBooleanFromString2Equals() {
-	String src = "2";
-	Boolean parsed = ParserUtils.parse(src, Boolean.class);
+		Assert.assertEquals(src, parsed);
 
-	Assert.assertEquals(Boolean.TRUE.toString(), parsed.toString());
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+	@Test
+	public void testParseToBooleanFromBooleanEquals() {
+		Boolean src = true;
+		Boolean parsed = ParserUtils.parse(src, Boolean.class);
 
-    @Test
-    public void testParseToBooleanFromStringMin1Equals() {
-	String src = "-1";
-	Boolean parsed = ParserUtils.parse(src, Boolean.class);
+		Assert.assertEquals(src, parsed);
 
-	Assert.assertEquals(Boolean.FALSE.toString(), parsed.toString());
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+	@Test
+	public void testParseToBooleanFromStringFalseEquals() {
+		String src = "false";
+		Boolean parsed = ParserUtils.parse(src, Boolean.class);
 
-    @Test
-    public void testParseToBooleanFromString0Equals() {
-	String src = "0";
-	Boolean parsed = ParserUtils.parse(src, Boolean.class);
+		Assert.assertEquals(src, parsed.toString());
 
-	Assert.assertEquals(Boolean.FALSE.toString(), parsed.toString());
+		src = "FALSE";
+		Assert.assertFalse(ParserUtils.parse(src, Boolean.class));
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-    @Test
-    public void testParseToBooleanFromStringLess0Equals() {
-	String src = "-1";
-	Boolean parsed = ParserUtils.parse(src, Boolean.class);
+	@Test
+	public void testParseToBooleanFromStringTrueEquals() {
+		String src = "true";
+		Boolean parsed = ParserUtils.parse(src, Boolean.class);
 
-	Assert.assertEquals(Boolean.FALSE.toString(), parsed.toString());
+		Assert.assertEquals(src, parsed.toString());
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		src = "TRUE";
+		Assert.assertTrue(ParserUtils.parse(src, Boolean.class));
 
-    @Test
-    public void testParseToBooleanFromNumberLess0Equals() {
-	Integer src = -1;
-	Boolean parsed = ParserUtils.parse(src, Boolean.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(Boolean.FALSE.toString(), parsed.toString());
+	@Test
+	public void testParseToBooleanFromStringRandomFalse() {
+		String src = "lkfdklasdlfkja";
+		Boolean parsed = ParserUtils.parse(src, Boolean.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertFalse(parsed);
 
-    @Test
-    public void testParseToBooleanFromNumber0Equals() {
-	Integer src = 0;
-	Boolean parsed = ParserUtils.parse(src, Boolean.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(Boolean.FALSE.toString(), parsed.toString());
+	@Test
+	public void testParseToBooleanFromString1Equals() {
+		String src = "1";
+		Boolean parsed = ParserUtils.parse(src, Boolean.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(Boolean.TRUE.toString(), parsed.toString());
 
-    @Test
-    public void testParseToBooleanFromNumberGreater0Equals() {
-	Integer src = 1;
-	Boolean parsed = ParserUtils.parse(src, Boolean.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(Boolean.TRUE.toString(), parsed.toString());
+	@Test
+	public void testParseToBooleanFromString2Equals() {
+		String src = "2";
+		Boolean parsed = ParserUtils.parse(src, Boolean.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(Boolean.TRUE.toString(), parsed.toString());
 
-    @Test
-    public void testParseToDateFromDateEquals() {
-	Date src = new Date();
-	Date parsed = ParserUtils.parse(src, Date.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToBooleanFromStringMin1Equals() {
+		String src = "-1";
+		Boolean parsed = ParserUtils.parse(src, Boolean.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(Boolean.FALSE.toString(), parsed.toString());
 
-    @Test
-    public void testParseToDateFromTimestampEquals() {
-	Timestamp src = new Timestamp(System.currentTimeMillis());
-	Date parsed = ParserUtils.parse(src, Date.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToBooleanFromString0Equals() {
+		String src = "0";
+		Boolean parsed = ParserUtils.parse(src, Boolean.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(Boolean.FALSE.toString(), parsed.toString());
 
-    @Test
-    public void testParseToDateFromSqlDateEquals() {
-	java.sql.Date src = new java.sql.Date(System.currentTimeMillis());
-	Date parsed = ParserUtils.parse(src, Date.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToBooleanFromStringLess0Equals() {
+		String src = "-1";
+		Boolean parsed = ParserUtils.parse(src, Boolean.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(Boolean.FALSE.toString(), parsed.toString());
 
-    @Test
-    public void testParseToTimestampFromStringEquals() {
-	String src = "2017-09-26 21:50:00.999";
-	Timestamp parsed = ParserUtils.parse(src, Timestamp.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed.toString());
+	@Test
+	public void testParseToBooleanFromNumberLess0Equals() {
+		Integer src = -1;
+		Boolean parsed = ParserUtils.parse(src, Boolean.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(Boolean.FALSE.toString(), parsed.toString());
 
-    @Test
-    public void testParseToTimestampFromDateEquals() {
-	Date src = new Date();
-	Timestamp parsed = ParserUtils.parse(src, Timestamp.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToBooleanFromNumber0Equals() {
+		Integer src = 0;
+		Boolean parsed = ParserUtils.parse(src, Boolean.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(Boolean.FALSE.toString(), parsed.toString());
 
-    @Test
-    public void testParseToTimestampFromTimestampEquals() {
-	Timestamp src = new Timestamp(System.currentTimeMillis());
-	Timestamp parsed = ParserUtils.parse(src, Timestamp.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToBooleanFromNumberGreater0Equals() {
+		Integer src = 1;
+		Boolean parsed = ParserUtils.parse(src, Boolean.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(Boolean.TRUE.toString(), parsed.toString());
 
-    @Test
-    public void testParseToTimestampFromSqlDateEquals() {
-	java.sql.Date src = new java.sql.Date(System.currentTimeMillis());
-	Timestamp parsed = ParserUtils.parse(src, Timestamp.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToDateFromDateEquals() {
+		Date src = new Date();
+		Date parsed = ParserUtils.parse(src, Date.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed);
 
-    @Test
-    public void testParseToSqlDateFromStringEquals() {
-	String src = "2017-09-26";
-	java.sql.Date parsed = ParserUtils.parse(src, java.sql.Date.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed.toString());
+	@Test
+	public void testParseToDateFromTimestampEquals() {
+		Timestamp src = new Timestamp(System.currentTimeMillis());
+		Date parsed = ParserUtils.parse(src, Date.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed);
 
-    @Test
-    public void testParseToSqlDateFromDateEquals() {
-	Date src = new Date();
-	java.sql.Date parsed = ParserUtils.parse(src, java.sql.Date.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToDateFromSqlDateEquals() {
+		java.sql.Date src = new java.sql.Date(System.currentTimeMillis());
+		Date parsed = ParserUtils.parse(src, Date.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed);
 
-    @Test
-    public void testParseToSqlDateFromTimestampEquals() {
-	Timestamp src = new Timestamp(System.currentTimeMillis());
-	java.sql.Date parsed = ParserUtils.parse(src, java.sql.Date.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new java.sql.Date(src.getTime()), parsed);
+	@Test
+	public void testParseToTimestampFromStringEquals() {
+		String src = "2017-09-26 21:50:00.999";
+		Timestamp parsed = ParserUtils.parse(src, Timestamp.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed.toString());
 
-    @Test
-    public void testParseToSqlDateFromSqlDateEquals() {
-	java.sql.Date src = new java.sql.Date(System.currentTimeMillis());
-	java.sql.Date parsed = ParserUtils.parse(src, java.sql.Date.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToTimestampFromDateEquals() {
+		Date src = new Date();
+		Timestamp parsed = ParserUtils.parse(src, Timestamp.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed);
 
-    @Test
-    public void testParseToUnknownClassFromUnknownClass() {
-	UnknownClass src = new UnknownClass();
-	UnknownClass parsed = ParserUtils.parse(src, UnknownClass.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToTimestampFromTimestampEquals() {
+		Timestamp src = new Timestamp(System.currentTimeMillis());
+		Timestamp parsed = ParserUtils.parse(src, Timestamp.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed);
 
-    @Test
-    public void testParseToAnyDateFromUncompatibleClass() {
-	Class<?> clazz = new NewDateClass().getClass();
-	System.out.println("End " + getMethodName(new Object() {
-	}));
-	expectedException.expect(ParseException.class);
-	expectedException.expectMessage("No Date wrapper found for target class : " + clazz);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	java.sql.Date src = new java.sql.Date(System.currentTimeMillis());
-	ParserUtils.parse(src, clazz);
-    }
+	@Test
+	public void testParseToTimestampFromSqlDateEquals() {
+		java.sql.Date src = new java.sql.Date(System.currentTimeMillis());
+		Timestamp parsed = ParserUtils.parse(src, Timestamp.class);
 
-    @Test
-    public void testParseToDateNullDateParser() {
-	System.out.println("End " + getMethodName(new Object() {
-	}));
-	expectedException.expect(IllegalArgumentException.class);
-	expectedException.expectMessage("Parser cannot be null.");
+		Assert.assertEquals(src, parsed);
 
-	String src = "26-09-2017";
-	IParser<Date> parser = null;
-	ParserUtils.parse(src, parser);
-    }
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-    @Test
-    public void testParseToDateExceptionParser() {
-	String src = "dsfasdfsdfsdfsfd";
-	System.out.println("End " + getMethodName(new Object() {
-	}));
-	expectedException.expect(ParseException.class);
-	expectedException.expectMessage("Unparseable date: \"" + src + "\"");
+	@Test
+	public void testParseToSqlDateFromStringEquals() {
+		String src = "2017-09-26";
+		java.sql.Date parsed = ParserUtils.parse(src, java.sql.Date.class);
 
-	IParser<Date> parser = new DateParser("dd-MM-yyyy");
-	ParserUtils.parse(src, parser);
-    }
+		Assert.assertEquals(src, parsed.toString());
 
-    @Test
-    public void testParseToDateFromDateParser() {
-	String src = "26-09-2017";
-	IParser<Date> parser = new DateParser("dd-MM-yyyy");
-	Date parsed = ParserUtils.parse(src, parser);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(new Date(parsed.getTime()), parsed);
+	@Test
+	public void testParseToSqlDateFromDateEquals() {
+		Date src = new Date();
+		java.sql.Date parsed = ParserUtils.parse(src, java.sql.Date.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed);
 
-    @Test
-    public void testParseToNewNumberClassFromUnknownClass() {
-	expectedException.expect(ParseException.class);
-	expectedException.expectMessage("No wrapper found for target class : " + new NewNumberClass().getClass());
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	System.out.println("End " + getMethodName(new Object() {
-	}));
+	@Test
+	public void testParseToSqlDateFromTimestampEquals() {
+		Timestamp src = new Timestamp(System.currentTimeMillis());
+		java.sql.Date parsed = ParserUtils.parse(src, java.sql.Date.class);
 
-	Long src = 11111L;
-	ParserUtils.parse(src, NewNumberClass.class);
-    }
+		Assert.assertEquals(new java.sql.Date(src.getTime()), parsed);
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    @Test
-    public void testParserFloatingHasChain() {
-	IGenericParser<Number> parserNonFloating = new ParseToNonFloatingChain(null);
-	IGenericParser parserFloating = new ParseToFloatingChain(parserNonFloating);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Long src = 11111L;
-	Long parsed = (Long) parserFloating.parse(src, Long.class);
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToSqlDateFromSqlDateEquals() {
+		java.sql.Date src = new java.sql.Date(System.currentTimeMillis());
+		java.sql.Date parsed = ParserUtils.parse(src, java.sql.Date.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed);
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    @Test
-    public void testParserNonFloatingHasChain() {
-	IGenericParser parserFloating = new ParseToFloatingChain(null);
-	IGenericParser parserNonFloating = new ParseToNonFloatingChain(parserFloating);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Double src = 11111D;
-	Double parsed = (Double) parserNonFloating.parse(src, Double.class);
-	Assert.assertEquals(src, parsed);
+	@Test
+	public void testParseToUnknownClassFromUnknownClass() {
+		UnknownClass src = new UnknownClass();
+		UnknownClass parsed = ParserUtils.parse(src, UnknownClass.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src, parsed);
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Test
-    public void testNoParserChainForNonFloating() {
-	expectedException.expect(ParseException.class);
-	expectedException.expectMessage("No wrapper found for target class : " + NewNumberClass.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	IGenericParser parser = new ParseToNonFloatingChain(null);
+	@Test
+	public void testParseToAnyDateFromUncompatibleClass() {
+		Class<?> clazz = new NewDateClass().getClass();
+		System.out.println("End " + getMethodName(new Object() {
+		}));
+		expectedException.expect(ParseException.class);
+		expectedException.expectMessage("No Date wrapper found for target class : " + clazz);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}));
+		java.sql.Date src = new java.sql.Date(System.currentTimeMillis());
+		ParserUtils.parse(src, clazz);
+	}
 
-	Long src = 11111L;
-	parser.parse(src, NewNumberClass.class);
-    }
+	@Test
+	public void testParseToDateNullDateParser() {
+		System.out.println("End " + getMethodName(new Object() {
+		}));
+		expectedException.expect(IllegalArgumentException.class);
+		expectedException.expectMessage("Parser cannot be null.");
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    @Test
-    public void testNoParserChainForFloating() {
-	expectedException.expect(ParseException.class);
-	expectedException.expectMessage("No wrapper found for target class : " + NewNumberClass.class);
+		String src = "26-09-2017";
+		IParser<Date> parser = null;
+		ParserUtils.parse(src, parser);
+	}
 
-	IGenericParser parser = new ParseToFloatingChain(null);
+	@Test
+	public void testParseToDateExceptionParser() {
+		String src = "dsfasdfsdfsdfsfd";
+		System.out.println("End " + getMethodName(new Object() {
+		}));
+		expectedException.expect(ParseException.class);
+		expectedException.expectMessage("Unparseable date: \"" + src + "\"");
 
-	System.out.println("End " + getMethodName(new Object() {
-	}));
+		IParser<Date> parser = new DateParser("dd-MM-yyyy");
+		ParserUtils.parse(src, parser);
+	}
 
-	Long src = 11111L;
-	parser.parse(src, NewNumberClass.class);
-    }
+	@Test
+	public void testParseToDateFromDateParser() {
+		String src = "26-09-2017";
+		IParser<Date> parser = new DateParser("dd-MM-yyyy");
+		Date parsed = ParserUtils.parse(src, parser);
 
-    @Test
-    public void testParserToStringFromByteEquals() {
-	Byte src = 111;
-	String parsed = ParserUtils.parse(src, String.class);
+		Assert.assertEquals(new Date(parsed.getTime()), parsed);
 
-	Assert.assertEquals(src.toString(), parsed);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+	@Test
+	public void testParseToNewNumberClassFromUnknownClass() {
+		expectedException.expect(ParseException.class);
+		expectedException.expectMessage("No wrapper found for target class : " + new NewNumberClass().getClass());
 
-    @Test
-    public void testParserToStringFromShortEquals() {
-	Short src = 11111;
-	String parsed = ParserUtils.parse(src, String.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}));
 
-	Assert.assertEquals(src.toString(), parsed);
+		Long src = 11111L;
+		ParserUtils.parse(src, NewNumberClass.class);
+	}
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Test
+	public void testParserFloatingHasChain() {
+		IGenericParser<Number> parserNonFloating = new ParseToNonFloatingChain(null);
+		IGenericParser parserFloating = new ParseToFloatingChain(parserNonFloating);
 
-    @Test
-    public void testParserToStringFromIntegerEquals() {
-	Integer src = 11111;
-	String parsed = ParserUtils.parse(src, String.class);
+		Long src = 11111L;
+		Long parsed = (Long) parserFloating.parse(src, Long.class);
+		Assert.assertEquals(src, parsed);
 
-	Assert.assertEquals(src.toString(), parsed);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Test
+	public void testParserNonFloatingHasChain() {
+		IGenericParser parserFloating = new ParseToFloatingChain(null);
+		IGenericParser parserNonFloating = new ParseToNonFloatingChain(parserFloating);
 
-    @Test
-    public void testParserToStringFromLongEquals() {
-	Long src = 11111L;
-	String parsed = ParserUtils.parse(src, String.class);
+		Double src = 11111D;
+		Double parsed = (Double) parserNonFloating.parse(src, Double.class);
+		Assert.assertEquals(src, parsed);
 
-	Assert.assertEquals(src.toString(), parsed);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Test
+	public void testNoParserChainForNonFloating() {
+		expectedException.expect(ParseException.class);
+		expectedException.expectMessage("No wrapper found for target class : " + NewNumberClass.class);
 
-    @Test
-    public void testParserToStringFromFloatEquals() {
-	Float src = 1111.1F;
-	String parsed = ParserUtils.parse(src, String.class);
+		IGenericParser parser = new ParseToNonFloatingChain(null);
 
-	Assert.assertEquals(src.toString(), parsed);
+		System.out.println("End " + getMethodName(new Object() {
+		}));
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Long src = 11111L;
+		parser.parse(src, NewNumberClass.class);
+	}
 
-    @Test
-    public void testParserToStringFromDoubleEquals() {
-	Double src = 1111.1D;
-	String parsed = ParserUtils.parse(src, String.class);
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Test
+	public void testNoParserChainForFloating() {
+		expectedException.expect(ParseException.class);
+		expectedException.expectMessage("No wrapper found for target class : " + NewNumberClass.class);
 
-	Assert.assertEquals(src.toString(), parsed);
+		IGenericParser parser = new ParseToFloatingChain(null);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		System.out.println("End " + getMethodName(new Object() {
+		}));
 
-    @Test
-    public void testParserToStringFromBigIntegerEquals() {
-	BigInteger src = new BigInteger("111111111111");
-	String parsed = ParserUtils.parse(src, String.class);
+		Long src = 11111L;
+		parser.parse(src, NewNumberClass.class);
+	}
 
-	Assert.assertEquals(src.toString(), parsed);
+	@Test
+	public void testParserToStringFromByteEquals() {
+		Byte src = 111;
+		String parsed = ParserUtils.parse(src, String.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src.toString(), parsed);
 
-    @Test
-    public void testParserToStringFromBigDecimalEquals() {
-	BigDecimal src = new BigDecimal("111111111.111");
-	String parsed = ParserUtils.parse(src, String.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src.toString(), parsed);
+	@Test
+	public void testParserToStringFromShortEquals() {
+		Short src = 11111;
+		String parsed = ParserUtils.parse(src, String.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src.toString(), parsed);
 
-    @Test
-    public void testParserToStringFromCharacterEquals() {
-	Character src = 'B';
-	String parsed = ParserUtils.parse(src, String.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src.toString(), parsed);
+	@Test
+	public void testParserToStringFromIntegerEquals() {
+		Integer src = 11111;
+		String parsed = ParserUtils.parse(src, String.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src.toString(), parsed);
 
-    @Test
-    public void testParserToStringFromStringEquals() {
-	String src = "1111111111111111111111111";
-	String parsed = ParserUtils.parse(src, String.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src.toString(), parsed);
+	@Test
+	public void testParserToStringFromLongEquals() {
+		Long src = 11111L;
+		String parsed = ParserUtils.parse(src, String.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src.toString(), parsed);
 
-    @Test
-    public void testParserToStringFromBooleanEquals() {
-	Boolean src = true;
-	String parsed = ParserUtils.parse(src, String.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src.toString(), parsed);
+	@Test
+	public void testParserToStringFromFloatEquals() {
+		Float src = 1111.1F;
+		String parsed = ParserUtils.parse(src, String.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src.toString(), parsed);
 
-    @Test
-    public void testParserToStringFromDateEquals() {
-	Date src = new Date();
-	String parsed = ParserUtils.parse(src, String.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src.toString(), parsed);
+	@Test
+	public void testParserToStringFromDoubleEquals() {
+		Double src = 1111.1D;
+		String parsed = ParserUtils.parse(src, String.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src.toString(), parsed);
 
-    @Test
-    public void testParserToStringFromTimestampEquals() {
-	Timestamp src = new Timestamp(System.currentTimeMillis());
-	String parsed = ParserUtils.parse(src, String.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src.toString(), parsed);
+	@Test
+	public void testParserToStringFromBigIntegerEquals() {
+		BigInteger src = new BigInteger("111111111111");
+		String parsed = ParserUtils.parse(src, String.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src.toString(), parsed);
 
-    @Test
-    public void testParserToStringFromSqlDateEquals() {
-	java.sql.Date src = new java.sql.Date(System.currentTimeMillis());
-	String parsed = ParserUtils.parse(src, String.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src.toString(), parsed);
+	@Test
+	public void testParserToStringFromBigDecimalEquals() {
+		BigDecimal src = new BigDecimal("111111111.111");
+		String parsed = ParserUtils.parse(src, String.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src.toString(), parsed);
 
-    @Test
-    public void testParserToStringFromUnknownClassEquals() {
-	UnknownClass src = new UnknownClass("111111111");
-	String parsed = ParserUtils.parse(src, String.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src.toString(), parsed);
+	@Test
+	public void testParserToStringFromCharacterEquals() {
+		Character src = 'B';
+		String parsed = ParserUtils.parse(src, String.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src.toString(), parsed);
 
-    @Test
-    public void testParserToStringFromNewDateClassEquals() {
-	NewDateClass src = new NewDateClass();
-	String parsed = ParserUtils.parse(src, String.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src.toString(), parsed);
+	@Test
+	public void testParserToStringFromStringEquals() {
+		String src = "1111111111111111111111111";
+		String parsed = ParserUtils.parse(src, String.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src.toString(), parsed);
 
-    @Test
-    public void testParserToStringFromNewNumberClassEquals() {
-	NewNumberClass src = new NewNumberClass();
-	String parsed = ParserUtils.parse(src, String.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	Assert.assertEquals(src.toString(), parsed);
+	@Test
+	public void testParserToStringFromBooleanEquals() {
+		Boolean src = true;
+		String parsed = ParserUtils.parse(src, String.class);
 
-	System.out.println("End " + getMethodName(new Object() {
-	}) + " : " + parsed);
-    }
+		Assert.assertEquals(src.toString(), parsed);
 
-    /**
-     * Test for java type:<br/>
-     * - java.sql.Date<br/>
-     * 
-     * @author Harvan Irsyadi
-     *
-     */
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-    @Test
-    public void testParseToByteForDefaultNull() {
-	Byte src = null;
-	Byte defaultVal = 1;
-	Byte parsed = ParserUtils.parse(src, defaultVal, Byte.class);
+	@Test
+	public void testParserToStringFromDateEquals() {
+		Date src = new Date();
+		String parsed = ParserUtils.parse(src, String.class);
 
-	assertNotEquals(src, parsed);
-	Assert.assertEquals(defaultVal, parsed);
-    }
+		Assert.assertEquals(src.toString(), parsed);
 
-    @Test
-    public void testParseToShortForDefaultNull() {
-	Short src = null;
-	Short defaultVal = 1;
-	Short parsed = ParserUtils.parse(src, defaultVal, Short.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	assertNotEquals(src, parsed);
-	Assert.assertEquals(defaultVal, parsed);
-    }
+	@Test
+	public void testParserToStringFromTimestampEquals() {
+		Timestamp src = new Timestamp(System.currentTimeMillis());
+		String parsed = ParserUtils.parse(src, String.class);
 
-    @Test
-    public void testParseToIntegerForDefaultNull() {
-	Integer src = null;
-	Integer defaultVal = 1;
-	Integer parsed = ParserUtils.parse(src, defaultVal, Integer.class);
+		Assert.assertEquals(src.toString(), parsed);
 
-	assertNotEquals(src, parsed);
-	Assert.assertEquals(defaultVal, parsed);
-    }
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-    @Test
-    public void testParseToLongForDefaultNull() {
-	Long src = null;
-	Long defaultVal = 1L;
-	Long parsed = ParserUtils.parse(src, defaultVal, Long.class);
+	@Test
+	public void testParserToStringFromSqlDateEquals() {
+		java.sql.Date src = new java.sql.Date(System.currentTimeMillis());
+		String parsed = ParserUtils.parse(src, String.class);
 
-	assertNotEquals(src, parsed);
-	Assert.assertEquals(defaultVal, parsed);
-    }
+		Assert.assertEquals(src.toString(), parsed);
 
-    @Test
-    public void testParseToFloatForDefaultNull() {
-	Float src = null;
-	Float defaultVal = 1F;
-	Float parsed = ParserUtils.parse(src, defaultVal, Float.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	assertNotEquals(src, parsed);
-	Assert.assertEquals(defaultVal, parsed);
-    }
+	@Test
+	public void testParserToStringFromUnknownClassEquals() {
+		UnknownClass src = new UnknownClass("111111111");
+		String parsed = ParserUtils.parse(src, String.class);
 
-    @Test
-    public void testParseToDoubleForDefaultNull() {
-	Double src = null;
-	Double defaultVal = 1D;
-	Double parsed = ParserUtils.parse(src, defaultVal, Double.class);
+		Assert.assertEquals(src.toString(), parsed);
 
-	assertNotEquals(src, parsed);
-	Assert.assertEquals(defaultVal, parsed);
-    }
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-    @Test
-    public void testParseToBigIntegerForDefaultNull() {
-	BigInteger src = null;
-	BigInteger defaultVal = BigInteger.valueOf(1L);
-	BigInteger parsed = ParserUtils.parse(src, defaultVal, BigInteger.class);
+	@Test
+	public void testParserToStringFromNewDateClassEquals() {
+		NewDateClass src = new NewDateClass();
+		String parsed = ParserUtils.parse(src, String.class);
 
-	assertNotEquals(src, parsed);
-	Assert.assertEquals(defaultVal, parsed);
-    }
+		Assert.assertEquals(src.toString(), parsed);
 
-    @Test
-    public void testParseToBigDecimalForDefaultNull() {
-	BigDecimal src = null;
-	BigDecimal defaultVal = BigDecimal.valueOf(1L);
-	BigDecimal parsed = ParserUtils.parse(src, defaultVal, BigDecimal.class);
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-	assertNotEquals(src, parsed);
-	Assert.assertEquals(defaultVal, parsed);
-    }
+	@Test
+	public void testParserToStringFromNewNumberClassEquals() {
+		NewNumberClass src = new NewNumberClass();
+		String parsed = ParserUtils.parse(src, String.class);
 
-    @Test
-    public void testParseToCharacterForDefaultNull() {
-	Character src = null;
-	Character defaultVal = 'c';
-	Character parsed = ParserUtils.parse(src, defaultVal, Character.class);
+		Assert.assertEquals(src.toString(), parsed);
 
-	assertNotEquals(src, parsed);
-	Assert.assertEquals(defaultVal, parsed);
-    }
+		System.out.println("End " + getMethodName(new Object() {
+		}) + " : " + parsed);
+	}
 
-    @Test
-    public void testParseToStringForDefaultNull() {
-	String src = null;
-	String defaultVal = "";
-	String parsed = ParserUtils.parse(src, defaultVal, String.class);
+	/**
+	 * Test for java type:<br/>
+	 * - java.sql.Date<br/>
+	 * 
+	 * @author Harvan Irsyadi
+	 *
+	 */
 
-	assertNotEquals(src, parsed);
-	Assert.assertEquals(defaultVal, parsed);
-    }
+	@Test
+	public void testParseToByteForDefaultNull() {
+		Byte src = null;
+		Byte defaultVal = 1;
+		Byte parsed = ParserUtils.parse(src, defaultVal, Byte.class);
 
-    @Test
-    public void testParseToBooleanForDefaultNullTrue() {
-	Boolean src = null;
-	Boolean defaultVal = true;
-	Boolean parsed = ParserUtils.parse(src, defaultVal, Boolean.class);
+		assertNotEquals(src, parsed);
+		Assert.assertEquals(defaultVal, parsed);
+	}
 
-	assertNotEquals(src, parsed);
-	Assert.assertEquals(defaultVal, parsed);
-    }
+	@Test
+	public void testParseToShortForDefaultNull() {
+		Short src = null;
+		Short defaultVal = 1;
+		Short parsed = ParserUtils.parse(src, defaultVal, Short.class);
 
-    @Test
-    public void testParseToBooleanForDefaultNullFalse() {
-	Boolean src = null;
-	Boolean defaultVal = false;
-	Boolean parsed = ParserUtils.parse(src, defaultVal, Boolean.class);
+		assertNotEquals(src, parsed);
+		Assert.assertEquals(defaultVal, parsed);
+	}
 
-	assertNotEquals(src, parsed);
-	Assert.assertEquals(defaultVal, parsed);
-    }
+	@Test
+	public void testParseToIntegerForDefaultNull() {
+		Integer src = null;
+		Integer defaultVal = 1;
+		Integer parsed = ParserUtils.parse(src, defaultVal, Integer.class);
 
-    @Test
-    public void testParseToSqlDateForDefaultNull() {
-	java.sql.Date src = null;
-	java.sql.Date defaultVal = new java.sql.Date(System.currentTimeMillis());
-	java.sql.Date parsed = ParserUtils.parse(src, defaultVal, java.sql.Date.class);
+		assertNotEquals(src, parsed);
+		Assert.assertEquals(defaultVal, parsed);
+	}
 
-	assertNotEquals(src, parsed);
-	Assert.assertEquals(defaultVal, parsed);
-    }
+	@Test
+	public void testParseToLongForDefaultNull() {
+		Long src = null;
+		Long defaultVal = 1L;
+		Long parsed = ParserUtils.parse(src, defaultVal, Long.class);
 
-    @Test
-    public void testParseToSqlTimestampForDefaultNull() {
-	java.sql.Timestamp src = null;
-	java.sql.Timestamp defaultVal = new java.sql.Timestamp(System.currentTimeMillis());
-	java.sql.Timestamp parsed = ParserUtils.parse(src, defaultVal, java.sql.Timestamp.class);
+		assertNotEquals(src, parsed);
+		Assert.assertEquals(defaultVal, parsed);
+	}
 
-	assertNotEquals(src, parsed);
-	Assert.assertEquals(defaultVal, parsed);
-    }
+	@Test
+	public void testParseToFloatForDefaultNull() {
+		Float src = null;
+		Float defaultVal = 1F;
+		Float parsed = ParserUtils.parse(src, defaultVal, Float.class);
 
-    @Test
-    public void testParseToDateForDefaultNull() {
-	Date src = null;
-	Date defaultVal = new Date();
-	Date parsed = ParserUtils.parse(src, defaultVal, Date.class);
+		assertNotEquals(src, parsed);
+		Assert.assertEquals(defaultVal, parsed);
+	}
 
-	assertNotEquals(src, parsed);
-	Assert.assertEquals(defaultVal, parsed);
-    }
+	@Test
+	public void testParseToDoubleForDefaultNull() {
+		Double src = null;
+		Double defaultVal = 1D;
+		Double parsed = ParserUtils.parse(src, defaultVal, Double.class);
 
-    @Test
-    public void testParseToDateNotDefaultNull() {
-	Date src = new Date();
-	Calendar cal = Calendar.getInstance();
-	cal.setTime(new Date());
-	cal.add(Calendar.DAY_OF_MONTH, 1);
-	Date defaultVal = cal.getTime();
+		assertNotEquals(src, parsed);
+		Assert.assertEquals(defaultVal, parsed);
+	}
 
-	Date parsed = ParserUtils.parse(src, defaultVal, Date.class);
+	@Test
+	public void testParseToBigIntegerForDefaultNull() {
+		BigInteger src = null;
+		BigInteger defaultVal = BigInteger.valueOf(1L);
+		BigInteger parsed = ParserUtils.parse(src, defaultVal, BigInteger.class);
 
-	assertEquals(src, parsed);
-	assertNotEquals(defaultVal, parsed);
-    }
+		assertNotEquals(src, parsed);
+		Assert.assertEquals(defaultVal, parsed);
+	}
+
+	@Test
+	public void testParseToBigDecimalForDefaultNull() {
+		BigDecimal src = null;
+		BigDecimal defaultVal = BigDecimal.valueOf(1L);
+		BigDecimal parsed = ParserUtils.parse(src, defaultVal, BigDecimal.class);
+
+		assertNotEquals(src, parsed);
+		Assert.assertEquals(defaultVal, parsed);
+	}
+
+	@Test
+	public void testParseToCharacterForDefaultNull() {
+		Character src = null;
+		Character defaultVal = 'c';
+		Character parsed = ParserUtils.parse(src, defaultVal, Character.class);
+
+		assertNotEquals(src, parsed);
+		Assert.assertEquals(defaultVal, parsed);
+	}
+
+	@Test
+	public void testParseToStringForDefaultNull() {
+		String src = null;
+		String defaultVal = "";
+		String parsed = ParserUtils.parse(src, defaultVal, String.class);
+
+		assertNotEquals(src, parsed);
+		Assert.assertEquals(defaultVal, parsed);
+	}
+
+	@Test
+	public void testParseToBooleanForDefaultNullTrue() {
+		Boolean src = null;
+		Boolean defaultVal = true;
+		Boolean parsed = ParserUtils.parse(src, defaultVal, Boolean.class);
+
+		assertNotEquals(src, parsed);
+		Assert.assertEquals(defaultVal, parsed);
+	}
+
+	@Test
+	public void testParseToBooleanForDefaultNullFalse() {
+		Boolean src = null;
+		Boolean defaultVal = false;
+		Boolean parsed = ParserUtils.parse(src, defaultVal, Boolean.class);
+
+		assertNotEquals(src, parsed);
+		Assert.assertEquals(defaultVal, parsed);
+	}
+
+	@Test
+	public void testParseToSqlDateForDefaultNull() {
+		java.sql.Date src = null;
+		java.sql.Date defaultVal = new java.sql.Date(System.currentTimeMillis());
+		java.sql.Date parsed = ParserUtils.parse(src, defaultVal, java.sql.Date.class);
+
+		assertNotEquals(src, parsed);
+		Assert.assertEquals(defaultVal, parsed);
+	}
+
+	@Test
+	public void testParseToSqlTimestampForDefaultNull() {
+		java.sql.Timestamp src = null;
+		java.sql.Timestamp defaultVal = new java.sql.Timestamp(System.currentTimeMillis());
+		java.sql.Timestamp parsed = ParserUtils.parse(src, defaultVal, java.sql.Timestamp.class);
+
+		assertNotEquals(src, parsed);
+		Assert.assertEquals(defaultVal, parsed);
+	}
+
+	@Test
+	public void testParseToDateForDefaultNull() {
+		Date src = null;
+		Date defaultVal = new Date();
+		Date parsed = ParserUtils.parse(src, defaultVal, Date.class);
+
+		assertNotEquals(src, parsed);
+		Assert.assertEquals(defaultVal, parsed);
+	}
+
+	@Test
+	public void testParseToDateNotDefaultNull() {
+		Date src = new Date();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		cal.add(Calendar.DAY_OF_MONTH, 1);
+		Date defaultVal = cal.getTime();
+
+		Date parsed = ParserUtils.parse(src, defaultVal, Date.class);
+
+		assertEquals(src, parsed);
+		assertNotEquals(defaultVal, parsed);
+	}
 }

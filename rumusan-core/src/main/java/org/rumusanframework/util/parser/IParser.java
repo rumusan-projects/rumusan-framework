@@ -9,5 +9,5 @@ package org.rumusanframework.util.parser;
  * @param <T>
  */
 public interface IParser<T> {
-    public T parse(Object object);
+	public T parse(Object object);
 }

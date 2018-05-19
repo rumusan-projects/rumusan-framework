@@ -14,23 +14,23 @@ import org.rumusanframework.util.parser.ParseException;
  *
  */
 public class DateParser implements IParser<Date> {
-    private SimpleDateFormat simpleDateFormat;
+	private SimpleDateFormat simpleDateFormat;
 
-    @SuppressWarnings("unused")
-    private DateParser() {
-	// hidden
-    }
-
-    public DateParser(String pattern) {
-	simpleDateFormat = new SimpleDateFormat(pattern);
-    }
-
-    @Override
-    public Date parse(Object object) {
-	try {
-	    return simpleDateFormat.parse(object.toString());
-	} catch (Exception e) {
-	    throw new ParseException(e);
+	@SuppressWarnings("unused")
+	private DateParser() {
+		// hidden
 	}
-    }
+
+	public DateParser(String pattern) {
+		simpleDateFormat = new SimpleDateFormat(pattern);
+	}
+
+	@Override
+	public Date parse(Object object) {
+		try {
+			return simpleDateFormat.parse(object.toString());
+		} catch (Exception e) {
+			throw new ParseException(e);
+		}
+	}
 }
