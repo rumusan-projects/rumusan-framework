@@ -9,11 +9,12 @@ import org.rumusanframework.concurrent.lock.exception.ConcurrentAccessException;
  * 
  * @author Harvan Irsyadi
  * @version 1.0.0
+ * @since 1.0.0 (11 Mar 2018)
  *
  */
 public interface QueueGuard {
-    public GroupLock checkIn(Class<? extends LockingProcess<GroupLock>> classCaller, GroupLockEnum groupLockEnum,
-	    boolean ignoreSameProcess) throws ConcurrentAccessException;
+	public GroupLock checkIn(Class<? extends LockingProcess<GroupLock>> classCaller, GroupLockEnum groupLockEnum,
+			boolean ignoreSameProcess) throws ConcurrentAccessException;
 
-    public void checkOut(GroupLock groupLock);
+	public void checkOut(GroupLock groupLock);
 }

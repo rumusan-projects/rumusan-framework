@@ -23,6 +23,7 @@ import org.rumusanframework.validation.constraintvalidator.StringTrimValidator;
  * 
  * @author Harvan Irsyadi
  * @version 1.0.0
+ * @since 1.0.0 (18 Feb 2018)
  *
  */
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
@@ -31,21 +32,21 @@ import org.rumusanframework.validation.constraintvalidator.StringTrimValidator;
 @Documented
 @Constraint(validatedBy = StringTrimValidator.class)
 public @interface StringTrimNotEmpty {
-    String message() default ConstraintViolationMessage.STRING_EMPTY;
+	String message() default ConstraintViolationMessage.STRING_EMPTY;
 
-    Class<?>[] groups() default {};
+	Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default {};
+	Class<? extends Payload>[] payload() default {};
 
-    /**
-     * Defines several {@link StringTrimNotEmpty} annotations on the same element.
-     *
-     * @see StringTrimNotEmpty
-     */
-    @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
-    @Retention(RUNTIME)
-    @Documented
-    @interface List {
-	StringTrimNotEmpty[] value();
-    }
+	/**
+	 * Defines several {@link StringTrimNotEmpty} annotations on the same element.
+	 *
+	 * @see StringTrimNotEmpty
+	 */
+	@Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
+	@Retention(RUNTIME)
+	@Documented
+	@interface List {
+		StringTrimNotEmpty[] value();
+	}
 }

@@ -7,11 +7,11 @@ package org.rumusanframework.util;
  *
  */
 public class StringUtils {
-    private StringUtils() {
-	// hide
-    }
+	private StringUtils() {
+		// hide
+	}
 
-    public static boolean isTrimEmpty(Object str) {
-	return (str == null || str.toString().trim().length() == 0);
-    }
+	public static boolean isTrimEmpty(Object str) {
+		return (str == null || str.toString().trim().length() == 0);
+	}
 }

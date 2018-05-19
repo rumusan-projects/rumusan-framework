@@ -28,105 +28,106 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  * @author Harvan Irsyadi
  * @version 1.0.0
+ * @since 1.0.0 (11 Mar 2018)
  *
  */
 @Service
 public class OptimisticLockingQueueGuard implements QueueGuard {
-    private final Log logger = LogFactory.getLog(getClass());
-    private IGroupLockDao groupLockDao;
-    private String hostName;
-    private ISystemDate systemDate;
+	private final Log logger = LogFactory.getLog(getClass());
+	private IGroupLockDao groupLockDao;
+	private String hostName;
+	private ISystemDate systemDate;
 
-    @Autowired
-    public void setSyncDao(IGroupLockDao groupLockDao) {
-	this.groupLockDao = groupLockDao;
-    }
+	@Autowired
+	public void setSyncDao(IGroupLockDao groupLockDao) {
+		this.groupLockDao = groupLockDao;
+	}
 
-    Log logger() {
-	return logger;
-    }
+	Log logger() {
+		return logger;
+	}
 
-    @PostConstruct
-    public void init() {
-	initHostName();
-	systemDate = new DbSystemDate();
-    }
+	@PostConstruct
+	public void init() {
+		initHostName();
+		systemDate = new DbSystemDate();
+	}
 
-    private void initHostName() {
-	if (hostName == null) {
-	    try {
-		hostName = InetAddress.getLocalHost().getHostName();
-	    } catch (UnknownHostException e) {
-		if (logger().isErrorEnabled()) {
-		    logger().error("Error on getting host name.", e);
+	private void initHostName() {
+		if (hostName == null) {
+			try {
+				hostName = InetAddress.getLocalHost().getHostName();
+			} catch (UnknownHostException e) {
+				if (logger().isErrorEnabled()) {
+					logger().error("Error on getting host name.", e);
+				}
+			}
 		}
-	    }
-	}
-    }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    @Override
-    public GroupLock checkIn(Class<? extends LockingProcess<GroupLock>> classCaller, GroupLockEnum groupLockEnum,
-	    boolean ignoreSameProcess) throws ConcurrentAccessException {
-	GroupLock newGroupLock = getPreparedObject(classCaller, groupLockEnum);
-	validateOptimisticUpdate(classCaller, newGroupLock, ignoreSameProcess);
-
-	if (logger().isDebugEnabled()) {
-	    logger().debug("CheckIn sucessfully. " + newGroupLock);
 	}
 
-	return newGroupLock;
-    }
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Override
+	public GroupLock checkIn(Class<? extends LockingProcess<GroupLock>> classCaller, GroupLockEnum groupLockEnum,
+			boolean ignoreSameProcess) throws ConcurrentAccessException {
+		GroupLock newGroupLock = getPreparedObject(classCaller, groupLockEnum);
+		validateOptimisticUpdate(classCaller, newGroupLock, ignoreSameProcess);
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    @Override
-    public void checkOut(GroupLock groupLock) {
-	int result = groupLockDao.resetLock(groupLock);
+		if (logger().isDebugEnabled()) {
+			logger().debug("CheckIn sucessfully. " + newGroupLock);
+		}
 
-	if (logger().isDebugEnabled()) {
-	    if (result > 0) {
-		logger().debug("CheckOut sucessfully : " + groupLock);
-	    } else {
-		logger().error("CheckOut failed : " + groupLock);
-	    }
+		return newGroupLock;
 	}
-    }
 
-    private void throwConcurrentProcess(Class<? extends LockingProcess<GroupLock>> classCaller, GroupLock groupLock,
-	    boolean isValid) throws ConcurrentAccessException {
-	if (!isValid) {
-	    throw new ConcurrentAccessException("Found concurrent process in the same group.", classCaller,
-		    groupLock.getGroupName(), groupLock.getMachineName());
+	@Transactional(propagation = Propagation.REQUIRED)
+	@Override
+	public void checkOut(GroupLock groupLock) {
+		int result = groupLockDao.resetLock(groupLock);
+
+		if (logger().isDebugEnabled()) {
+			if (result > 0) {
+				logger().debug("CheckOut sucessfully : " + groupLock);
+			} else {
+				logger().error("CheckOut failed : " + groupLock);
+			}
+		}
 	}
-    }
 
-    private GroupLock getPreparedObject(Class<? extends LockingProcess<GroupLock>> classCaller,
-	    GroupLockEnum groupLockEnum) {
-	GroupLock groupLock = new GroupLock();
+	private void throwConcurrentProcess(Class<? extends LockingProcess<GroupLock>> classCaller, GroupLock groupLock,
+			boolean isValid) throws ConcurrentAccessException {
+		if (!isValid) {
+			throw new ConcurrentAccessException("Found concurrent process in the same group.", classCaller,
+					groupLock.getGroupName(), groupLock.getMachineName());
+		}
+	}
 
-	groupLock.setGroupId(groupLockEnum.getId());
-	groupLock.setGroupName(groupLockEnum.name());
-	groupLock.setProcessName(classCaller.getName());
-	groupLock.setProcessId(UUID.randomUUID().toString());
-	groupLock.setMachineName(hostName);
-	groupLock.setLastUpdateTime(systemDate.getSystemDate(((DaoTemplate<?>) groupLockDao).getSession()));
-	groupLock.setLastUpdateProcessName(classCaller.getName());
-	groupLock.setLastUpdateProcessId(groupLock.getProcessId());
+	private GroupLock getPreparedObject(Class<? extends LockingProcess<GroupLock>> classCaller,
+			GroupLockEnum groupLockEnum) {
+		GroupLock groupLock = new GroupLock();
 
-	return groupLock;
-    }
+		groupLock.setGroupId(groupLockEnum.getId());
+		groupLock.setGroupName(groupLockEnum.name());
+		groupLock.setProcessName(classCaller.getName());
+		groupLock.setProcessId(UUID.randomUUID().toString());
+		groupLock.setMachineName(hostName);
+		groupLock.setLastUpdateTime(systemDate.getSystemDate(((DaoTemplate<?>) groupLockDao).getSession()));
+		groupLock.setLastUpdateProcessName(classCaller.getName());
+		groupLock.setLastUpdateProcessId(groupLock.getProcessId());
 
-    private void validateOptimisticUpdate(Class<? extends LockingProcess<GroupLock>> classCaller, GroupLock groupLock,
-	    boolean ignoreSameProcess) throws ConcurrentAccessException {
-	int result = groupLockDao.optimisticCheckIn(groupLock, classCaller, ignoreSameProcess);
-	boolean valid = result > 0;
+		return groupLock;
+	}
 
-	throwConcurrentProcess(classCaller, groupLock, valid);
-    }
+	private void validateOptimisticUpdate(Class<? extends LockingProcess<GroupLock>> classCaller, GroupLock groupLock,
+			boolean ignoreSameProcess) throws ConcurrentAccessException {
+		int result = groupLockDao.optimisticCheckIn(groupLock, classCaller, ignoreSameProcess);
+		boolean valid = result > 0;
+
+		throwConcurrentProcess(classCaller, groupLock, valid);
+	}
 }
 
 interface ISystemDate {
-    Date getSystemDate(Session session);
+	Date getSystemDate(Session session);
 }
 
 /**
@@ -136,10 +137,10 @@ interface ISystemDate {
  *
  */
 class DbSystemDate implements ISystemDate {
-    private VersionType<Date> dbTimeStamp = new DbTimestampType();
+	private VersionType<Date> dbTimeStamp = new DbTimestampType();
 
-    @Override
-    public Date getSystemDate(Session session) {
-	return dbTimeStamp.seed((SessionImplementor) session);
-    }
+	@Override
+	public Date getSystemDate(Session session) {
+		return dbTimeStamp.seed((SessionImplementor) session);
+	}
 }

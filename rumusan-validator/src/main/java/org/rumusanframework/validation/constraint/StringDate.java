@@ -23,6 +23,7 @@ import org.rumusanframework.validation.constraintvalidator.StringDateValidator;
  * 
  * @author Harvan Irsyadi
  * @version 1.0.0
+ * @since 1.0.0 (18 Feb 2018)
  *
  */
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
@@ -31,23 +32,23 @@ import org.rumusanframework.validation.constraintvalidator.StringDateValidator;
 @Documented
 @Constraint(validatedBy = StringDateValidator.class)
 public @interface StringDate {
-    String message() default ConstraintViolationMessage.DATE_NOT_VALID;
+	String message() default ConstraintViolationMessage.DATE_NOT_VALID;
 
-    Class<?>[] groups() default {};
+	Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default {};
+	Class<? extends Payload>[] payload() default {};
 
-    String dateFormat() default "dd-MM-yyyy HH:mm:ss:SSSSSSS";
+	String dateFormat() default "dd-MM-yyyy HH:mm:ss:SSSSSSS";
 
-    /**
-     * Defines several {@link StringDate} annotations on the same element.
-     *
-     * @see StringDate
-     */
-    @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
-    @Retention(RUNTIME)
-    @Documented
-    @interface List {
-	StringDate[] value();
-    }
+	/**
+	 * Defines several {@link StringDate} annotations on the same element.
+	 *
+	 * @see StringDate
+	 */
+	@Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
+	@Retention(RUNTIME)
+	@Documented
+	@interface List {
+		StringDate[] value();
+	}
 }

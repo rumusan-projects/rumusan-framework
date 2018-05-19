@@ -11,12 +11,13 @@ import org.rumusanframework.concurrent.lock.entity.GroupLockEnum;
  * 
  * @author Harvan Irsyadi
  * @version 1.0.0
+ * @since 1.0.0 (11 Mar 2018)
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Lock {
-    GroupLockEnum groupEnum();
+	GroupLockEnum groupEnum();
 
-    boolean ignoreSameProcess() default false;
+	boolean ignoreSameProcess() default false;
 }

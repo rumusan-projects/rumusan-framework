@@ -13,14 +13,14 @@ import org.rumusanframework.util.parser.IParser;
  *
  */
 public class DateToStringParser implements IParser<String> {
-    private SimpleDateFormat format;
+	private SimpleDateFormat format;
 
-    public DateToStringParser(String pattern) {
-	format = new SimpleDateFormat(pattern);
-    }
+	public DateToStringParser(String pattern) {
+		format = new SimpleDateFormat(pattern);
+	}
 
-    @Override
-    public String parse(Object object) {
-	return format.format((Date) object);
-    }
+	@Override
+	public String parse(Object object) {
+		return format.format((Date) object);
+	}
 }

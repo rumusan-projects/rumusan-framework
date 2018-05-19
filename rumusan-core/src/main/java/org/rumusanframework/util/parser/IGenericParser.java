@@ -9,5 +9,5 @@ package org.rumusanframework.util.parser;
  * @param <T>
  */
 public interface IGenericParser<T> {
-    T parse(Object obj, Class<T> targetClass);
+	T parse(Object obj, Class<T> targetClass);
 }

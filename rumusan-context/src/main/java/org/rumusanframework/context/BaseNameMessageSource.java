@@ -7,5 +7,5 @@ package org.rumusanframework.context;
  *
  */
 public interface BaseNameMessageSource {
-    public String getBaseName();
+	public String getBaseName();
 }

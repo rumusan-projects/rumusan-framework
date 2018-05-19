@@ -15,66 +15,67 @@ import org.springframework.beans.factory.annotation.Autowired;
  * 
  * @author Harvan Irsyadi
  * @version 1.0.0
+ * @since 1.0.0 (11 Mar 2018)
  *
  */
 public abstract class BaseOptimisticLockingProcess implements LockingProcess<GroupLock> {
-    private final Log logger = LogFactory.getLog(getClass());
-    private QueueGuard optimisticLockingQueueGuard;
-    private GroupLockEnum groupLockEnum;
-    private boolean ignoreSameProcess = false;
-    private boolean init = false;
+	private final Log logger = LogFactory.getLog(getClass());
+	private QueueGuard optimisticLockingQueueGuard;
+	private GroupLockEnum groupLockEnum;
+	private boolean ignoreSameProcess = false;
+	private boolean init = false;
 
-    @Autowired
-    public void setOptimisticLockingQueueGuard(QueueGuard optimisticLockingQueueGuard) {
-	this.optimisticLockingQueueGuard = optimisticLockingQueueGuard;
-    }
-
-    Log logger() {
-	return logger;
-    }
-
-    protected abstract void executeInternal(ProcessContext<GroupLock> context);
-
-    @PostConstruct
-    public void init() {
-	synchronized (this) {
-	    if (!init) {
-		if (!isValid()) {
-		    throw new RuntimeException("Not a valid synchronize process : " + this.getClass().getName());// NOSONAR
-		}
-
-		Lock synchronize = getClass().getAnnotation(Lock.class);
-		groupLockEnum = synchronize.groupEnum();
-		ignoreSameProcess = synchronize.ignoreSameProcess();
-
-		if (logger().isInfoEnabled()) {
-		    logger().info("Initializing...");
-		    logger().info("GroupLockEnum : " + groupLockEnum);
-		    logger().info("IgnoreSameProcess : " + ignoreSameProcess);
-		}
-	    }
+	@Autowired
+	public void setOptimisticLockingQueueGuard(QueueGuard optimisticLockingQueueGuard) {
+		this.optimisticLockingQueueGuard = optimisticLockingQueueGuard;
 	}
-    }
 
-    protected boolean isIgnoreSameProcess() {
-	return ignoreSameProcess;
-    }
+	Log logger() {
+		return logger;
+	}
 
-    protected GroupLockEnum getGroupLockEnum() {
-	return groupLockEnum;
-    }
+	protected abstract void executeInternal(ProcessContext<GroupLock> context);
 
-    private boolean isValid() {
-	return getClass().isAnnotationPresent(Lock.class);
-    }
+	@PostConstruct
+	public void init() {
+		synchronized (this) {
+			if (!init) {
+				if (!isValid()) {
+					throw new RuntimeException("Not a valid synchronize process : " + this.getClass().getName());// NOSONAR
+				}
 
-    @Override
-    public void execute(ProcessContext<GroupLock> context) throws ConcurrentAccessException {
-	GroupLock object = optimisticLockingQueueGuard.checkIn(getClass(), getGroupLockEnum(), isIgnoreSameProcess());
-	context.setObject(object);
+				Lock synchronize = getClass().getAnnotation(Lock.class);
+				groupLockEnum = synchronize.groupEnum();
+				ignoreSameProcess = synchronize.ignoreSameProcess();
 
-	executeInternal(context);
+				if (logger().isInfoEnabled()) {
+					logger().info("Initializing...");
+					logger().info("GroupLockEnum : " + groupLockEnum);
+					logger().info("IgnoreSameProcess : " + ignoreSameProcess);
+				}
+			}
+		}
+	}
 
-	optimisticLockingQueueGuard.checkOut(object);
-    }
+	protected boolean isIgnoreSameProcess() {
+		return ignoreSameProcess;
+	}
+
+	protected GroupLockEnum getGroupLockEnum() {
+		return groupLockEnum;
+	}
+
+	private boolean isValid() {
+		return getClass().isAnnotationPresent(Lock.class);
+	}
+
+	@Override
+	public void execute(ProcessContext<GroupLock> context) throws ConcurrentAccessException {
+		GroupLock object = optimisticLockingQueueGuard.checkIn(getClass(), getGroupLockEnum(), isIgnoreSameProcess());
+		context.setObject(object);
+
+		executeInternal(context);
+
+		optimisticLockingQueueGuard.checkOut(object);
+	}
 }

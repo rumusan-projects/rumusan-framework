@@ -15,52 +15,53 @@ import org.springframework.util.Assert;
  * 
  * @author Harvan Irsyadi
  * @version 1.0.0
+ * @since 1.0.0 (18 Mar 2018)
  *
  */
 public abstract class DtoDao<E extends Serializable, R> extends DaoTemplate<E> implements IDtoDao<R> {
-    private static final String QUERY_ROOT_NOT_FOUND = "Query Root not found.";
-    private static final String ATTRIBUTE_ID_NOT_FOUND = "Attribute Id not found.";
-    // Note : Ensure your meta model class in the same package with entity class
-    private String entityPackage = entityType.getPackage().getName();
+	private static final String QUERY_ROOT_NOT_FOUND = "Query Root not found.";
+	private static final String ATTRIBUTE_ID_NOT_FOUND = "Attribute Id not found.";
+	// Note : Ensure your meta model class in the same package with entity class
+	private String entityPackage = entityType.getPackage().getName();
 
-    @SuppressWarnings("unchecked")
-    private SingularAttribute<E, Class<?>> getAttributeId() {
-	return (SingularAttribute<E, Class<?>>) daoUtils.getMetaAttributeId(entityPackage, entityType);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public R findVoById(Serializable id) {
-	CriteriaBuilder cb = getSession().getCriteriaBuilder();
-	CriteriaQuery<R> query = getVoCriteriaQuery();
-	Set<Root<?>> roots = query.getRoots();
-	Root<E> queryRoot = null;
-
-	for (Root<?> root : roots) {
-	    if (logger().isDebugEnabled()) {
-		logger().debug("Dao entityType : " + entityType);
-		logger().debug("Query Root javaType : " + root.getJavaType());
-	    }
-	    if (root.getJavaType().equals(entityType)) {
-		queryRoot = (Root<E>) root;
-		break;
-	    }
+	@SuppressWarnings("unchecked")
+	private SingularAttribute<E, Class<?>> getAttributeId() {
+		return (SingularAttribute<E, Class<?>>) daoUtils.getMetaAttributeId(entityPackage, entityType);
 	}
 
-	Assert.notNull(queryRoot, QUERY_ROOT_NOT_FOUND);
+	@SuppressWarnings("unchecked")
+	@Override
+	public R findVoById(Serializable id) {
+		CriteriaBuilder cb = getSession().getCriteriaBuilder();
+		CriteriaQuery<R> query = getVoCriteriaQuery();
+		Set<Root<?>> roots = query.getRoots();
+		Root<E> queryRoot = null;
 
-	SingularAttribute<E, Class<?>> attributeId = getAttributeId();
-	Assert.notNull(attributeId, ATTRIBUTE_ID_NOT_FOUND);
+		for (Root<?> root : roots) {
+			if (logger().isDebugEnabled()) {
+				logger().debug("Dao entityType : " + entityType);
+				logger().debug("Query Root javaType : " + root.getJavaType());
+			}
+			if (root.getJavaType().equals(entityType)) {
+				queryRoot = (Root<E>) root;
+				break;
+			}
+		}
 
-	query.where(cb.equal(queryRoot.get(attributeId), id));
+		Assert.notNull(queryRoot, QUERY_ROOT_NOT_FOUND);
 
-	return getSession().createQuery(query).uniqueResult();
-    }
+		SingularAttribute<E, Class<?>> attributeId = getAttributeId();
+		Assert.notNull(attributeId, ATTRIBUTE_ID_NOT_FOUND);
 
-    protected abstract CriteriaQuery<R> getVoCriteriaQuery();
+		query.where(cb.equal(queryRoot.get(attributeId), id));
 
-    @Override
-    public List<R> findAllVo() {
-	return getSession().createQuery(getVoCriteriaQuery()).getResultList();
-    }
+		return getSession().createQuery(query).uniqueResult();
+	}
+
+	protected abstract CriteriaQuery<R> getVoCriteriaQuery();
+
+	@Override
+	public List<R> findAllVo() {
+		return getSession().createQuery(getVoCriteriaQuery()).getResultList();
+	}
 }
