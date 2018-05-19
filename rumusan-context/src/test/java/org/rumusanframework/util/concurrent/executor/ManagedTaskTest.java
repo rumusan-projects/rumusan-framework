@@ -22,134 +22,134 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ManagedTaskTest {
-    @Mock
-    private Log log;
-    @Mock
-    private Appender mockAppender;
+	@Mock
+	private Log log;
+	@Mock
+	private Appender mockAppender;
 
-    class EventValue {
-	private String value;
-	private boolean isFinished;
+	class EventValue {
+		private String value;
+		private boolean isFinished;
 
-	void setValue(String value) {
-	    this.value = value;
+		void setValue(String value) {
+			this.value = value;
+		}
+
+		String getValue() {
+			return value;
+		}
+
+		boolean isFinished() {
+			return isFinished;
+		}
+
+		void setFinished(boolean isFinished) {
+			this.isFinished = isFinished;
+		}
 	}
 
-	String getValue() {
-	    return value;
+	@Before
+	public void setup() {
 	}
 
-	boolean isFinished() {
-	    return isFinished;
+	/*
+	 * Ensure event is executed by changing object value from "empty" to "filled"
+	 */
+	@Test
+	public void testRun() {
+		final EventValue eventValue = new EventValue();
+		eventValue.setValue("empty");
+
+		Assert.assertEquals("empty", eventValue.getValue());
+
+		TaskEvent event = new TaskEvent() {
+			@Override
+			public void execute() {
+				eventValue.setValue("filled");
+				eventValue.setFinished(true);
+			}
+		};
+		ManagedTask task = new ManagedTask(event);
+		task.run();
+
+		while (!eventValue.isFinished()) {
+		}
+
+		Assert.assertEquals("filled", eventValue.getValue());
 	}
 
-	void setFinished(boolean isFinished) {
-	    this.isFinished = isFinished;
-	}
-    }
+	/*
+	 * Ensure final event is executed by changing object value from "empty" to
+	 * "filled"
+	 */
+	@Test
+	public void testRunFinal() {
+		final EventValue eventValue = new EventValue();
 
-    @Before
-    public void setup() {
-    }
+		TaskEvent event = new TaskEvent() {
+			@Override
+			public void execute() {
+				eventValue.setFinished(true);
+			}
+		};
 
-    /*
-     * Ensure event is executed by changing object value from "empty" to "filled"
-     */
-    @Test
-    public void testRun() {
-	final EventValue eventValue = new EventValue();
-	eventValue.setValue("empty");
+		final EventValue eventValueFinal = new EventValue();
+		eventValueFinal.setValue("empty");
 
-	Assert.assertEquals("empty", eventValue.getValue());
+		Assert.assertEquals("empty", eventValueFinal.getValue());
+		TaskEvent finalEvent = new TaskEvent() {
+			@Override
+			public void execute() {
+				eventValueFinal.setValue("filled");
+			}
+		};
 
-	TaskEvent event = new TaskEvent() {
-	    @Override
-	    public void execute() {
-		eventValue.setValue("filled");
-		eventValue.setFinished(true);
-	    }
-	};
-	ManagedTask task = new ManagedTask(event);
-	task.run();
+		ManagedTask task = new ManagedTask(event);
+		task.setFinalEvent(finalEvent);
+		task.run();
 
-	while (!eventValue.isFinished()) {
-	}
+		while (!eventValue.isFinished()) {
+		}
 
-	Assert.assertEquals("filled", eventValue.getValue());
-    }
-
-    /*
-     * Ensure final event is executed by changing object value from "empty" to
-     * "filled"
-     */
-    @Test
-    public void testRunFinal() {
-	final EventValue eventValue = new EventValue();
-
-	TaskEvent event = new TaskEvent() {
-	    @Override
-	    public void execute() {
-		eventValue.setFinished(true);
-	    }
-	};
-
-	final EventValue eventValueFinal = new EventValue();
-	eventValueFinal.setValue("empty");
-
-	Assert.assertEquals("empty", eventValueFinal.getValue());
-	TaskEvent finalEvent = new TaskEvent() {
-	    @Override
-	    public void execute() {
-		eventValueFinal.setValue("filled");
-	    }
-	};
-
-	ManagedTask task = new ManagedTask(event);
-	task.setFinalEvent(finalEvent);
-	task.run();
-
-	while (!eventValue.isFinished()) {
+		Assert.assertTrue(eventValue.isFinished());
+		Assert.assertEquals("filled", eventValueFinal.getValue());
 	}
 
-	Assert.assertTrue(eventValue.isFinished());
-	Assert.assertEquals("filled", eventValueFinal.getValue());
-    }
+	/*
+	 * Coverage for error logger
+	 */
+	@Test
+	public void testRunWithException() {
+		final EventValue eventValue = new EventValue();
 
-    /*
-     * Coverage for error logger
-     */
-    @Test
-    public void testRunWithException() {
-	final EventValue eventValue = new EventValue();
+		TaskEvent event = new TaskEvent() {
+			@Override
+			public void execute() {
+				eventValue.setFinished(true);
+				throw new RuntimeException("Error runtime");
+			}
+		};
+		TaskEvent finalEvent = new TaskEvent() {
+			@Override
+			public void execute() {
+				throw new RuntimeException("Error runtime");
+			}
+		};
 
-	TaskEvent event = new TaskEvent() {
-	    @Override
-	    public void execute() {
-		eventValue.setFinished(true);
-		throw new RuntimeException("Error runtime");
-	    }
-	};
-	TaskEvent finalEvent = new TaskEvent() {
-	    @Override
-	    public void execute() {
-		throw new RuntimeException("Error runtime");
-	    }
-	};
+		ManagedTask task = Mockito.spy(new ManagedTask(event));
+		task.setFinalEvent(finalEvent);
 
-	ManagedTask task = Mockito.spy(new ManagedTask(event));
-	task.setFinalEvent(finalEvent);
+		Mockito.when(task.logger()).thenReturn(log);
+		Mockito.when(log.isErrorEnabled()).thenReturn(true);
+		task.run();
+		while (!eventValue.isFinished()) {
+		}
 
-	Mockito.when(task.logger()).thenReturn(log);
-	Mockito.when(log.isErrorEnabled()).thenReturn(true);
-	task.run();
-	while (!eventValue.isFinished()) {
+		Mockito.when(log.isErrorEnabled()).thenReturn(false);
+		task.run();
+		while (!eventValue.isFinished()) {
+		}
+
+		Assert.assertTrue(eventValue.isFinished());
 	}
-
-	Mockito.when(log.isErrorEnabled()).thenReturn(false);
-	task.run();
-	while (!eventValue.isFinished()) {
-	}
-
-	Assert.assertTrue(eventValue.isFinished());
-    }
 }

@@ -15,26 +15,26 @@ import org.springframework.context.support.AbstractResourceBasedMessageSource;
  *
  */
 public class BaseNameMessageSourceLoader {
-    private BaseNameMessageSourceLoader() {
-    }
-
-    public static void addBasename(ApplicationContext applicationContext,
-	    AbstractResourceBasedMessageSource messageSource) {
-	List<BaseNameMessageSource> baseNameMessageSources = getBaseNameMessageSource(applicationContext);
-
-	if (!baseNameMessageSources.isEmpty()) {
-	    System.out.println("Found " + baseNameMessageSources.size() + " of autowired basename message source.");// NOSONAR
+	private BaseNameMessageSourceLoader() {
 	}
 
-	for (BaseNameMessageSource baseNameMessageSource : baseNameMessageSources) {
-	    System.out.println("basename : " + baseNameMessageSource.getBaseName());// NOSONAR
-	    messageSource.addBasenames(baseNameMessageSource.getBaseName());
+	public static void addBasename(ApplicationContext applicationContext,
+			AbstractResourceBasedMessageSource messageSource) {
+		List<BaseNameMessageSource> baseNameMessageSources = getBaseNameMessageSource(applicationContext);
+
+		if (!baseNameMessageSources.isEmpty()) {
+			System.out.println("Found " + baseNameMessageSources.size() + " of autowired basename message source.");// NOSONAR
+		}
+
+		for (BaseNameMessageSource baseNameMessageSource : baseNameMessageSources) {
+			System.out.println("basename : " + baseNameMessageSource.getBaseName());// NOSONAR
+			messageSource.addBasenames(baseNameMessageSource.getBaseName());
+		}
 	}
-    }
 
-    private static List<BaseNameMessageSource> getBaseNameMessageSource(ApplicationContext applicationContext) {
-	Map<String, BaseNameMessageSource> obj = applicationContext.getBeansOfType(BaseNameMessageSource.class);
+	private static List<BaseNameMessageSource> getBaseNameMessageSource(ApplicationContext applicationContext) {
+		Map<String, BaseNameMessageSource> obj = applicationContext.getBeansOfType(BaseNameMessageSource.class);
 
-	return obj != null ? new ArrayList<>(obj.values()) : Collections.emptyList();
-    }
+		return obj != null ? new ArrayList<>(obj.values()) : Collections.emptyList();
+	}
 }

@@ -7,10 +7,10 @@ package org.rumusanframework.context;
  *
  */
 public abstract class DefaultBasenameMessageSource implements BaseNameMessageSource {
-    @Override
-    public final String getBaseName() {
-	return getClass().getPackage().getName().concat(".").concat(getMessageResourceFileName());
-    }
+	@Override
+	public final String getBaseName() {
+		return getClass().getPackage().getName().concat(".").concat(getMessageResourceFileName());
+	}
 
-    protected abstract String getMessageResourceFileName();
+	protected abstract String getMessageResourceFileName();
 }

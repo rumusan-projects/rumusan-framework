@@ -15,75 +15,75 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  *
  */
 public class SpringTaskExecutorManagerTest {
-    @Test
-    public void testSpringTaskExecutorManagerThreadPoolTaskExecutor() {
-	ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-	new SpringTaskExecutorManager(taskExecutor);
-    }
+	@Test
+	public void testSpringTaskExecutorManagerThreadPoolTaskExecutor() {
+		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+		new SpringTaskExecutorManager(taskExecutor);
+	}
 
-    @Test
-    public void testSpringTaskExecutorManagerThreadPoolTaskExecutorInt() {
-	ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-	new SpringTaskExecutorManager(taskExecutor, 500);
-    }
+	@Test
+	public void testSpringTaskExecutorManagerThreadPoolTaskExecutorInt() {
+		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+		new SpringTaskExecutorManager(taskExecutor, 500);
+	}
 
-    @Test
-    public void testGetTaskExecutor() {
-	ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-	SpringTaskExecutorManager manager = new SpringTaskExecutorManager(taskExecutor);
-	Assert.assertEquals(taskExecutor, manager.getTaskExecutor());
-    }
+	@Test
+	public void testGetTaskExecutor() {
+		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+		SpringTaskExecutorManager manager = new SpringTaskExecutorManager(taskExecutor);
+		Assert.assertEquals(taskExecutor, manager.getTaskExecutor());
+	}
 
-    @Test
-    public void testGetIntervalFinishedChecker() {
-	ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-	int interval = 500;
-	SpringTaskExecutorManager manager = new SpringTaskExecutorManager(taskExecutor, interval);
-	Assert.assertEquals(interval, manager.getIntervalFinishedChecker());
-    }
+	@Test
+	public void testGetIntervalFinishedChecker() {
+		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+		int interval = 500;
+		SpringTaskExecutorManager manager = new SpringTaskExecutorManager(taskExecutor, interval);
+		Assert.assertEquals(interval, manager.getIntervalFinishedChecker());
+	}
 
-    @Test
-    public void testSetIntervalFinishedChecker() {
-	ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-	int interval = 500;
-	SpringTaskExecutorManager manager = new SpringTaskExecutorManager(taskExecutor);
-	manager.setIntervalFinishedChecker(interval);
+	@Test
+	public void testSetIntervalFinishedChecker() {
+		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+		int interval = 500;
+		SpringTaskExecutorManager manager = new SpringTaskExecutorManager(taskExecutor);
+		manager.setIntervalFinishedChecker(interval);
 
-	Assert.assertEquals(interval, manager.getIntervalFinishedChecker());
+		Assert.assertEquals(interval, manager.getIntervalFinishedChecker());
 
-    }
+	}
 
-    @Test
-    public void testAddTaskGetTask() {
-	ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-	int interval = 500;
-	SpringTaskExecutorManager manager = new SpringTaskExecutorManager(taskExecutor, interval);
-	ManagedTask task = new ManagedTask(new TaskEvent() {
-	    @Override
-	    public void execute() {
-	    }
-	});
-	manager.addTask(task);
+	@Test
+	public void testAddTaskGetTask() {
+		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+		int interval = 500;
+		SpringTaskExecutorManager manager = new SpringTaskExecutorManager(taskExecutor, interval);
+		ManagedTask task = new ManagedTask(new TaskEvent() {
+			@Override
+			public void execute() {
+			}
+		});
+		manager.addTask(task);
 
-	Assert.assertTrue(manager.getTask().contains(task));
-	Assert.assertTrue(manager.getTask().size() == 1);
-    }
+		Assert.assertTrue(manager.getTask().contains(task));
+		Assert.assertTrue(manager.getTask().size() == 1);
+	}
 
-    @Test
-    public void testExecuteAndWaitTasks() {
-	ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-	int interval = 10;
-	SpringTaskExecutorManager manager = new SpringTaskExecutorManager(taskExecutor, interval);
-	ManagedTask task = new ManagedTask(new TaskEvent() {
-	    @Override
-	    public void execute() {
-	    }
-	});
-	manager.addTask(task);
+	@Test
+	public void testExecuteAndWaitTasks() {
+		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+		int interval = 10;
+		SpringTaskExecutorManager manager = new SpringTaskExecutorManager(taskExecutor, interval);
+		ManagedTask task = new ManagedTask(new TaskEvent() {
+			@Override
+			public void execute() {
+			}
+		});
+		manager.addTask(task);
 
-	manager.executeAndWaitTasks();
-	Assert.assertTrue(manager.getTask().size() == 0);
+		manager.executeAndWaitTasks();
+		Assert.assertTrue(manager.getTask().size() == 0);
 
-	manager.executeAndWaitTasks();
-    }
+		manager.executeAndWaitTasks();
+	}
 }
