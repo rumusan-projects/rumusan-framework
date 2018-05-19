@@ -1,10 +1,14 @@
 package org.rumusanframework.util.parser;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.junit.Assert;
@@ -32,7 +36,7 @@ import org.rumusanframework.util.parser.impl.ParseToNonFloatingChain;
  * - Boolean<br/>
  * - java.sql.Date<br/>
  * - java.sql.Timestamp<br/>
- * - java.sql.Date<br/>
+ * - java.util.Date<br/>
  * 
  * @author Harvan Irsyadi
  * @version 1.0.0
@@ -1111,6 +1115,9 @@ public class ParserUtilsTest {
 
 	Assert.assertEquals(src, parsed.toString());
 
+	src = "FALSE";
+	Assert.assertFalse(ParserUtils.parse(src, Boolean.class));
+
 	System.out.println("End " + getMethodName(new Object() {
 	}) + " : " + parsed);
     }
@@ -1121,6 +1128,20 @@ public class ParserUtilsTest {
 	Boolean parsed = ParserUtils.parse(src, Boolean.class);
 
 	Assert.assertEquals(src, parsed.toString());
+
+	src = "TRUE";
+	Assert.assertTrue(ParserUtils.parse(src, Boolean.class));
+
+	System.out.println("End " + getMethodName(new Object() {
+	}) + " : " + parsed);
+    }
+
+    @Test
+    public void testParseToBooleanFromStringRandomFalse() {
+	String src = "lkfdklasdlfkja";
+	Boolean parsed = ParserUtils.parse(src, Boolean.class);
+
+	Assert.assertFalse(parsed);
 
 	System.out.println("End " + getMethodName(new Object() {
 	}) + " : " + parsed);
@@ -1138,11 +1159,77 @@ public class ParserUtilsTest {
     }
 
     @Test
+    public void testParseToBooleanFromString2Equals() {
+	String src = "2";
+	Boolean parsed = ParserUtils.parse(src, Boolean.class);
+
+	Assert.assertEquals(Boolean.TRUE.toString(), parsed.toString());
+
+	System.out.println("End " + getMethodName(new Object() {
+	}) + " : " + parsed);
+    }
+
+    @Test
+    public void testParseToBooleanFromStringMin1Equals() {
+	String src = "-1";
+	Boolean parsed = ParserUtils.parse(src, Boolean.class);
+
+	Assert.assertEquals(Boolean.FALSE.toString(), parsed.toString());
+
+	System.out.println("End " + getMethodName(new Object() {
+	}) + " : " + parsed);
+    }
+
+    @Test
     public void testParseToBooleanFromString0Equals() {
 	String src = "0";
 	Boolean parsed = ParserUtils.parse(src, Boolean.class);
 
 	Assert.assertEquals(Boolean.FALSE.toString(), parsed.toString());
+
+	System.out.println("End " + getMethodName(new Object() {
+	}) + " : " + parsed);
+    }
+
+    @Test
+    public void testParseToBooleanFromStringLess0Equals() {
+	String src = "-1";
+	Boolean parsed = ParserUtils.parse(src, Boolean.class);
+
+	Assert.assertEquals(Boolean.FALSE.toString(), parsed.toString());
+
+	System.out.println("End " + getMethodName(new Object() {
+	}) + " : " + parsed);
+    }
+
+    @Test
+    public void testParseToBooleanFromNumberLess0Equals() {
+	Integer src = -1;
+	Boolean parsed = ParserUtils.parse(src, Boolean.class);
+
+	Assert.assertEquals(Boolean.FALSE.toString(), parsed.toString());
+
+	System.out.println("End " + getMethodName(new Object() {
+	}) + " : " + parsed);
+    }
+
+    @Test
+    public void testParseToBooleanFromNumber0Equals() {
+	Integer src = 0;
+	Boolean parsed = ParserUtils.parse(src, Boolean.class);
+
+	Assert.assertEquals(Boolean.FALSE.toString(), parsed.toString());
+
+	System.out.println("End " + getMethodName(new Object() {
+	}) + " : " + parsed);
+    }
+
+    @Test
+    public void testParseToBooleanFromNumberGreater0Equals() {
+	Integer src = 1;
+	Boolean parsed = ParserUtils.parse(src, Boolean.class);
+
+	Assert.assertEquals(Boolean.TRUE.toString(), parsed.toString());
 
 	System.out.println("End " + getMethodName(new Object() {
 	}) + " : " + parsed);
@@ -1583,5 +1670,177 @@ public class ParserUtilsTest {
 
 	System.out.println("End " + getMethodName(new Object() {
 	}) + " : " + parsed);
+    }
+
+    /**
+     * Test for java type:<br/>
+     * - java.sql.Date<br/>
+     * 
+     * @author Harvan Irsyadi
+     *
+     */
+
+    @Test
+    public void testParseToByteForDefaultNull() {
+	Byte src = null;
+	Byte defaultVal = 1;
+	Byte parsed = ParserUtils.parse(src, defaultVal, Byte.class);
+
+	assertNotEquals(src, parsed);
+	Assert.assertEquals(defaultVal, parsed);
+    }
+
+    @Test
+    public void testParseToShortForDefaultNull() {
+	Short src = null;
+	Short defaultVal = 1;
+	Short parsed = ParserUtils.parse(src, defaultVal, Short.class);
+
+	assertNotEquals(src, parsed);
+	Assert.assertEquals(defaultVal, parsed);
+    }
+
+    @Test
+    public void testParseToIntegerForDefaultNull() {
+	Integer src = null;
+	Integer defaultVal = 1;
+	Integer parsed = ParserUtils.parse(src, defaultVal, Integer.class);
+
+	assertNotEquals(src, parsed);
+	Assert.assertEquals(defaultVal, parsed);
+    }
+
+    @Test
+    public void testParseToLongForDefaultNull() {
+	Long src = null;
+	Long defaultVal = 1L;
+	Long parsed = ParserUtils.parse(src, defaultVal, Long.class);
+
+	assertNotEquals(src, parsed);
+	Assert.assertEquals(defaultVal, parsed);
+    }
+
+    @Test
+    public void testParseToFloatForDefaultNull() {
+	Float src = null;
+	Float defaultVal = 1F;
+	Float parsed = ParserUtils.parse(src, defaultVal, Float.class);
+
+	assertNotEquals(src, parsed);
+	Assert.assertEquals(defaultVal, parsed);
+    }
+
+    @Test
+    public void testParseToDoubleForDefaultNull() {
+	Double src = null;
+	Double defaultVal = 1D;
+	Double parsed = ParserUtils.parse(src, defaultVal, Double.class);
+
+	assertNotEquals(src, parsed);
+	Assert.assertEquals(defaultVal, parsed);
+    }
+
+    @Test
+    public void testParseToBigIntegerForDefaultNull() {
+	BigInteger src = null;
+	BigInteger defaultVal = BigInteger.valueOf(1L);
+	BigInteger parsed = ParserUtils.parse(src, defaultVal, BigInteger.class);
+
+	assertNotEquals(src, parsed);
+	Assert.assertEquals(defaultVal, parsed);
+    }
+
+    @Test
+    public void testParseToBigDecimalForDefaultNull() {
+	BigDecimal src = null;
+	BigDecimal defaultVal = BigDecimal.valueOf(1L);
+	BigDecimal parsed = ParserUtils.parse(src, defaultVal, BigDecimal.class);
+
+	assertNotEquals(src, parsed);
+	Assert.assertEquals(defaultVal, parsed);
+    }
+
+    @Test
+    public void testParseToCharacterForDefaultNull() {
+	Character src = null;
+	Character defaultVal = 'c';
+	Character parsed = ParserUtils.parse(src, defaultVal, Character.class);
+
+	assertNotEquals(src, parsed);
+	Assert.assertEquals(defaultVal, parsed);
+    }
+
+    @Test
+    public void testParseToStringForDefaultNull() {
+	String src = null;
+	String defaultVal = "";
+	String parsed = ParserUtils.parse(src, defaultVal, String.class);
+
+	assertNotEquals(src, parsed);
+	Assert.assertEquals(defaultVal, parsed);
+    }
+
+    @Test
+    public void testParseToBooleanForDefaultNullTrue() {
+	Boolean src = null;
+	Boolean defaultVal = true;
+	Boolean parsed = ParserUtils.parse(src, defaultVal, Boolean.class);
+
+	assertNotEquals(src, parsed);
+	Assert.assertEquals(defaultVal, parsed);
+    }
+
+    @Test
+    public void testParseToBooleanForDefaultNullFalse() {
+	Boolean src = null;
+	Boolean defaultVal = false;
+	Boolean parsed = ParserUtils.parse(src, defaultVal, Boolean.class);
+
+	assertNotEquals(src, parsed);
+	Assert.assertEquals(defaultVal, parsed);
+    }
+
+    @Test
+    public void testParseToSqlDateForDefaultNull() {
+	java.sql.Date src = null;
+	java.sql.Date defaultVal = new java.sql.Date(System.currentTimeMillis());
+	java.sql.Date parsed = ParserUtils.parse(src, defaultVal, java.sql.Date.class);
+
+	assertNotEquals(src, parsed);
+	Assert.assertEquals(defaultVal, parsed);
+    }
+
+    @Test
+    public void testParseToSqlTimestampForDefaultNull() {
+	java.sql.Timestamp src = null;
+	java.sql.Timestamp defaultVal = new java.sql.Timestamp(System.currentTimeMillis());
+	java.sql.Timestamp parsed = ParserUtils.parse(src, defaultVal, java.sql.Timestamp.class);
+
+	assertNotEquals(src, parsed);
+	Assert.assertEquals(defaultVal, parsed);
+    }
+
+    @Test
+    public void testParseToDateForDefaultNull() {
+	Date src = null;
+	Date defaultVal = new Date();
+	Date parsed = ParserUtils.parse(src, defaultVal, Date.class);
+
+	assertNotEquals(src, parsed);
+	Assert.assertEquals(defaultVal, parsed);
+    }
+
+    @Test
+    public void testParseToDateNotDefaultNull() {
+	Date src = new Date();
+	Calendar cal = Calendar.getInstance();
+	cal.setTime(new Date());
+	cal.add(Calendar.DAY_OF_MONTH, 1);
+	Date defaultVal = cal.getTime();
+
+	Date parsed = ParserUtils.parse(src, defaultVal, Date.class);
+
+	assertEquals(src, parsed);
+	assertNotEquals(defaultVal, parsed);
     }
 }

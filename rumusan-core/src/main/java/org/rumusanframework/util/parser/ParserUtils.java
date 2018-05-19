@@ -8,7 +8,7 @@ import org.rumusanframework.util.parser.impl.ParseToNonFloatingChain;
 
 /**
  * <pre>
- * Fast parsing object.
+ * Fast parsing object. This class is designed to be preferred for performance rather than design patterns.
  * </pre>
  * 
  * @author Harvan Irsyadi
@@ -67,18 +67,44 @@ public class ParserUtils {
     }
 
     private static <T> T parseToBoolean(Object obj, Class<T> targetClass) {
-	String string = obj.toString();
 	Boolean value;
 
-	if ("1".equals(string)) {
-	    value = true;
-	} else if ("0".equals(string)) {
-	    value = false;
+	if (Number.class.isInstance(obj)) {
+	    int intValue = ParserUtils.parse(obj, Integer.class);
+
+	    value = isTrue(intValue);
 	} else {
-	    value = Boolean.valueOf(string);
+	    String string = obj.toString();
+
+	    if ("0".equals(string)) {
+		value = false;
+	    } else if ("1".equals(string)) {
+		value = true;
+	    } else if ("true".equalsIgnoreCase(string)) {
+		value = true;
+	    } else if ("false".equalsIgnoreCase(string)) {
+		value = false;
+	    } else {
+		value = isTrueStringToInteger(string);
+	    }
 	}
 
 	return targetClass.cast(value);
+    }
+
+    private static boolean isTrue(int intValue) {
+	return intValue > 0;
+    }
+
+    private static boolean isTrueStringToInteger(String string) {
+	int intValue = 0;
+
+	try {
+	    intValue = ParserUtils.parse(string, Integer.class);
+	} catch (Exception e) {// NOSONAR
+	}
+
+	return isTrue(intValue);
     }
 
     private static <T> T parseToDate(Object obj, Class<T> targetClass) {
@@ -104,5 +130,11 @@ public class ParserUtils {
 	}
 
 	throw new ParseException("No Date wrapper found for target class : " + targetClass);
+    }
+
+    public static <T> T parse(Object obj, T defaultVal, Class<T> targetClass) {
+	T returnVal = parse(obj, targetClass);
+
+	return returnVal != null ? returnVal : defaultVal;
     }
 }
