@@ -27,11 +27,17 @@ import org.springframework.stereotype.Repository;
 public class GroupLockDao extends DaoTemplate<GroupLock> implements IGroupLockDao {
 	private AliasToBeanResultTransformer findGroupTransformers = new AliasToBeanResultTransformer(GroupLock.class);
 	private ProjectionList findAllProjection;
+	private EntityManager entityManager;
 
 	@PersistenceContext(unitName = "entityManagerFactory")
 	@Override
 	protected void setEntityManager(EntityManager entityManager) {
-		setRootEntityManager(entityManager);
+		this.entityManager = entityManager;
+	}
+
+	@Override
+	protected EntityManager getEntityManager() {
+		return entityManager;
 	}
 
 	/**
