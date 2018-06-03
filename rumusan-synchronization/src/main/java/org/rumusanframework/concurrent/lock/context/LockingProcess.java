@@ -1,3 +1,7 @@
+/*
+ * Copyright 2018-2018 the original author or authors.
+ */
+
 package org.rumusanframework.concurrent.lock.context;
 
 import org.rumusanframework.concurrent.lock.exception.ConcurrentAccessException;

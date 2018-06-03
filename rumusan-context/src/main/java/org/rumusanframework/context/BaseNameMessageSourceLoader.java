@@ -1,3 +1,7 @@
+/*
+ * Copyright 2018-2018 the original author or authors.
+ */
+
 package org.rumusanframework.context;
 
 import java.util.ArrayList;
@@ -12,6 +16,7 @@ import org.springframework.context.support.AbstractResourceBasedMessageSource;
  * 
  * @author Harvan Irsyadi
  * @version 1.0.0
+ * @since 1.0.0 (28 Jan 2018)
  *
  */
 public class BaseNameMessageSourceLoader {

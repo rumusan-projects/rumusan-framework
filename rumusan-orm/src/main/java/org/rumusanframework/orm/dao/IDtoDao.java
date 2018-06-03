@@ -1,4 +1,8 @@
-package org.rumusanframework.repository.dao;
+/*
+ * Copyright 2018-2018 the original author or authors.
+ */
+
+package org.rumusanframework.orm.dao;
 
 import java.io.Serializable;
 import java.util.List;
@@ -12,7 +16,7 @@ import java.util.List;
  * @param <R>
  */
 public interface IDtoDao<R> {
-	public R findVoById(Serializable id);
+	public R findDtoById(Serializable id);
 
-	public List<R> findAllVo();
+	public List<R> findAllDto();
 }

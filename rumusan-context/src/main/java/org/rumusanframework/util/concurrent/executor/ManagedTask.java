@@ -10,7 +10,8 @@ import org.apache.commons.logging.LogFactory;
 /**
  * 
  * @author Harvan Irsyadi
- * @version 1.0
+ * @version 1.0.0
+ * @since 1.0.0 (29 Nov 2015)
  * 
  */
 public class ManagedTask implements Runnable {
