@@ -1,3 +1,7 @@
+/*
+ * Copyright 2018-2018 the original author or authors.
+ */
+
 package org.rumusanframework.util;
 
 import java.lang.annotation.Annotation;
@@ -13,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @author Harvan Irsyadi
  * @version 1.0.0
+ * @since 1.0.0 (28 Jan 2018)
  *
  */
 public class ClassUtils {
@@ -94,11 +99,11 @@ public class ClassUtils {
 
 	public static <T> T newInstanceFieldByClass(Class<?> clazz, Field field) {
 		if (clazz != null && field != null) {
-			Field[] metaDeclaredFields = clazz.getDeclaredFields();
+			Field[] fields = clazz.getDeclaredFields();
 
-			for (Field metaField : metaDeclaredFields) {
-				if (metaField.getName().equals(field.getName())) {
-					return newInstance(clazz, metaField);
+			for (Field innerField : fields) {
+				if (innerField.getName().equals(field.getName())) {
+					return newInstance(clazz, innerField);
 				}
 			}
 		}

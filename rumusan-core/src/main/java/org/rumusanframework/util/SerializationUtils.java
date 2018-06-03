@@ -1,3 +1,7 @@
+/*
+ * Copyright 2017-2017 the original author or authors.
+ */
+
 package org.rumusanframework.util;
 
 import java.io.BufferedReader;
@@ -18,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * 
  * @author Harvan Irsyadi
  * @version 1.0.0
- * @since 1.0.0
+ * @since 1.0.0 (8 Oct 2017)
  *
  */
 public class SerializationUtils {

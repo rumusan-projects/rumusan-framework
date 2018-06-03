@@ -1,3 +1,7 @@
+/*
+ * Copyright 2017-2017 the original author or authors.
+ */
+
 package org.rumusanframework.security.oauth2.client.token.grant.password;
 
 import org.springframework.security.oauth2.client.token.grant.password.ResourceOwnerPasswordResourceDetails;
