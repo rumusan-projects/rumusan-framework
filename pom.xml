@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.rumusan</groupId>
 	<artifactId>rumusan-framework</artifactId>
-	<version>1.0.2.RELEASE</version>
+	<version>1.0.x-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
 		<module>rumusan-core</module>
@@ -32,7 +32,7 @@
 		<jdk.version>1.8</jdk.version>
 		<maven-compiler.version>3.7.0</maven-compiler.version>
 		<maven-resources.version>3.0.1</maven-resources.version>
-		<rumusan.version>1.0.2.RELEASE</rumusan.version>
+		<rumusan.version>1.0.x-SNAPSHOT</rumusan.version>
 		<spring.version>4.3.12.RELEASE</spring.version>
 		<spring-security-oauth2.version>2.2.0.RELEASE</spring-security-oauth2.version>
 		<spring-security-web.version>4.2.3.RELEASE</spring-security-web.version>
