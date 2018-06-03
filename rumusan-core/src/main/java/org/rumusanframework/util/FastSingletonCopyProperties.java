@@ -1,3 +1,7 @@
+/*
+ * Copyright 2018-2018 the original author or authors.
+ */
+
 package org.rumusanframework.util;
 
 import java.lang.reflect.Field;
@@ -7,10 +11,11 @@ import java.util.List;
 
 /**
  * For performance perspective, please ensure the instance of this class
- * instantiate only once for each entity.
+ * instantiate only once for each bean.
  * 
  * @author Harvan Irsyadi
  * @version 1.0.0
+ * @since 1.0.0 (19 Feb 2018)
  *
  */
 public class FastSingletonCopyProperties {

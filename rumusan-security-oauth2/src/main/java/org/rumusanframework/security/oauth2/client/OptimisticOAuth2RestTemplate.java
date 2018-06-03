@@ -1,3 +1,7 @@
+/*
+ * Copyright 2017-2018 the original author or authors.
+ */
+
 package org.rumusanframework.security.oauth2.client;
 
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
@@ -91,14 +95,14 @@ public class OptimisticOAuth2RestTemplate extends OAuth2RestTemplate {
 	}
 
 	private void printAccessTokenInfo(OAuth2AccessToken accessToken) {
-		if (logger.isInfoEnabled() && accessToken != null) {
+		if (logger.isDebugEnabled() && accessToken != null) {
 			StringBuilder buff = new StringBuilder();
 
 			buff.append("accessToken : " + accessToken.getValue());
 			buff.append(", refreshToken : " + accessToken.getRefreshToken().getValue());
 			buff.append(", expired in : " + accessToken.getExpiresIn() + " second[s].");
 
-			logger.info(buff.toString());
+			logger.debug(buff.toString());
 		}
 	}
 }

@@ -104,11 +104,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.rumusan</groupId>
-			<artifactId>rumusan-repository</artifactId>
-			<version>${rumusan.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.rumusan</groupId>
 			<artifactId>rumusan-orm</artifactId>
 			<version>${rumusan.version}</version>
 		</dependency>
