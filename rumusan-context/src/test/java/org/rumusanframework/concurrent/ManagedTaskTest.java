@@ -2,7 +2,7 @@
  * Copyright 29 Nov 2015 the original author or authors.
  */
 
-package org.rumusanframework.util.concurrent.executor;
+package org.rumusanframework.concurrent;
 
 import org.apache.commons.logging.Log;
 import org.apache.logging.log4j.core.Appender;
@@ -13,11 +13,14 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.rumusanframework.concurrent.ManagedTask;
+import org.rumusanframework.concurrent.TaskEvent;
 
 /**
  * 
  * @author Harvan Irsyadi
- * @version 1.0
+ * @version 1.0.0
+ * @since 1.0.0 (29 Nov 2015)
  * 
  */
 @RunWith(MockitoJUnitRunner.class)

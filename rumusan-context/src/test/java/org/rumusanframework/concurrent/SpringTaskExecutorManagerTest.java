@@ -2,7 +2,7 @@
  * Copyright 29 Nov 2015 the original author or authors.
  */
 
-package org.rumusanframework.util.concurrent.executor;
+package org.rumusanframework.concurrent;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -12,6 +12,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  * 
  * @author Harvan Irsyadi
  * @version 1.0.0
+ * @since 1.0.0 (29 Nov 2015)
  *
  */
 public class SpringTaskExecutorManagerTest {
