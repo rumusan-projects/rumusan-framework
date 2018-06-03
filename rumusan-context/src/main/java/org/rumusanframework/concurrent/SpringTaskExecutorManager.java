@@ -1,5 +1,5 @@
 /*
- * Copyright 29 Nov 2015 the original author or authors.
+ * Copyright 29 Nov 2015 - 2018 the original author or authors.
  */
 
 package org.rumusanframework.concurrent;
@@ -9,8 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
@@ -21,7 +19,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  * 
  */
 public class SpringTaskExecutorManager {
-	private final Log logger = LogFactory.getLog(getClass());
 	private final List<ManagedTask> tasks = new CopyOnWriteArrayList<>();
 	private int intervalFinishedChecker = 100;
 	private ThreadPoolTaskExecutor taskExecutor;
@@ -76,19 +73,13 @@ public class SpringTaskExecutorManager {
 		}
 	}
 
-	private void waitAllTaskFinished() {
-		try {
-			while (!tasks.isEmpty()) {
-				Thread.sleep(intervalFinishedChecker);
-			}
-		} catch (Exception e) {
-			if (logger.isErrorEnabled()) {
-				logger.error("Error on waitAllTaskFinished.", e);
-			}
+	private void waitAllTaskFinished() throws InterruptedException {
+		while (!tasks.isEmpty()) {
+			Thread.sleep(intervalFinishedChecker);
 		}
 	}
 
-	public synchronized void executeAndWaitTasks() {
+	public synchronized void executeAndWaitTasks() throws InterruptedException {
 		if (!isStarting) {
 			executeTasks();
 			waitAllTaskFinished();

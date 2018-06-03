@@ -1,5 +1,5 @@
 /*
- * Copyright 29 Nov 2015 the original author or authors.
+ * Copyright 29 Nov 2015 - 2018 the original author or authors.
  */
 
 package org.rumusanframework.concurrent;
@@ -57,6 +57,7 @@ public class SpringTaskExecutorManagerTest {
 	@Test
 	public void testAddTaskGetTask() {
 		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+		taskExecutor.initialize();
 		int interval = 500;
 		SpringTaskExecutorManager manager = new SpringTaskExecutorManager(taskExecutor, interval);
 		ManagedTask task = new ManagedTask(new TaskEvent() {
@@ -67,11 +68,11 @@ public class SpringTaskExecutorManagerTest {
 		manager.addTask(task);
 
 		Assert.assertTrue(manager.getTask().contains(task));
-		Assert.assertTrue(manager.getTask().size() == 1);
+		Assert.assertEquals(1, manager.getTask().size());
 	}
 
 	@Test
-	public void testExecuteAndWaitTasks() {
+	public void testExecuteAndWaitTasks() throws InterruptedException {
 		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
 		int interval = 10;
 		SpringTaskExecutorManager manager = new SpringTaskExecutorManager(taskExecutor, interval);
@@ -83,8 +84,24 @@ public class SpringTaskExecutorManagerTest {
 		manager.addTask(task);
 
 		manager.executeAndWaitTasks();
-		Assert.assertTrue(manager.getTask().size() == 0);
+		Assert.assertEquals(0, manager.getTask().size());
 
 		manager.executeAndWaitTasks();
+	}
+
+	@Test
+	public void testIsShutdown() throws InterruptedException {
+		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+		taskExecutor.initialize();
+		int interval = 10;
+		SpringTaskExecutorManager manager = new SpringTaskExecutorManager(taskExecutor, interval);
+
+		manager.executeAndWaitTasks();
+		Assert.assertEquals(0, manager.getTask().size());
+
+		manager = new SpringTaskExecutorManager(taskExecutor, interval);
+		taskExecutor.shutdown();
+		manager.executeAndWaitTasks();
+		Assert.assertEquals(0, manager.getTask().size());
 	}
 }
