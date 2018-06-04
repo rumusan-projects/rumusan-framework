@@ -21,7 +21,6 @@ import java.util.List;
 public class FastSingletonCopyProperties {
 	private Class<?> beanClass;
 	private String[] excludedFieldNames;
-	private boolean initialized;
 	private Field[] fields;
 
 	public FastSingletonCopyProperties(Class<?> beanClass) {
@@ -36,19 +35,17 @@ public class FastSingletonCopyProperties {
 	}
 
 	private void init() {
-		if (!initialized) {
-			Field[] allField = ClassUtils.getAllField(beanClass);
-			List<Field> fieldList = new ArrayList<>();
+		Field[] allField = ClassUtils.getAllField(beanClass);
+		List<Field> fieldList = new ArrayList<>();
 
-			for (Field field : allField) {
-				if (isValidField(field)) {
-					field.setAccessible(true);
-					fieldList.add(field);
-				}
+		for (Field field : allField) {
+			if (isValidField(field)) {
+				field.setAccessible(true);
+				fieldList.add(field);
 			}
-
-			fields = fieldList.toArray(new Field[fieldList.size()]);
 		}
+
+		fields = fieldList.toArray(new Field[fieldList.size()]);
 	}
 
 	private boolean isValidField(Field field) {
@@ -56,7 +53,8 @@ public class FastSingletonCopyProperties {
 	}
 
 	private boolean isValidFieldModifier(Field field) {
-		return !Modifier.isStatic(field.getModifiers());
+		int modifier = field.getModifiers();
+		return !Modifier.isFinal(modifier);
 	}
 
 	private boolean isValidFieldName(String fieldName) {

@@ -6,7 +6,8 @@ package org.rumusanframework.util;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.Arrays;
+import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,17 +29,29 @@ public class ClassUtils {
 
 	public static Field[] getAllField(Class<?> classToScan) {
 		Set<Field> fieldSet = new HashSet<>();
-		fieldSet.addAll(Arrays.asList(classToScan.getDeclaredFields()));
+		addFields(fieldSet, classToScan.getDeclaredFields());
 
 		Class<?> superClass = classToScan.getSuperclass();
 
 		while (isValidClassToScan(superClass)) {
-			fieldSet.addAll(Arrays.asList(superClass.getDeclaredFields()));
+			addFields(fieldSet, superClass.getDeclaredFields());
 
 			superClass = superClass.getSuperclass();
 		}
 
 		return fieldSet.toArray(new Field[fieldSet.size()]);
+	}
+
+	private static void addFields(Collection<Field> col, Field[] fields) {
+		for (int i = 0; i < fields.length; i++) {
+			if (isAllowField(fields[i])) {
+				col.add(fields[i]);
+			}
+		}
+	}
+
+	private static boolean isAllowField(Field field) {
+		return !field.isSynthetic() && !Modifier.isStatic(field.getModifiers());
 	}
 
 	private static boolean isValidClassToScan(Class<?> classToScan) {
@@ -89,21 +102,20 @@ public class ClassUtils {
 		try {
 			return org.springframework.util.ClassUtils.getDefaultClassLoader().loadClass(name);
 		} catch (ClassNotFoundException e) {
-			if (logger().isErrorEnabled()) {
-				logger().error("Error while load class.", e);
-			}
+			logger().error("Error while load class.", e);
 		}
 
 		return null;
 	}
 
-	public static <T> T newInstanceFieldByClass(Class<?> clazz, Field field) {
+	public static <T> T newInstanceFieldByClass(Class<?> clazz, Field field)
+			throws InstantiationException, IllegalAccessException {
 		if (clazz != null && field != null) {
-			Field[] fields = clazz.getDeclaredFields();
+			Field[] fields = getAllField(clazz);
 
 			for (Field innerField : fields) {
-				if (innerField.getName().equals(field.getName())) {
-					return newInstance(clazz, innerField);
+				if (innerField.equals(field)) {
+					return newInstance(innerField);
 				}
 			}
 		}
@@ -112,16 +124,8 @@ public class ClassUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T> T newInstance(Class<?> clazz, Field field) {
-		try {
-			return (T) field.get(clazz.newInstance());
-		} catch (Exception e) {
-			if (logger().isErrorEnabled()) {
-				logger().error("Error initiating object.", e);
-			}
-		}
-
-		return null;
+	private static <T> T newInstance(Field field) throws InstantiationException, IllegalAccessException {
+		return (T) field.getType().newInstance();
 	}
 
 	static Log logger() {

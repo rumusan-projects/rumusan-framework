@@ -5,7 +5,6 @@
 package org.rumusanframework.context;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +39,6 @@ public class BaseNameMessageSourceLoader {
 	private static List<BaseNameMessageSource> getBaseNameMessageSource(ApplicationContext applicationContext) {
 		Map<String, BaseNameMessageSource> obj = applicationContext.getBeansOfType(BaseNameMessageSource.class);
 
-		return obj != null ? new ArrayList<>(obj.values()) : Collections.emptyList();
+		return new ArrayList<>(obj.values());
 	}
 }
