@@ -27,22 +27,6 @@ public class ConcurrentAccessException extends Exception {
 		this.machineName = machineName;
 	}
 
-	public ConcurrentAccessException(String message, Throwable cause,
-			Class<? extends LockingProcess<?>> concurrentProcess, String groupName, String machineName) {
-		super(message, cause);
-		this.concurrentProcess = concurrentProcess.getName();
-		this.groupName = groupName;
-		this.machineName = machineName;
-	}
-
-	public ConcurrentAccessException(Throwable cause, Class<? extends LockingProcess<?>> concurrentProcess,
-			String groupName, String machineName) {
-		super(cause);
-		this.concurrentProcess = concurrentProcess.getName();
-		this.groupName = groupName;
-		this.machineName = machineName;
-	}
-
 	public String getConcurrentProcess() {
 		return concurrentProcess;
 	}

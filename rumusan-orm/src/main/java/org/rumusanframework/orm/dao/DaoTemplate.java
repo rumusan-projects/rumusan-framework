@@ -47,12 +47,8 @@ public abstract class DaoTemplate<E extends Serializable> implements IGenericDao
 
 	@SuppressWarnings("unchecked")
 	private Class<E> getEntityClass() {
-		if (entityType == null) {
-			ParameterizedType thisType = (ParameterizedType) getClass().getGenericSuperclass();
-			return (Class<E>) thisType.getActualTypeArguments()[0];
-		}
-
-		return entityType;
+		ParameterizedType thisType = (ParameterizedType) getClass().getGenericSuperclass();
+		return (Class<E>) thisType.getActualTypeArguments()[0];
 	}
 
 	public Session getSession() {

@@ -1,4 +1,4 @@
-package org.rumusanframework.concurrent.lock;
+package org.rumusanframework.concurrent.lock.service;
 
 import org.rumusanframework.concurrent.lock.context.ProcessContext;
 import org.rumusanframework.concurrent.lock.entity.GroupLock;

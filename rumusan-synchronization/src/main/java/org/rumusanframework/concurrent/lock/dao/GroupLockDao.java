@@ -102,8 +102,7 @@ public class GroupLockDao extends DaoTemplate<GroupLock> implements IGroupLockDa
 			query.setParameter("key2", groupLock.getProcessName());
 
 			return query.executeUpdate();
-		} else if (groupLock.getProcessName() != null || groupLock.getProcessId() != null
-				|| groupLock.getMachineName() != null) {
+		} else {
 			query = getSession().createQuery(UPDATE_UNIQUE_PROCESS);
 
 			setQueryParameter(query, groupLock);
@@ -113,8 +112,6 @@ public class GroupLockDao extends DaoTemplate<GroupLock> implements IGroupLockDa
 
 			return query.executeUpdate();
 		}
-
-		return 0;
 	}
 
 	private void setQueryParameter(Query<?> query, GroupLock groupLock) {
