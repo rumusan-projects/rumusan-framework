@@ -6,9 +6,9 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.hibernate.cfg.AvailableSettings;
+import org.rumusanframework.orm.dao.BasePackageRumusanOrmDao;
 import org.rumusanframework.orm.jpa.validation.BeanValidationExceptionTranslator;
 import org.rumusanframework.orm.jpa.vendor.ChainedHibernateJpaDialect;
-import org.rumusanframework.repository.dao.BasePackageRumusanRepositoryDao;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -32,7 +32,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
  *
  */
 @Configuration
-@ComponentScan(basePackages = { BasePackageRumusanRepositoryDao.PACKAGE })
+@ComponentScan(basePackages = { BasePackageRumusanOrmDao.PACKAGE })
 @EnableTransactionManagement
 @PropertySource(value = { "file:/opt/synchronize/config/application-test.properties" })
 public abstract class DefaultTestConfig {

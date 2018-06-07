@@ -1,3 +1,7 @@
+/*
+ * Copyright 2018-2018 the original author or authors.
+ */
+
 package org.rumusanframework.validation.constraint;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;

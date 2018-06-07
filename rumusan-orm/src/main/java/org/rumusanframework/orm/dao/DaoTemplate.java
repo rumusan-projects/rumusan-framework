@@ -1,4 +1,8 @@
-package org.rumusanframework.repository.dao;
+/*
+ * Copyright 2018-2018 the original author or authors.
+ */
+
+package org.rumusanframework.orm.dao;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;

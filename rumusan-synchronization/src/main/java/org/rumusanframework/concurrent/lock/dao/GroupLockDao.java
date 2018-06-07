@@ -1,3 +1,7 @@
+/*
+ * Copyright 2018-2018 the original author or authors.
+ */
+
 package org.rumusanframework.concurrent.lock.dao;
 
 import javax.persistence.EntityManager;
@@ -12,8 +16,8 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.rumusanframework.concurrent.lock.context.LockingProcess;
 import org.rumusanframework.concurrent.lock.entity.GroupLock;
 import org.rumusanframework.concurrent.lock.entity.GroupLock_;
-import org.rumusanframework.repository.dao.DaoTemplate;
-import org.rumusanframework.repository.dao.ValidatedEntity;
+import org.rumusanframework.orm.dao.DaoTemplate;
+import org.rumusanframework.orm.dao.ValidatedEntity;
 import org.springframework.stereotype.Repository;
 
 /**

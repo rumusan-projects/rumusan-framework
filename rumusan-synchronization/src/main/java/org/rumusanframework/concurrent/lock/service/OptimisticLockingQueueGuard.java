@@ -1,3 +1,7 @@
+/*
+ * Copyright 2018-2018 the original author or authors.
+ */
+
 package org.rumusanframework.concurrent.lock.service;
 
 import java.net.InetAddress;
@@ -18,7 +22,7 @@ import org.rumusanframework.concurrent.lock.dao.IGroupLockDao;
 import org.rumusanframework.concurrent.lock.entity.GroupLock;
 import org.rumusanframework.concurrent.lock.entity.GroupLockEnum;
 import org.rumusanframework.concurrent.lock.exception.ConcurrentAccessException;
-import org.rumusanframework.repository.dao.DaoTemplate;
+import org.rumusanframework.orm.dao.DaoTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;

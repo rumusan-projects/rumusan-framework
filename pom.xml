@@ -2,9 +2,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.rumusan</groupId>
+	<groupId>org.rumusanframework</groupId>
 	<artifactId>rumusan-framework</artifactId>
-	<version>1.0.2.RELEASE</version>
+	<version>1.1.x-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
 		<module>rumusan-core</module>
@@ -12,7 +12,6 @@
 		<module>rumusan-context</module>
 		<module>rumusan-validator</module>
 		<module>rumusan-synchronization</module>
-		<module>rumusan-repository</module>
 		<module>rumusan-orm</module>
 	</modules>
 	<distributionManagement>
@@ -32,7 +31,6 @@
 		<jdk.version>1.8</jdk.version>
 		<maven-compiler.version>3.7.0</maven-compiler.version>
 		<maven-resources.version>3.0.1</maven-resources.version>
-		<rumusan.version>1.0.2.RELEASE</rumusan.version>
 		<spring.version>4.3.12.RELEASE</spring.version>
 		<spring-security-oauth2.version>2.2.0.RELEASE</spring-security-oauth2.version>
 		<spring-security-web.version>4.2.3.RELEASE</spring-security-web.version>

@@ -1,4 +1,8 @@
-package org.rumusanframework.repository.dao;
+/*
+ * Copyright 2018-2018 the original author or authors.
+ */
+
+package org.rumusanframework.orm.dao;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -47,7 +51,11 @@ class DaoUtils {
 				}
 
 				if (entityType.equals(entity)) {
-					attributeId = ClassUtils.newInstanceFieldByClass(metaClass, entityPersistenceId);
+					try {
+						attributeId = ClassUtils.newInstanceFieldByClass(metaClass, entityPersistenceId);
+					} catch (InstantiationException | IllegalAccessException e) {
+						logger().error("Error instantiate field annotated with Id.class", e);
+					}
 					entityMetaIdMap.put(entityType, attributeId);
 
 					loggerMetaAttributeId(metaClass, attributeId);

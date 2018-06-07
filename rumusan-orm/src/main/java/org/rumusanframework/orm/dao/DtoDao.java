@@ -1,4 +1,8 @@
-package org.rumusanframework.repository.dao;
+/*
+ * Copyright 2018-2018 the original author or authors.
+ */
+
+package org.rumusanframework.orm.dao;
 
 import java.io.Serializable;
 import java.util.List;
@@ -31,9 +35,9 @@ public abstract class DtoDao<E extends Serializable, R> extends DaoTemplate<E> i
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public R findVoById(Serializable id) {
+	public R findDtoById(Serializable id) {
 		CriteriaBuilder cb = getSession().getCriteriaBuilder();
-		CriteriaQuery<R> query = getVoCriteriaQuery();
+		CriteriaQuery<R> query = getDtoCriteriaQuery();
 		Set<Root<?>> roots = query.getRoots();
 		Root<E> queryRoot = null;
 
@@ -58,10 +62,10 @@ public abstract class DtoDao<E extends Serializable, R> extends DaoTemplate<E> i
 		return getSession().createQuery(query).uniqueResult();
 	}
 
-	protected abstract CriteriaQuery<R> getVoCriteriaQuery();
+	protected abstract CriteriaQuery<R> getDtoCriteriaQuery();
 
 	@Override
-	public List<R> findAllVo() {
-		return getSession().createQuery(getVoCriteriaQuery()).getResultList();
+	public List<R> findAllDto() {
+		return getSession().createQuery(getDtoCriteriaQuery()).getResultList();
 	}
 }
