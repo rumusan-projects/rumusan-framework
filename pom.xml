@@ -48,5 +48,6 @@
 		<javax.el-test.version>3.0.0</javax.el-test.version>
 		<jacoco-maven-plugin.version>0.8.1</jacoco-maven-plugin.version>
 		<maven-surefire-plugin.version>2.20</maven-surefire-plugin.version>
+		<postgresql.version>42.2.2</postgresql.version>
 	</properties>
 </project>

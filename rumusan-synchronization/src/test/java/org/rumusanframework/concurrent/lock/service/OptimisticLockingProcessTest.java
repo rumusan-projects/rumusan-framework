@@ -3,17 +3,20 @@ package org.rumusanframework.concurrent.lock.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.rumusanframework.concurrent.FinishedExecutorService;
-import org.rumusanframework.concurrent.FinishedStateThread;
 import org.rumusanframework.concurrent.lock.config.LockGroupConfig;
-import org.rumusanframework.concurrent.lock.context.LockingProcess;
 import org.rumusanframework.concurrent.lock.context.ProcessContext;
 import org.rumusanframework.concurrent.lock.entity.GroupLock;
 import org.rumusanframework.concurrent.lock.exception.ConcurrentAccessException;
@@ -36,7 +39,7 @@ public class OptimisticLockingProcessTest {
 	@Autowired
 	private OptimisticLockingUniqueProcess optimisticLockingUniqueProcess;
 	@Autowired
-	private LockingProcess<GroupLock> optimisticLockingSameProcess;
+	private OptimisticLockingSameProcess optimisticLockingSameProcess;
 
 	private void addSet(Set<Integer> map, int id) {
 		if (map.contains(id)) {
@@ -46,33 +49,35 @@ public class OptimisticLockingProcessTest {
 		}
 	}
 
-	@Test
-	public void testExecuteUniqueProcess() {
-		// double init()
-		optimisticLockingUniqueProcess.init();
+	private void awaitTermination(List<Future<?>> futures) throws InterruptedException, ExecutionException {
+		for (Future<?> future : futures) {
+			future.get();
+		}
+	}
 
-		System.out.println("Real processor core : " + Runtime.getRuntime().availableProcessors());
-		int processorCore = 10;
+	private void process(int threadCount, Set<Integer> successSet, Set<Integer> failedSet,
+			BaseOptimisticLockingProcess process) throws InterruptedException, ExecutionException {
+		int realCore = Runtime.getRuntime().availableProcessors();
+		System.out.println("Real processor core : " + realCore);
+		int processorCore = realCore + 1;
 		System.out.println("Simulate processor core : " + processorCore);
 
-		final Set<Integer> successSet = new ConcurrentSkipListSet<>();
-		final Set<Integer> failedSet = new ConcurrentSkipListSet<>();
-
-		final FinishedStateThread[] threads = new FinishedStateThread[10];
-		FinishedExecutorService myExecutor = new FinishedExecutorService(processorCore, threads, 10);
+		final Runnable[] threads = new Runnable[threadCount];
+		ExecutorService executorService = Executors.newFixedThreadPool(processorCore);
+		List<Future<?>> futures = new ArrayList<>(threads.length);
 		Long startTime = System.currentTimeMillis();
 
 		for (int i = 0; i < threads.length; i++) {
 			final int id = i;
 
-			threads[i] = new FinishedStateThread() {
+			threads[i] = new Runnable() {
 				@Override
-				public void doRun() {
+				public void run() {
 					Long start = System.currentTimeMillis();
 
 					ProcessContext<GroupLock> context = new ProcessContext<>();
 					try {
-						optimisticLockingUniqueProcess.execute(context);
+						process.execute(context);
 						Long end = System.currentTimeMillis();
 						System.out.println(String.format("           %s[id:%s] elapsed in %s ms.",
 								Thread.currentThread().getName(), id, (end - start)));
@@ -91,72 +96,41 @@ public class OptimisticLockingProcessTest {
 					}
 				}
 			};
+
+			futures.add(executorService.submit(threads[i]));
 		}
 
-		myExecutor.execute();
-		myExecutor.shutDown();
-		myExecutor.awaitTermination();
+		awaitTermination(futures);
 
 		Long endTime = System.currentTimeMillis();
 		System.out.println("Elapsed in : " + (endTime - startTime) + " ms.");
+	}
+
+	@Test
+	public void testExecuteUniqueProcess() throws InterruptedException, ExecutionException {
+		// double init()
+		optimisticLockingUniqueProcess.init();
+
+		final Set<Integer> successSet = new ConcurrentSkipListSet<>();
+		final Set<Integer> failedSet = new ConcurrentSkipListSet<>();
+		int threadCount = 10;
+
+		process(threadCount, successSet, failedSet, optimisticLockingUniqueProcess);
 
 		assertTrue(!successSet.isEmpty());
 		assertTrue(!failedSet.isEmpty());
 	}
 
 	@Test
-	public void testExecuteSameProcess() {
-		System.out.println("Real processor core : " + Runtime.getRuntime().availableProcessors());
-		int processorCore = 10;
-		System.out.println("Simulate processor core : " + processorCore);
-
+	public void testExecuteSameProcess() throws InterruptedException, ExecutionException {
 		final Set<Integer> successSet = new ConcurrentSkipListSet<>();
 		final Set<Integer> failedSet = new ConcurrentSkipListSet<>();
+		int threadCount = 10;
 
-		final FinishedStateThread[] threads = new FinishedStateThread[10];
-		FinishedExecutorService myExecutor = new FinishedExecutorService(processorCore, threads, 10);
-		Long startTime = System.currentTimeMillis();
-
-		for (int i = 0; i < threads.length; i++) {
-			final int id = i;
-
-			threads[i] = new FinishedStateThread() {
-				@Override
-				public void doRun() {
-					Long start = System.currentTimeMillis();
-
-					ProcessContext<GroupLock> context = new ProcessContext<>();
-					try {
-						optimisticLockingSameProcess.execute(context);
-						Long end = System.currentTimeMillis();
-						System.out.println(String.format("           %s[id:%s] elapsed in %s ms.",
-								Thread.currentThread().getName(), id, (end - start)));
-						addSet(successSet, id);
-					} catch (ConcurrentAccessException e) {
-						addSet(failedSet, id);
-
-						System.err.println(Thread.currentThread().getName() + ". " + String.format(
-								"[id:%s] Failed due concurrent process. ConcurrentProcess : %s, GroupName : %s, MachineName : %s",
-								id, e.getConcurrentProcess(), e.getGroupName(), e.getMachineName()));
-					} catch (Exception e) {
-						addSet(failedSet, id);
-
-						System.err.println("Failed due an exception : " + e.toString());
-						e.printStackTrace();
-					}
-				}
-			};
-		}
-
-		myExecutor.execute();
-		myExecutor.shutDown();
-		myExecutor.awaitTermination();
-
-		Long endTime = System.currentTimeMillis();
-		System.out.println("Elapsed in : " + (endTime - startTime) + " ms.");
+		process(threadCount, successSet, failedSet, optimisticLockingSameProcess);
 
 		assertTrue(!successSet.isEmpty());
-		assertEquals(successSet.size(), threads.length);
+		assertEquals(successSet.size(), threadCount);
 		assertTrue(failedSet.isEmpty());
 	}
 

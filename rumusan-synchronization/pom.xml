@@ -186,6 +186,11 @@
 			<version>${javax.el-test.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${postgresql.version}</version>
+		</dependency>
 	</dependencies>
 	<distributionManagement>
 		<repository>
