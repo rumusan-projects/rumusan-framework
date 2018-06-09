@@ -6,6 +6,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.hibernate.cfg.AvailableSettings;
+import org.rumusanframework.concurrent.config.Settings;
 import org.rumusanframework.orm.dao.BasePackageRumusanOrmDao;
 import org.rumusanframework.orm.jpa.validation.BeanValidationExceptionTranslator;
 import org.rumusanframework.orm.jpa.vendor.ChainedHibernateJpaDialect;
@@ -34,7 +35,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 @Configuration
 @ComponentScan(basePackages = { BasePackageRumusanOrmDao.PACKAGE })
 @EnableTransactionManagement
-@PropertySource(value = { "file:/opt/synchronize/config/application-test.properties" })
+@PropertySource(value = { "${" + Settings.CONFIG_LOCATION + ":classpath:application-test.properties}" })
 public abstract class DefaultTestConfig {
 	@Value("${" + AvailableSettings.DIALECT + "}")
 	private String dialect;
@@ -44,13 +45,13 @@ public abstract class DefaultTestConfig {
 	private String batchSize;
 	@Value("${" + AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS + "}")
 	private String sessionContextClass;
-	@Value("${test.synchronize.datasource.driver.class.name}")
+	@Value("${" + Settings.DATASOURCE_DRIVER_CLASS + "}")
 	private String datasourceDriverClassName;
-	@Value("${test.synchronize.datasource.url}")
+	@Value("${" + Settings.DATASOURCE_URL + "}")
 	private String datasourceUrl;
-	@Value("${test.synchronize.datasource.username}")
+	@Value("${" + Settings.DATASOURCE_USERNAME + "}")
 	private String datasourceUsername;
-	@Value("${test.synchronize.datasource.password}")
+	@Value("${" + Settings.DATASOURCE_SECRET + "}")
 	private String datasourcePassword;
 
 	@Bean
@@ -59,7 +60,7 @@ public abstract class DefaultTestConfig {
 	}
 
 	@Bean
-	public Log4j2Configurer log4jInitialization(@Value("${test.synchronize.log.config}") String location) {
+	public Log4j2Configurer log4jInitialization(@Value("${" + Settings.LOG_CONFIG_LOCATION + "}") String location) {
 		Log4j2Configurer log4jConfig = new Log4j2Configurer();
 		log4jConfig.setLocation(location);
 
