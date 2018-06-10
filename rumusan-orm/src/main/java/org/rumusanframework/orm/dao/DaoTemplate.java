@@ -23,12 +23,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 
+ * @param <E> Entity type
+ * 
  * @author Harvan Irsyadi
  * @version 1.0.0
  * @since 1.0.0 (11 Mar 2018)
- *
- * @param <E>
- *            Entity type
+ * 
  */
 public abstract class DaoTemplate<E extends Serializable> implements IGenericDao<E> {
 	private final Log logger = LogFactory.getLog(DaoTemplate.class);
