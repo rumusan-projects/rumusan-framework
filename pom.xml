@@ -49,5 +49,7 @@
 		<jacoco-maven-plugin.version>0.8.1</jacoco-maven-plugin.version>
 		<maven-surefire-plugin.version>2.20</maven-surefire-plugin.version>
 		<postgresql.version>42.2.2</postgresql.version>
+		<ojdbc6.version>11.2.0.3</ojdbc6.version>
+		<ucp.version>11.2.0.4</ucp.version>
 	</properties>
 </project>

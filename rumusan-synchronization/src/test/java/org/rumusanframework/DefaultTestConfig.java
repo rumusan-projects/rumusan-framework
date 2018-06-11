@@ -1,9 +1,12 @@
+/*
+ * Copyright 2018-2018 the original author or authors.
+ */
+
 package org.rumusanframework;
 
 import java.util.Properties;
 
 import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
 
 import org.hibernate.cfg.AvailableSettings;
 import org.rumusanframework.concurrent.config.Settings;
@@ -16,7 +19,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaDialect;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -72,14 +74,15 @@ public abstract class DefaultTestConfig {
 		return new LocalValidatorFactoryBean();
 	}
 
-	public DataSource dataSource() {
-		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName(datasourceDriverClassName);
-		dataSource.setUrl(datasourceUrl);
-		dataSource.setUsername(datasourceUsername);
-		dataSource.setPassword(datasourcePassword);
+	private DataSourceContext getDataSourceContext() {
+		DataSourceContext context = new DataSourceContext();
 
-		return dataSource;
+		context.setDriverClassName(datasourceDriverClassName);
+		context.setUrl(datasourceUrl);
+		context.setUsername(datasourceUsername);
+		context.setPassword(datasourcePassword);
+
+		return context;
 	}
 
 	private Properties getHibernateProperties() {
@@ -91,14 +94,14 @@ public abstract class DefaultTestConfig {
 		return properties;
 	}
 
-	public JpaDialect jpaDialect() {
+	private JpaDialect jpaDialect() {
 		ChainedHibernateJpaDialect dialect = new ChainedHibernateJpaDialect();
 		dialect.addTranslator(new BeanValidationExceptionTranslator());
 
 		return dialect;
 	}
 
-	public HibernateJpaVendorAdapter jpaVendorAdapter() {
+	private HibernateJpaVendorAdapter jpaVendorAdapter() {
 		HibernateJpaVendorAdapter jpaVendor = new HibernateJpaVendorAdapter();
 		jpaVendor.setDatabase(Database.HSQL);
 		jpaVendor.setDatabasePlatform(dialect);
@@ -110,7 +113,7 @@ public abstract class DefaultTestConfig {
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
 
-		em.setDataSource(dataSource());
+		em.setDataSource(DataSourceFactory.getDataSource(getDataSourceContext()));
 		em.setJpaDialect(jpaDialect());
 		em.setJpaVendorAdapter(jpaVendorAdapter());
 		em.setPackagesToScan(getPackageToScan());
