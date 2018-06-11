@@ -9,11 +9,12 @@ import java.util.List;
 
 /**
  * 
+ * @param <R>
+ * 
  * @author Harvan Irsyadi
  * @version 1.0.0
  * @since 1.0.0 (18 Mar 2018)
- *
- * @param <R>
+ * 
  */
 public interface IDtoDao<R> {
 	public R findDtoById(Serializable id);

@@ -17,3 +17,6 @@ create unique index IDX_GRP_LCK_PRC_ID on GROUP_LOCK (PROCESS_ID);
 create index IDX_GRP_LCK_LST_UPD_TM on GROUP_LOCK (LAST_UPDATE_TIME);
 create index IDX_GRP_LCK_LST_UPD_PRC_NM on GROUP_LOCK (LAST_UPDATE_PROCESS_NAME);
 create index IDX_GRP_LCK_LST_UPD_PRC_ID on GROUP_LOCK (LAST_UPDATE_PROCESS_ID);
+
+insert into GROUP_LOCK (group_id, group_name) values (1, 'A');
+commit;

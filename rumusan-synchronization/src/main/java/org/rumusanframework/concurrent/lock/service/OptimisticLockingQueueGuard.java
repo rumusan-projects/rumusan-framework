@@ -52,20 +52,14 @@ public class OptimisticLockingQueueGuard implements QueueGuard {
 	}
 
 	@PostConstruct
-	public void init() {
+	public void init() throws UnknownHostException {
 		initHostName();
 		systemDate = new DbSystemDate();
 	}
 
-	private void initHostName() {
+	private void initHostName() throws UnknownHostException {
 		if (hostName == null) {
-			try {
-				hostName = InetAddress.getLocalHost().getHostName();
-			} catch (UnknownHostException e) {
-				if (logger().isErrorEnabled()) {
-					logger().error("Error on getting host name.", e);
-				}
-			}
+			hostName = InetAddress.getLocalHost().getHostName();
 		}
 	}
 

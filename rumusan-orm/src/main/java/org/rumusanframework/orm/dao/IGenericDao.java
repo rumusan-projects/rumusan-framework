@@ -10,12 +10,12 @@ import java.util.List;
 
 /**
  * 
+ * @param <E> Entity type
+ * 
  * @author Harvan Irsyadi
  * @version 1.0.0
  * @since 1.0.0 (11 Mar 2018)
- *
- * @param <E>
- *            Entity type
+ * 
  */
 public interface IGenericDao<E> {
 	public void refresh(E object);

@@ -1,11 +1,15 @@
+/*
+ * Copyright 2018-2018 the original author or authors.
+ */
+
 package org.rumusanframework;
 
 import java.util.Properties;
 
 import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
 
 import org.hibernate.cfg.AvailableSettings;
+import org.rumusanframework.concurrent.config.Settings;
 import org.rumusanframework.orm.dao.BasePackageRumusanOrmDao;
 import org.rumusanframework.orm.jpa.validation.BeanValidationExceptionTranslator;
 import org.rumusanframework.orm.jpa.vendor.ChainedHibernateJpaDialect;
@@ -15,7 +19,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaDialect;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -34,7 +37,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 @Configuration
 @ComponentScan(basePackages = { BasePackageRumusanOrmDao.PACKAGE })
 @EnableTransactionManagement
-@PropertySource(value = { "file:/opt/synchronize/config/application-test.properties" })
+@PropertySource(value = { "${" + Settings.CONFIG_LOCATION + ":classpath:application-test.properties}" })
 public abstract class DefaultTestConfig {
 	@Value("${" + AvailableSettings.DIALECT + "}")
 	private String dialect;
@@ -44,13 +47,13 @@ public abstract class DefaultTestConfig {
 	private String batchSize;
 	@Value("${" + AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS + "}")
 	private String sessionContextClass;
-	@Value("${test.synchronize.datasource.driver.class.name}")
+	@Value("${" + Settings.DATASOURCE_DRIVER_CLASS + "}")
 	private String datasourceDriverClassName;
-	@Value("${test.synchronize.datasource.url}")
+	@Value("${" + Settings.DATASOURCE_URL + "}")
 	private String datasourceUrl;
-	@Value("${test.synchronize.datasource.username}")
+	@Value("${" + Settings.DATASOURCE_USERNAME + "}")
 	private String datasourceUsername;
-	@Value("${test.synchronize.datasource.password}")
+	@Value("${" + Settings.DATASOURCE_SECRET + "}")
 	private String datasourcePassword;
 
 	@Bean
@@ -59,7 +62,7 @@ public abstract class DefaultTestConfig {
 	}
 
 	@Bean
-	public Log4j2Configurer log4jInitialization(@Value("${test.synchronize.log.config}") String location) {
+	public Log4j2Configurer log4jInitialization(@Value("${" + Settings.LOG_CONFIG_LOCATION + "}") String location) {
 		Log4j2Configurer log4jConfig = new Log4j2Configurer();
 		log4jConfig.setLocation(location);
 
@@ -71,14 +74,15 @@ public abstract class DefaultTestConfig {
 		return new LocalValidatorFactoryBean();
 	}
 
-	public DataSource dataSource() {
-		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName(datasourceDriverClassName);
-		dataSource.setUrl(datasourceUrl);
-		dataSource.setUsername(datasourceUsername);
-		dataSource.setPassword(datasourcePassword);
+	private DataSourceContext getDataSourceContext() {
+		DataSourceContext context = new DataSourceContext();
 
-		return dataSource;
+		context.setDriverClassName(datasourceDriverClassName);
+		context.setUrl(datasourceUrl);
+		context.setUsername(datasourceUsername);
+		context.setPassword(datasourcePassword);
+
+		return context;
 	}
 
 	private Properties getHibernateProperties() {
@@ -90,14 +94,14 @@ public abstract class DefaultTestConfig {
 		return properties;
 	}
 
-	public JpaDialect jpaDialect() {
+	private JpaDialect jpaDialect() {
 		ChainedHibernateJpaDialect dialect = new ChainedHibernateJpaDialect();
 		dialect.addTranslator(new BeanValidationExceptionTranslator());
 
 		return dialect;
 	}
 
-	public HibernateJpaVendorAdapter jpaVendorAdapter() {
+	private HibernateJpaVendorAdapter jpaVendorAdapter() {
 		HibernateJpaVendorAdapter jpaVendor = new HibernateJpaVendorAdapter();
 		jpaVendor.setDatabase(Database.HSQL);
 		jpaVendor.setDatabasePlatform(dialect);
@@ -109,7 +113,7 @@ public abstract class DefaultTestConfig {
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
 
-		em.setDataSource(dataSource());
+		em.setDataSource(DataSourceFactory.getDataSource(getDataSourceContext()));
 		em.setJpaDialect(jpaDialect());
 		em.setJpaVendorAdapter(jpaVendorAdapter());
 		em.setPackagesToScan(getPackageToScan());

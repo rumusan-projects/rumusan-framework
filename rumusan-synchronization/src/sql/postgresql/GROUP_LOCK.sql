@@ -1,12 +1,12 @@
 create table GROUP_LOCK (
-	group_id					number(19,0) not null,
-	group_name					varchar2(5 char) not null,
-	process_name				varchar2(255 char),
-	machine_name				varchar2(255 char),
-	process_id					varchar2(36 char),
+	group_id					numeric(19,0) not null,
+	group_name					varchar(5) not null,
+	process_name				varchar(255),
+	machine_name				varchar(255),
+	process_id					varchar(36),
 	last_update_time			timestamp(6),
-	last_update_process_id		varchar2(36 char),
-	last_update_process_name	varchar2(255 char)
+	last_update_process_id		varchar(36),
+	last_update_process_name	varchar(255)
 );
 
 create unique index IDX_GRP_LCK_GRP_ID on GROUP_LOCK (GROUP_ID);

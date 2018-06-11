@@ -52,11 +52,11 @@ public abstract class BaseOptimisticLockingProcess implements LockingProcess<Gro
 				groupLockEnum = synchronize.groupEnum();
 				ignoreSameProcess = synchronize.ignoreSameProcess();
 
-				if (logger().isInfoEnabled()) {
-					logger().info("Initializing...");
-					logger().info("GroupLockEnum : " + groupLockEnum);
-					logger().info("IgnoreSameProcess : " + ignoreSameProcess);
-				}
+				logger().info("Initializing...");
+				logger().info("GroupLockEnum : " + groupLockEnum);
+				logger().info("IgnoreSameProcess : " + ignoreSameProcess);
+
+				init = true;
 			}
 		}
 	}
