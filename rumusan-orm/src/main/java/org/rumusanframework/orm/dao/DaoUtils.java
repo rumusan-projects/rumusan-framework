@@ -51,7 +51,11 @@ class DaoUtils {
 				}
 
 				if (entityType.equals(entity)) {
-					attributeId = ClassUtils.newInstanceFieldByClass(metaClass, entityPersistenceId);
+					try {
+						attributeId = ClassUtils.newInstanceFieldByClass(metaClass, entityPersistenceId);
+					} catch (InstantiationException | IllegalAccessException e) {
+						logger().error("Error instantiate field annotated with Id.class", e);
+					}
 					entityMetaIdMap.put(entityType, attributeId);
 
 					loggerMetaAttributeId(metaClass, attributeId);
