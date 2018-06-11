@@ -203,6 +203,7 @@
 			<groupId>com.oracle</groupId>
 			<artifactId>ucp</artifactId>
 			<version>${ucp.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<distributionManagement>
