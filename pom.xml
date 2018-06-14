@@ -51,5 +51,6 @@
 		<postgresql.version>42.2.2</postgresql.version>
 		<ojdbc6.version>11.2.0.3</ojdbc6.version>
 		<ucp.version>11.2.0.4</ucp.version>
+		<commons-dbcp2.version>2.3.0</commons-dbcp2.version>
 	</properties>
 </project>
