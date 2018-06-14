@@ -112,8 +112,9 @@ public abstract class DefaultTestConfig {
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+		DataSourceFactory dataSourceFactory = new DataSourceFactory();
 
-		em.setDataSource(DataSourceFactory.getDataSource(getDataSourceContext()));
+		em.setDataSource(dataSourceFactory.getDataSource(getDataSourceContext()));
 		em.setJpaDialect(jpaDialect());
 		em.setJpaVendorAdapter(jpaVendorAdapter());
 		em.setPackagesToScan(getPackageToScan());
