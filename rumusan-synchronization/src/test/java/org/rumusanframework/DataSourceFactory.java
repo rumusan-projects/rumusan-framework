@@ -43,11 +43,11 @@ public class DataSourceFactory {
 		}
 	}
 
-	interface DataSourceLoader {
+	interface VendorDataSource {
 		public DataSource getDataSource(DataSourceContext context);
 	}
 
-	static class OraclePoolDataSource implements DataSourceLoader {
+	static class OraclePoolDataSource implements VendorDataSource {
 		@Override
 		public DataSource getDataSource(DataSourceContext context) {
 			PoolDataSourceImpl ods = new PoolDataSourceImpl();
@@ -71,7 +71,7 @@ public class DataSourceFactory {
 		}
 	}
 
-	static class GenericPoolDataSource implements DataSourceLoader {
+	static class GenericPoolDataSource implements VendorDataSource {
 		@Override
 		public DataSource getDataSource(DataSourceContext context) {
 			BasicDataSource bds = new BasicDataSource();
