@@ -17,7 +17,7 @@ import java.util.List;
  * @since 1.0.0 (11 Mar 2018)
  * 
  */
-public interface IGenericDao<E> {
+public interface BaseDao<E> {
 	public void refresh(E object);
 
 	public Serializable save(E object);
