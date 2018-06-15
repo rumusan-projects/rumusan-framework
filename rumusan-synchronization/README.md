@@ -2,7 +2,7 @@
 Set of implementation to support concurrency operation.
 
 ## Externalize configuration parameter
-**1. Default database is MySql**
+**1. Default database is PostgreSQL**
 
 **2. Run maven**
 
