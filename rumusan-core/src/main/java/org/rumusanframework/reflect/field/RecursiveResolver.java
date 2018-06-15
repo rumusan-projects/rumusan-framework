@@ -54,8 +54,8 @@ public class RecursiveResolver extends DefaultFieldResolver {
 	 * @param classUsage
 	 * @param annotationFields
 	 */
-	public RecursiveResolver(Class<?> classUsage, Class<?>[] annotationFields) {
-		super(classUsage, annotationFields, ".");
+	public RecursiveResolver(Class<?> classUsage, Class<?>... annotationFields) {
+		super(classUsage, ".", annotationFields);
 	}
 
 	@Override

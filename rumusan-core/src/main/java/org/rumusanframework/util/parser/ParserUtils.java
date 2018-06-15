@@ -27,13 +27,6 @@ public class ParserUtils {
 	private ParserUtils() {
 	}
 
-	public static <T> T parse(Object obj, IParser<T> parser) {
-		if (parser == null) {
-			throw new IllegalArgumentException("Parser cannot be null.");
-		}
-		return parser.parse(obj);
-	}
-
 	public static <T> T parse(Object obj, Class<T> targetClass) {
 		if (targetClass == null) {
 			throw new IllegalArgumentException("Target class cannot be null.");

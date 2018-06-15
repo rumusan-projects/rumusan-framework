@@ -67,10 +67,10 @@ public class ParseToFloatingChain implements IGenericParser<Number> {
 	private <T> T parseToBigDecimal(Number number, String text, Class<T> targetClass) {
 		if (number != null) {
 			if (number instanceof Double) {
-				return targetClass.cast(new BigDecimal((Double) number));
+				return targetClass.cast(new BigDecimal((Double) number)); // NOSONAR - performance
 			}
 			if (number instanceof Float) {
-				return targetClass.cast(new BigDecimal((Float) number));
+				return targetClass.cast(new BigDecimal((Float) number)); // NOSONAR - performance
 			}
 			// keep precision
 			if (number instanceof BigInteger) {
