@@ -73,7 +73,7 @@ public abstract class DaoTemplate<E extends Serializable> implements IGenericDao
 
 	protected abstract ValidatedEntity getValidatedEntity(E object);
 
-	private void validateContext(E object) {
+	protected void validateContext(E object) {
 		ValidatedEntity entity = getValidatedEntity(object);
 
 		if (entity != null) {
