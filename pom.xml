@@ -13,6 +13,7 @@
 		<module>rumusan-validator</module>
 		<module>rumusan-synchronization</module>
 		<module>rumusan-orm</module>
+		<module>rumusan-orm-test</module>
 	</modules>
 	<distributionManagement>
 		<repository>
