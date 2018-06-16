@@ -1,4 +1,4 @@
-package org.rumusanframework.orm.config;
+package org.rumusanframework;
 
 import java.net.URL;
 
