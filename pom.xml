@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.rumusanframework</groupId>
 	<artifactId>rumusan-framework</artifactId>
-	<version>1.1.2.RELEASE</version>
+	<version>1.1.3.RELEASE</version>
 	<packaging>pom</packaging>
 	<modules>
 		<module>rumusan-core</module>
@@ -13,6 +13,7 @@
 		<module>rumusan-validator</module>
 		<module>rumusan-synchronization</module>
 		<module>rumusan-orm</module>
+		<module>rumusan-orm-test</module>
 	</modules>
 	<distributionManagement>
 		<repository>
@@ -50,6 +51,6 @@
 		<maven-surefire-plugin.version>2.20</maven-surefire-plugin.version>
 		<postgresql.version>42.2.2</postgresql.version>
 		<ojdbc6.version>11.2.0.3</ojdbc6.version>
-		<ucp.version>11.2.0.4</ucp.version>
+		<commons-dbcp2.version>2.3.0</commons-dbcp2.version>
 	</properties>
 </project>

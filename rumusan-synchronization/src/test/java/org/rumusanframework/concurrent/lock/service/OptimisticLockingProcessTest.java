@@ -19,6 +19,8 @@ import org.junit.runner.RunWith;
 import org.rumusanframework.concurrent.lock.config.LockGroupConfig;
 import org.rumusanframework.concurrent.lock.context.ProcessContext;
 import org.rumusanframework.concurrent.lock.entity.GroupLock;
+import org.rumusanframework.concurrent.lock.entityinvalid.GroupLockAConflict1;
+import org.rumusanframework.concurrent.lock.entityinvalid.GroupLockAConflict2;
 import org.rumusanframework.concurrent.lock.exception.ConcurrentAccessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -85,9 +87,10 @@ public class OptimisticLockingProcessTest {
 					} catch (ConcurrentAccessException e) {
 						addSet(failedSet, id);
 
-						System.err.println(Thread.currentThread().getName() + ". " + String.format(
-								"[id:%s] Failed due concurrent process. ConcurrentProcess : %s, GroupName : %s, MachineName : %s",
-								id, e.getConcurrentProcess(), e.getGroupName(), e.getMachineName()));
+						System.err.println(String.format(
+								"           %s[id:%s] Failed due concurrent process. ConcurrentProcess : %s, GroupName : %s, MachineName : %s",
+								Thread.currentThread().getName(), id, e.getConcurrentProcess(), e.getGroupName(),
+								e.getMachineName()));
 					} catch (Exception e) {
 						addSet(failedSet, id);
 
@@ -142,5 +145,19 @@ public class OptimisticLockingProcessTest {
 
 		OptimisticLockingInvalidProcess optimisticLockingInvalidProcess = new OptimisticLockingInvalidProcess();
 		optimisticLockingInvalidProcess.init();
+	}
+
+	@Test
+	public void testInvalidKeyValueGroupProcess() {
+		expectedException.expect(RuntimeException.class);
+
+		KeyValueGroup keyVal1 = GroupLockAConflict1.class.getAnnotation(KeyValueGroup.class);
+		OptimisticLockingConflict1Process process1 = new OptimisticLockingConflict1Process();
+		process1.init();
+
+		KeyValueGroup keyVal = GroupLockAConflict2.class.getAnnotation(KeyValueGroup.class);
+		String expectMessage = String.format("Found conflict KeyValueGroup with key:'%s', value: '%s' <> '%s'",
+				keyVal.key(), keyVal.value(), keyVal1.value());
+		expectedException.expectMessage(expectMessage);
 	}
 }

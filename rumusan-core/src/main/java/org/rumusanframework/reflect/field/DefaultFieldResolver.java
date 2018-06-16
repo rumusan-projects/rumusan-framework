@@ -22,7 +22,7 @@ abstract class DefaultFieldResolver implements FieldResolver {
 	private final String concater;
 
 	@SuppressWarnings("unchecked")
-	DefaultFieldResolver(Class<?> classUsage, Class<?>[] annotationFields, String concater) {
+	DefaultFieldResolver(Class<?> classUsage, String concater, Class<?>... annotationFields) {
 		this.classUsage = classUsage;
 		this.annotationFields = (Class<? extends Annotation>[]) annotationFields;
 		this.concater = concater;
@@ -53,15 +53,12 @@ abstract class DefaultFieldResolver implements FieldResolver {
 
 		if (fieldName == null) {
 			Class<?> parent = annotationField.getEnclosingClass();
+			Field[] fields = parent.getDeclaredFields();
 
-			if (parent != null) {
-				Field[] fields = parent.getDeclaredFields();
-
-				for (Field field : fields) {
-					if (field.isAnnotationPresent(annotationField)) {
-						cacheField.put(annotationField, field.getName());
-						return field.getName();
-					}
+			for (Field field : fields) {
+				if (field.isAnnotationPresent(annotationField)) {
+					cacheField.put(annotationField, field.getName());
+					return field.getName();
 				}
 			}
 		}

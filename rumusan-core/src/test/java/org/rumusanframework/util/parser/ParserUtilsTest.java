@@ -17,7 +17,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.rumusanframework.util.parser.impl.DateParser;
 import org.rumusanframework.util.parser.impl.ParseToFloatingChain;
 import org.rumusanframework.util.parser.impl.ParseToNonFloatingChain;
 
@@ -99,14 +98,6 @@ public class ParserUtilsTest {
 	@Test
 	public void testPrivateConstructor() throws Exception {
 		Constructor<ParserUtils> constructor = ParserUtils.class.getDeclaredConstructor();
-		Assert.assertTrue(Modifier.isPrivate(constructor.getModifiers()));
-		constructor.setAccessible(true);
-		constructor.newInstance();
-	}
-
-	@Test
-	public void testPrivateConstructorDateParser() throws Exception {
-		Constructor<DateParser> constructor = DateParser.class.getDeclaredConstructor();
 		Assert.assertTrue(Modifier.isPrivate(constructor.getModifiers()));
 		constructor.setAccessible(true);
 		constructor.newInstance();
@@ -1377,42 +1368,6 @@ public class ParserUtilsTest {
 
 		java.sql.Date src = new java.sql.Date(System.currentTimeMillis());
 		ParserUtils.parse(src, clazz);
-	}
-
-	@Test
-	public void testParseToDateNullDateParser() {
-		System.out.println("End " + getMethodName(new Object() {
-		}));
-		expectedException.expect(IllegalArgumentException.class);
-		expectedException.expectMessage("Parser cannot be null.");
-
-		String src = "26-09-2017";
-		IParser<Date> parser = null;
-		ParserUtils.parse(src, parser);
-	}
-
-	@Test
-	public void testParseToDateExceptionParser() {
-		String src = "dsfasdfsdfsdfsfd";
-		System.out.println("End " + getMethodName(new Object() {
-		}));
-		expectedException.expect(ParseException.class);
-		expectedException.expectMessage("Unparseable date: \"" + src + "\"");
-
-		IParser<Date> parser = new DateParser("dd-MM-yyyy");
-		ParserUtils.parse(src, parser);
-	}
-
-	@Test
-	public void testParseToDateFromDateParser() {
-		String src = "26-09-2017";
-		IParser<Date> parser = new DateParser("dd-MM-yyyy");
-		Date parsed = ParserUtils.parse(src, parser);
-
-		Assert.assertEquals(new Date(parsed.getTime()), parsed);
-
-		System.out.println("End " + getMethodName(new Object() {
-		}) + " : " + parsed);
 	}
 
 	@Test

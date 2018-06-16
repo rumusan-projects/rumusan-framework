@@ -7,12 +7,17 @@ package org.rumusanframework.util;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 /**
  * 
@@ -25,6 +30,10 @@ public class ClassUtils {
 	private static final Log LOGGER = LogFactory.getLog(ClassUtils.class);
 
 	private ClassUtils() {
+	}
+
+	static Log logger() {
+		return LOGGER;
 	}
 
 	public static Field[] getAllField(Class<?> classToScan) {
@@ -108,13 +117,13 @@ public class ClassUtils {
 		return null;
 	}
 
-	public static <T> T newInstanceFieldByClass(Class<?> clazz, Field field)
+	public static <T> T newInstanceSameFieldNameByClass(Class<?> clazz, Field field)
 			throws InstantiationException, IllegalAccessException {
 		if (clazz != null && field != null) {
 			Field[] fields = getAllField(clazz);
 
 			for (Field innerField : fields) {
-				if (innerField.equals(field)) {
+				if (innerField.getName().equals(field.getName())) {
 					return newInstance(innerField);
 				}
 			}
@@ -128,7 +137,16 @@ public class ClassUtils {
 		return (T) field.getType().newInstance();
 	}
 
-	static Log logger() {
-		return LOGGER;
+	public static List<Class<?>> getClassByAnnotation(Class<? extends Annotation> annotationClass, String basePackage) {
+		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+		scanner.addIncludeFilter(new AnnotationTypeFilter(annotationClass));
+
+		List<Class<?>> result = new ArrayList<>();
+		for (BeanDefinition bd : scanner.findCandidateComponents(basePackage)) {
+			Class<?> clazz = ClassUtils.loadClass(bd.getBeanClassName());
+			result.add(clazz);
+		}
+
+		return result;
 	}
 }

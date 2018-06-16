@@ -6,7 +6,6 @@ package org.rumusanframework.concurrent.lock.service;
 
 import org.rumusanframework.concurrent.lock.context.LockingProcess;
 import org.rumusanframework.concurrent.lock.entity.GroupLock;
-import org.rumusanframework.concurrent.lock.entity.GroupLockEnum;
 import org.rumusanframework.concurrent.lock.exception.ConcurrentAccessException;
 
 /**
@@ -17,7 +16,7 @@ import org.rumusanframework.concurrent.lock.exception.ConcurrentAccessException;
  *
  */
 public interface QueueGuard {
-	public GroupLock checkIn(Class<? extends LockingProcess<GroupLock>> classCaller, GroupLockEnum groupLockEnum,
+	public GroupLock checkIn(Class<? extends LockingProcess<GroupLock>> classCaller, KeyValueGroup keyValueGroup,
 			boolean ignoreSameProcess) throws ConcurrentAccessException;
 
 	public void checkOut(GroupLock groupLock);

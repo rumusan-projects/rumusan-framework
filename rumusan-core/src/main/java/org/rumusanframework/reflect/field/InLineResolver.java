@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2017 the original author or authors.
+ * Copyright 2017-2018 the original author or authors.
  */
 
 package org.rumusanframework.reflect.field;
@@ -54,8 +54,8 @@ public class InLineResolver extends DefaultFieldResolver {
 	 * @param classUsage
 	 * @param annotationFields
 	 */
-	public InLineResolver(Class<?> classUsage, Class<?>[] annotationFields) {
-		super(classUsage, annotationFields, ",");
+	public InLineResolver(Class<?> classUsage, Class<?>... annotationFields) {
+		super(classUsage, ",", annotationFields);
 	}
 
 	@Override

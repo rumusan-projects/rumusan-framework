@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @since 1.0.0 (11 Mar 2018)
  * 
  */
-public abstract class DaoTemplate<E extends Serializable> implements IGenericDao<E> {
+public abstract class DaoTemplate<E extends Serializable> implements BaseDao<E> {
 	private final Log logger = LogFactory.getLog(DaoTemplate.class);
 	protected Class<E> entityType = getEntityClass();
 	protected DaoUtils daoUtils = new DaoUtils();
@@ -73,7 +73,7 @@ public abstract class DaoTemplate<E extends Serializable> implements IGenericDao
 
 	protected abstract ValidatedEntity getValidatedEntity(E object);
 
-	private void validateContext(E object) {
+	protected void validateContext(E object) {
 		ValidatedEntity entity = getValidatedEntity(object);
 
 		if (entity != null) {
