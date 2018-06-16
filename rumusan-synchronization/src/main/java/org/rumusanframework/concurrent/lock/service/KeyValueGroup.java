@@ -13,13 +13,13 @@ import java.lang.annotation.Target;
  * 
  * @author Harvan Irsyadi
  * @version 1.0.0
- * @since 1.0.0 (11 Mar 2018)
+ * @since 1.0.0 (16 Jun 2018)
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Lock {
-	Class<?> keyValueGroupClass();
+public @interface KeyValueGroup {
+	long key();
 
-	boolean ignoreSameProcess() default false;
+	String value();
 }

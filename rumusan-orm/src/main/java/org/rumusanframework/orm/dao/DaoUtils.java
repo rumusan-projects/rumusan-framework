@@ -30,6 +30,13 @@ class DaoUtils {
 	private final Log logger = LogFactory.getLog(getClass());
 	private Map<Class<?>, SingularAttribute<Class<?>, Class<?>>> entityMetaIdMap = new ConcurrentHashMap<>();
 
+	/**
+	 * Replace #1 with {@link ClassUtils#getClassByAnnotation(Class, String)}
+	 * 
+	 * @param basePackage
+	 * @param entityType
+	 * @return
+	 */
 	SingularAttribute<Class<?>, Class<?>> getMetaAttributeId(String basePackage, Class<?> entityType) {
 		SingularAttribute<Class<?>, Class<?>> attributeId = entityMetaIdMap.get(entityType);
 
@@ -38,6 +45,9 @@ class DaoUtils {
 					false);
 			scanner.addIncludeFilter(new AnnotationTypeFilter(StaticMetamodel.class));
 
+			/**
+			 * TODO : harvan. #1
+			 */
 			for (BeanDefinition bd : scanner.findCandidateComponents(basePackage)) {
 				Class<?> metaClass = ClassUtils.loadClass(bd.getBeanClassName());
 				Field entityPersistenceId = null;
