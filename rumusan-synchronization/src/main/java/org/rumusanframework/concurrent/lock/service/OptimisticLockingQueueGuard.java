@@ -57,9 +57,7 @@ public class OptimisticLockingQueueGuard implements QueueGuard {
 	}
 
 	private void initHostName() throws UnknownHostException {
-		if (hostName == null) {
-			hostName = InetAddress.getLocalHost().getHostName();
-		}
+		hostName = InetAddress.getLocalHost().getHostName();
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
