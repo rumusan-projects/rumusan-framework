@@ -205,12 +205,6 @@
 			<version>${ojdbc6.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>ucp</artifactId>
-			<version>${ucp.version}</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 	<distributionManagement>
 		<repository>
