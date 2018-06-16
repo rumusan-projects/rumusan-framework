@@ -117,13 +117,13 @@ public class ClassUtils {
 		return null;
 	}
 
-	public static <T> T newInstanceFieldByClass(Class<?> clazz, Field field)
+	public static <T> T newInstanceSameFieldNameByClass(Class<?> clazz, Field field)
 			throws InstantiationException, IllegalAccessException {
 		if (clazz != null && field != null) {
 			Field[] fields = getAllField(clazz);
 
 			for (Field innerField : fields) {
-				if (innerField.equals(field)) {
+				if (innerField.getName().equals(field.getName())) {
 					return newInstance(innerField);
 				}
 			}
@@ -144,11 +144,9 @@ public class ClassUtils {
 		List<Class<?>> result = new ArrayList<>();
 		for (BeanDefinition bd : scanner.findCandidateComponents(basePackage)) {
 			Class<?> clazz = ClassUtils.loadClass(bd.getBeanClassName());
-
-			if (clazz != null) {
-				result.add(clazz);
-			}
+			result.add(clazz);
 		}
+
 		return result;
 	}
 }

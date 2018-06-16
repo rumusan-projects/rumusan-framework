@@ -62,7 +62,7 @@ class DaoUtils {
 
 				if (entityType.equals(entity)) {
 					try {
-						attributeId = ClassUtils.newInstanceFieldByClass(metaClass, entityPersistenceId);
+						attributeId = ClassUtils.newInstanceSameFieldNameByClass(metaClass, entityPersistenceId);
 					} catch (InstantiationException | IllegalAccessException e) {
 						logger().error("Error instantiate field annotated with Id.class", e);
 					}

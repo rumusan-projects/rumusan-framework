@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.rumusanframework.util.TestParent.FieldParent1;
 import org.rumusanframework.util.TestParent.FieldParent2;
 import org.rumusanframework.util.TestParent.SelectedField;
+import org.rumusanframework.util.TestParent2.DifferentField;
 
 /**
  * 
@@ -78,19 +79,28 @@ public class ClassUtilsTest {
 	}
 
 	@Test
-	public void testNewInstanceFieldByClass() throws InstantiationException, IllegalAccessException {
+	public void testNewInstanceSameFieldNameByClass() throws InstantiationException, IllegalAccessException {
 		TestParent obj = new TestParent();
 		Field field = ClassUtils.getFieldByAnnotation(obj.getClass(), FieldParent1.class);
 
 		assertNull(obj.getFieldParent1());
-		String value = ClassUtils.newInstanceFieldByClass(obj.getClass(), field);
+		String value = ClassUtils.newInstanceSameFieldNameByClass(obj.getClass(), field);
 		assertNotNull(value);
 
-		value = ClassUtils.newInstanceFieldByClass(null, field);
+		value = ClassUtils.newInstanceSameFieldNameByClass(null, field);
 		assertNull(value);
 
-		value = ClassUtils.newInstanceFieldByClass(obj.getClass(), null);
+		value = ClassUtils.newInstanceSameFieldNameByClass(obj.getClass(), null);
 		assertNull(value);
+
+		// test for same field name different class
+		TestParent2 obj2 = new TestParent2();
+		String value2 = ClassUtils.newInstanceSameFieldNameByClass(obj2.getClass(), field);
+		assertNotNull(value2);
+
+		Field differentField = ClassUtils.getFieldByAnnotation(obj2.getClass(), DifferentField.class);
+		value2 = ClassUtils.newInstanceSameFieldNameByClass(obj.getClass(), differentField);
+		assertNull(value2);
 	}
 
 	/**
