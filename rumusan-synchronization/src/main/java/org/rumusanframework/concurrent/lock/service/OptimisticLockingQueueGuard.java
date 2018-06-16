@@ -20,7 +20,6 @@ import org.hibernate.type.VersionType;
 import org.rumusanframework.concurrent.lock.context.LockingProcess;
 import org.rumusanframework.concurrent.lock.dao.IGroupLockDao;
 import org.rumusanframework.concurrent.lock.entity.GroupLock;
-import org.rumusanframework.concurrent.lock.entity.GroupLockEnum;
 import org.rumusanframework.concurrent.lock.exception.ConcurrentAccessException;
 import org.rumusanframework.orm.dao.DaoTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,9 +64,9 @@ public class OptimisticLockingQueueGuard implements QueueGuard {
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override
-	public GroupLock checkIn(Class<? extends LockingProcess<GroupLock>> classCaller, GroupLockEnum groupLockEnum,
+	public GroupLock checkIn(Class<? extends LockingProcess<GroupLock>> classCaller, KeyValueGroup keyValueGroup,
 			boolean ignoreSameProcess) throws ConcurrentAccessException {
-		GroupLock newGroupLock = getPreparedObject(classCaller, groupLockEnum);
+		GroupLock newGroupLock = getPreparedObject(classCaller, keyValueGroup);
 		validateOptimisticUpdate(classCaller, newGroupLock, ignoreSameProcess);
 
 		if (logger().isDebugEnabled()) {
@@ -100,15 +99,18 @@ public class OptimisticLockingQueueGuard implements QueueGuard {
 	}
 
 	private GroupLock getPreparedObject(Class<? extends LockingProcess<GroupLock>> classCaller,
-			GroupLockEnum groupLockEnum) {
+			KeyValueGroup keyValueGroup) {
 		GroupLock groupLock = new GroupLock();
 
-		groupLock.setGroupId(groupLockEnum.getId());
-		groupLock.setGroupName(groupLockEnum.name());
+		groupLock.setGroupId(keyValueGroup.key());
+		groupLock.setGroupName(keyValueGroup.value());
 		groupLock.setProcessName(classCaller.getName());
 		groupLock.setProcessId(UUID.randomUUID().toString());
 		groupLock.setMachineName(hostName);
-		groupLock.setLastUpdateTime(systemDate.getSystemDate(((DaoTemplate<?>) groupLockDao).getSession()));
+
+		Session session = ((DaoTemplate<?>) groupLockDao).getSession();
+		groupLock.setLastUpdateTime(systemDate.getSystemDate(session));
+
 		groupLock.setLastUpdateProcessName(classCaller.getName());
 		groupLock.setLastUpdateProcessId(groupLock.getProcessId());
 

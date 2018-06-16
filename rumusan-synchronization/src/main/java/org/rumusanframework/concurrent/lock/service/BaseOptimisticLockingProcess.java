@@ -4,6 +4,10 @@
 
 package org.rumusanframework.concurrent.lock.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.logging.Log;
@@ -11,8 +15,8 @@ import org.apache.commons.logging.LogFactory;
 import org.rumusanframework.concurrent.lock.context.LockingProcess;
 import org.rumusanframework.concurrent.lock.context.ProcessContext;
 import org.rumusanframework.concurrent.lock.entity.GroupLock;
-import org.rumusanframework.concurrent.lock.entity.GroupLockEnum;
 import org.rumusanframework.concurrent.lock.exception.ConcurrentAccessException;
+import org.rumusanframework.util.ClassUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -25,9 +29,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class BaseOptimisticLockingProcess implements LockingProcess<GroupLock> {
 	private final Log logger = LogFactory.getLog(getClass());
 	private QueueGuard optimisticLockingQueueGuard;
-	private GroupLockEnum groupLockEnum;
+	private KeyValueGroup keyValueGroup;
 	private boolean ignoreSameProcess = false;
 	private boolean init = false;
+	private static final Map<String, Boolean> keyValGroupMapValidated = new HashMap<>();
 
 	@Autowired
 	public void setOptimisticLockingQueueGuard(QueueGuard optimisticLockingQueueGuard) {
@@ -38,7 +43,29 @@ public abstract class BaseOptimisticLockingProcess implements LockingProcess<Gro
 		return logger;
 	}
 
+	protected boolean isIgnoreSameProcess() {
+		return ignoreSameProcess;
+	}
+
+	protected KeyValueGroup getKeyValueGroup() {
+		return keyValueGroup;
+	}
+
+	private boolean isValid() {
+		return getClass().isAnnotationPresent(Lock.class);
+	}
+
 	protected abstract void executeInternal(ProcessContext<GroupLock> context);
+
+	@Override
+	public void execute(ProcessContext<GroupLock> context) throws ConcurrentAccessException {
+		GroupLock object = optimisticLockingQueueGuard.checkIn(getClass(), getKeyValueGroup(), isIgnoreSameProcess());
+		context.setObject(object);
+
+		executeInternal(context);
+
+		optimisticLockingQueueGuard.checkOut(object);
+	}
 
 	@PostConstruct
 	public void init() {
@@ -47,13 +74,15 @@ public abstract class BaseOptimisticLockingProcess implements LockingProcess<Gro
 				if (!isValid()) {
 					throw new RuntimeException("Not a valid synchronize process : " + this.getClass().getName());// NOSONAR
 				}
+				validateKeyValueGroup();
 
 				Lock synchronize = getClass().getAnnotation(Lock.class);
-				groupLockEnum = synchronize.groupEnum();
+				Class<?> keyValueGroupClass = synchronize.keyValueGroupClass();
+				keyValueGroup = keyValueGroupClass.getAnnotation(KeyValueGroup.class);
 				ignoreSameProcess = synchronize.ignoreSameProcess();
 
 				logger().info("Initializing...");
-				logger().info("GroupLockEnum : " + groupLockEnum);
+				logger().info("KeyValueGroup : " + keyValueGroup);
 				logger().info("IgnoreSameProcess : " + ignoreSameProcess);
 
 				init = true;
@@ -61,25 +90,39 @@ public abstract class BaseOptimisticLockingProcess implements LockingProcess<Gro
 		}
 	}
 
-	protected boolean isIgnoreSameProcess() {
-		return ignoreSameProcess;
+	protected abstract String getKayValueGroupPackage();
+
+	private void validateKeyValueGroup() {
+		synchronized (BaseOptimisticLockingProcess.class) {
+			String packageName = getKayValueGroupPackage();
+			if (!keyValGroupMapValidated.containsKey(packageName)) {
+				List<Class<?>> classList = ClassUtils.getClassByAnnotation(KeyValueGroup.class, packageName);
+				validateKeyValueClass(classList);
+				keyValGroupMapValidated.put(packageName, true);
+			}
+		}
 	}
 
-	protected GroupLockEnum getGroupLockEnum() {
-		return groupLockEnum;
-	}
+	private void validateKeyValueClass(List<Class<?>> classList) {
+		Map<Long, String> keyValue = new HashMap<>();
 
-	private boolean isValid() {
-		return getClass().isAnnotationPresent(Lock.class);
-	}
+		for (Class<?> clazz : classList) {
+			KeyValueGroup keyVal = clazz.getAnnotation(KeyValueGroup.class);
 
-	@Override
-	public void execute(ProcessContext<GroupLock> context) throws ConcurrentAccessException {
-		GroupLock object = optimisticLockingQueueGuard.checkIn(getClass(), getGroupLockEnum(), isIgnoreSameProcess());
-		context.setObject(object);
+			String existingValue = keyValue.get(keyVal.key());
+			if (logger().isDebugEnabled()) {
+				logger().debug("Validate KeyValueGroup.");
+				logger().debug(String.format("ExistingValue of key(%s): %s", keyVal.key(), existingValue));
+				logger().debug("key: " + keyVal.key() + ", value: " + keyVal.value());
+			}
 
-		executeInternal(context);
-
-		optimisticLockingQueueGuard.checkOut(object);
+			if (existingValue != null) {
+				throw new RuntimeException( // NOSONAR
+						String.format("Found conflict KeyValueGroup with key:'%s', value: '%s' <> '%s'", keyVal.key(),
+								keyVal.value(), existingValue));
+			} else {
+				keyValue.put(keyVal.key(), keyVal.value());
+			}
+		}
 	}
 }
