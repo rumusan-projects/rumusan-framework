@@ -6,11 +6,14 @@ package org.rumusanframework;
 
 import org.rumusanframework.concurrent.config.Settings;
 import org.rumusanframework.orm.config.DataSourceConfig;
+import org.rumusanframework.orm.config.Log4j2Configurer;
 import org.rumusanframework.orm.dao.BasePackageRumusanOrmDao;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
@@ -59,5 +62,18 @@ public abstract class DefaultTestConfig extends DataSourceConfig {
 	@Override
 	protected String getDatasourcePassword() {
 		return datasourcePassword;
+	}
+
+	@Bean
+	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+		return new PropertySourcesPlaceholderConfigurer();
+	}
+
+	@Bean
+	public Log4j2Configurer log4jInitialization() {
+		Log4j2Configurer log4jConfig = new Log4j2Configurer();
+		log4jConfig.setLocation(getLogConfigLocation());
+
+		return log4jConfig;
 	}
 }

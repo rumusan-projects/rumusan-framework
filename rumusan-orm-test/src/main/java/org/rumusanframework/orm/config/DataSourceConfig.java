@@ -13,7 +13,6 @@ import org.rumusanframework.orm.jpa.validation.BeanValidationExceptionTranslator
 import org.rumusanframework.orm.jpa.vendor.ChainedHibernateJpaDialect;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.orm.jpa.JpaDialect;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -47,19 +46,6 @@ public abstract class DataSourceConfig {
 	protected abstract String getDatasourceUsername();
 
 	protected abstract String getDatasourcePassword();
-
-	@Bean
-	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-		return new PropertySourcesPlaceholderConfigurer();
-	}
-
-	@Bean
-	public Log4j2Configurer log4jInitialization() {
-		Log4j2Configurer log4jConfig = new Log4j2Configurer();
-		log4jConfig.setLocation(getLogConfigLocation());
-
-		return log4jConfig;
-	}
 
 	@Bean
 	public LocalValidatorFactoryBean validator() {
