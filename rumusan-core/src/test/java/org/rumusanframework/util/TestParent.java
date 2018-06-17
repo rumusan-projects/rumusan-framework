@@ -12,6 +12,7 @@ public class TestParent {
 	@SelectedField
 	private Long fieldParent2;
 	public static final String CONSTANT = "";
+	public static String CONSTANT2 = "";
 	private final Long finalField = 10L;
 
 	public String getFieldParent1() {
