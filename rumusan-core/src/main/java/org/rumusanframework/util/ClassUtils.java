@@ -191,7 +191,7 @@ public class ClassUtils {
 
 	@SuppressWarnings("unchecked")
 	private static <T> T getInstance(Field field) throws InstantiationException, IllegalAccessException {
-		return (T) field.get(field.getType().newInstance());
+		return (T) field.get(field.getDeclaringClass().newInstance());
 	}
 
 	public static List<Class<?>> getClassByAnnotation(Class<? extends Annotation> annotationClass, String basePackage) {
