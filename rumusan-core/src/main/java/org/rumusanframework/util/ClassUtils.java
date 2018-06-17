@@ -28,8 +28,13 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
  */
 public class ClassUtils {
 	private static final Log LOGGER = LogFactory.getLog(ClassUtils.class);
+	private static final List<Acceptable<Field>> acceptableFields = new ArrayList<>();
 
 	private ClassUtils() {
+	}
+
+	static {
+		initAcceptableFields();
 	}
 
 	static Log logger() {
@@ -60,7 +65,41 @@ public class ClassUtils {
 	}
 
 	private static boolean isAllowField(Field field) {
-		return !field.isSynthetic() && !Modifier.isStatic(field.getModifiers());
+		boolean allow = true;
+
+		for (Acceptable<Field> acceptable : acceptableFields) {
+			if (!allow) {
+				return allow;
+			}
+
+			allow = acceptable.accepted(field);
+		}
+
+		return allow;
+	}
+
+	private static void initAcceptableFields() {
+		acceptableFields.add(new AcceptNonSynthetic());
+		acceptableFields.add(new AcceptNonStaticFinal());
+	}
+
+	interface Acceptable<T> {
+		public boolean accepted(T object);
+	}
+
+	static class AcceptNonSynthetic implements Acceptable<Field> {
+		@Override
+		public boolean accepted(Field object) {
+			return !object.isSynthetic();
+		}
+	}
+
+	static class AcceptNonStaticFinal implements Acceptable<Field> {
+		@Override
+		public boolean accepted(Field object) {
+			int modifier = object.getModifiers();
+			return !(Modifier.isStatic(modifier) && Modifier.isFinal(modifier));
+		}
 	}
 
 	private static boolean isValidClassToScan(Class<?> classToScan) {

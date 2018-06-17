@@ -28,11 +28,29 @@ import org.rumusanframework.util.TestParent2.DifferentField;
 public class ClassUtilsTest {
 	@Test
 	public void testGetAllField() {
+		/**
+		 * <pre>
+		 * 1. private String fieldParent1;
+		 * 2. private Long fieldParent2;
+		 * 3. public static String CONSTANT2 = "";
+		 * 4. private final Long finalField = 10L;
+		 * </pre>
+		 */
 		Field[] parentFields = ClassUtils.getAllField(TestParent.class);
-		assertEquals(3, parentFields.length);
+		assertEquals(4, parentFields.length);
 
+		/**
+		 * <pre>
+		 * 1. private String fieldParent1;
+		 * 2. private Long fieldParent2;
+		 * 3. public static String CONSTANT2 = "";
+		 * 4. private final Long finalField = 10L;
+		 * 5. private Long fieldChild1;
+		 * 6. private String fieldChild2;
+		 * </pre>
+		 */
 		Field[] chiledFields = ClassUtils.getAllField(TestChild.class);
-		assertEquals(5, chiledFields.length);
+		assertEquals(6, chiledFields.length);
 	}
 
 	@Test
