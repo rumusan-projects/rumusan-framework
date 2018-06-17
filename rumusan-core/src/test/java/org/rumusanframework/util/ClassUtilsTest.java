@@ -97,28 +97,42 @@ public class ClassUtilsTest {
 	}
 
 	@Test
-	public void testNewInstanceSameFieldNameByClass() throws InstantiationException, IllegalAccessException {
+	public void testGetStaticInstanceSameFieldNameByClass_nonStatic()
+			throws InstantiationException, IllegalAccessException {
 		TestParent obj = new TestParent();
 		Field field = ClassUtils.getFieldByAnnotation(obj.getClass(), FieldParent1.class);
 
 		assertNull(obj.getFieldParent1());
-		String value = ClassUtils.newInstanceSameFieldNameByClass(obj.getClass(), field);
-		assertNotNull(value);
 
-		value = ClassUtils.newInstanceSameFieldNameByClass(null, field);
+		String value = ClassUtils.getStaticInstanceSameFieldNameByClass(obj.getClass(), field);
 		assertNull(value);
 
-		value = ClassUtils.newInstanceSameFieldNameByClass(obj.getClass(), null);
+		obj.setFieldParent1("value1");
+		value = ClassUtils.getStaticInstanceSameFieldNameByClass(obj.getClass(), field);
 		assertNull(value);
 
-		// test for same field name different class
-		TestParent2 obj2 = new TestParent2();
-		String value2 = ClassUtils.newInstanceSameFieldNameByClass(obj2.getClass(), field);
-		assertNotNull(value2);
+		value = ClassUtils.getStaticInstanceSameFieldNameByClass(null, field);
+		assertNull(value);
 
-		Field differentField = ClassUtils.getFieldByAnnotation(obj2.getClass(), DifferentField.class);
-		value2 = ClassUtils.newInstanceSameFieldNameByClass(obj.getClass(), differentField);
+		value = ClassUtils.getStaticInstanceSameFieldNameByClass(obj.getClass(), null);
+		assertNull(value);
+
+		// different field
+		Field differentField = ClassUtils.getFieldByAnnotation(TestParent2.class, DifferentField.class);
+		String value2 = ClassUtils.getStaticInstanceSameFieldNameByClass(obj.getClass(), differentField);
 		assertNull(value2);
+	}
+
+	@Test
+	public void testGetStaticInstanceSameFieldNameByClass_static()
+			throws InstantiationException, IllegalAccessException {
+		Field field = ClassUtils.getFieldByAnnotation(TestParent.class, FieldParent1.class);
+		String fieldParent1Value = "fieldParent1";
+		TestParent2.fieldParent1 = fieldParent1Value;
+		String value2 = ClassUtils.getStaticInstanceSameFieldNameByClass(TestParent2.class, field);
+
+		assertNotNull(value2);
+		assertEquals(fieldParent1Value, value2);
 	}
 
 	/**

@@ -7,16 +7,12 @@ import java.lang.annotation.Target;
 
 public class TestParent2 {
 	@FieldParent1
-	private String fieldParent1;
+	public static String fieldParent1;
 	@DifferentField
 	private Long differentField;
 
 	public String getFieldParent1() {
 		return fieldParent1;
-	}
-
-	public void setFieldParent1(String fieldParent1) {
-		this.fieldParent1 = fieldParent1;
 	}
 
 	public Long getDifferentField() {
