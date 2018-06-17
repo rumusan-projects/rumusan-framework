@@ -28,7 +28,8 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
  */
 public class ClassUtils {
 	private static final Log LOGGER = LogFactory.getLog(ClassUtils.class);
-	private static final List<Acceptable<Field>> acceptableFields = new ArrayList<>();
+	private static final List<Acceptable<Field>> defaultAcceptableFields = new ArrayList<>();
+	private static final List<Acceptable<Field>> acceptableStaticInstanceSameFieldName = new ArrayList<>();
 
 	private ClassUtils() {
 	}
@@ -42,13 +43,17 @@ public class ClassUtils {
 	}
 
 	public static Field[] getAllField(Class<?> classToScan) {
+		return getAllField(classToScan, null);
+	}
+
+	public static Field[] getAllField(Class<?> classToScan, List<Acceptable<Field>> acceptableFields) {
 		Set<Field> fieldSet = new HashSet<>();
-		addFields(fieldSet, classToScan.getDeclaredFields());
+		addFields(fieldSet, classToScan.getDeclaredFields(), acceptableFields);
 
 		Class<?> superClass = classToScan.getSuperclass();
 
 		while (isValidClassToScan(superClass)) {
-			addFields(fieldSet, superClass.getDeclaredFields());
+			addFields(fieldSet, superClass.getDeclaredFields(), acceptableFields);
 
 			superClass = superClass.getSuperclass();
 		}
@@ -56,18 +61,20 @@ public class ClassUtils {
 		return fieldSet.toArray(new Field[fieldSet.size()]);
 	}
 
-	private static void addFields(Collection<Field> col, Field[] fields) {
+	private static void addFields(Collection<Field> col, Field[] fields, List<Acceptable<Field>> acceptableFields) {
 		for (int i = 0; i < fields.length; i++) {
-			if (isAllowField(fields[i])) {
+			if (isAllowField(fields[i], acceptableFields)) {
 				col.add(fields[i]);
 			}
 		}
 	}
 
-	private static boolean isAllowField(Field field) {
+	private static boolean isAllowField(Field field, List<Acceptable<Field>> acceptableFields) {
 		boolean allow = true;
+		List<Acceptable<Field>> innerAcceptableField = acceptableFields != null ? acceptableFields
+				: defaultAcceptableFields;
 
-		for (Acceptable<Field> acceptable : acceptableFields) {
+		for (Acceptable<Field> acceptable : innerAcceptableField) {
 			if (!allow) {
 				return allow;
 			}
@@ -79,8 +86,10 @@ public class ClassUtils {
 	}
 
 	private static void initAcceptableFields() {
-		acceptableFields.add(new AcceptNonSynthetic());
-		acceptableFields.add(new AcceptNonStaticFinal());
+		defaultAcceptableFields.add(new AcceptNonSynthetic());
+		defaultAcceptableFields.add(new AcceptNonStaticFinal());
+
+		acceptableStaticInstanceSameFieldName.add(new AcceptStaticNonFinal());
 	}
 
 	interface Acceptable<T> {
@@ -99,6 +108,14 @@ public class ClassUtils {
 		public boolean accepted(Field object) {
 			int modifier = object.getModifiers();
 			return !(Modifier.isStatic(modifier) && Modifier.isFinal(modifier));
+		}
+	}
+
+	static class AcceptStaticNonFinal implements Acceptable<Field> {
+		@Override
+		public boolean accepted(Field object) {
+			int modifier = object.getModifiers();
+			return Modifier.isStatic(modifier) && !Modifier.isFinal(modifier);
 		}
 	}
 
@@ -156,14 +173,15 @@ public class ClassUtils {
 		return null;
 	}
 
-	public static <T> T newInstanceSameFieldNameByClass(Class<?> clazz, Field field)
+	public static <T> T getStaticInstanceSameFieldNameByClass(Class<?> clazz, Field field)
 			throws InstantiationException, IllegalAccessException {
 		if (clazz != null && field != null) {
-			Field[] fields = getAllField(clazz);
+			Field[] fields = getAllField(clazz, acceptableStaticInstanceSameFieldName);
 
 			for (Field innerField : fields) {
 				if (innerField.getName().equals(field.getName())) {
-					return newInstance(innerField);
+					innerField.setAccessible(true);
+					return getInstance(innerField);
 				}
 			}
 		}
@@ -172,8 +190,8 @@ public class ClassUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T> T newInstance(Field field) throws InstantiationException, IllegalAccessException {
-		return (T) field.getType().newInstance();
+	private static <T> T getInstance(Field field) throws InstantiationException, IllegalAccessException {
+		return (T) field.get(field.getType().newInstance());
 	}
 
 	public static List<Class<?>> getClassByAnnotation(Class<? extends Annotation> annotationClass, String basePackage) {
