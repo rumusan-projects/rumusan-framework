@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Lock(keyValueGroupClass = GroupLockA.class, ignoreSameProcess = true)
-public class OptimisticLockingSameProcess extends BaseTestLockingProcess {
+public class OptimisticLockingSameProcess extends BaseOptimisticLockingProcess {
 	@Override
 	protected void executeInternal(ProcessContext<GroupLock> context) {
 	}

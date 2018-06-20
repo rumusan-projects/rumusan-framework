@@ -74,12 +74,15 @@ public abstract class BaseOptimisticLockingProcess implements LockingProcess<Gro
 				if (!isValid()) {
 					throw new RuntimeException("Not a valid synchronize process : " + this.getClass().getName());// NOSONAR
 				}
-				validateKeyValueGroup();
 
-				Lock synchronize = getClass().getAnnotation(Lock.class);
-				Class<?> keyValueGroupClass = synchronize.keyValueGroupClass();
+				Lock lock = getClass().getAnnotation(Lock.class);
+
+				validateKeyValueGroup(lock);
+
+				Class<?> keyValueGroupClass = lock.keyValueGroupClass();
+
 				keyValueGroup = keyValueGroupClass.getAnnotation(KeyValueGroup.class);
-				ignoreSameProcess = synchronize.ignoreSameProcess();
+				ignoreSameProcess = lock.ignoreSameProcess();
 
 				logger().info("Initializing...");
 				logger().info("KeyValueGroup : " + keyValueGroup);
@@ -90,14 +93,15 @@ public abstract class BaseOptimisticLockingProcess implements LockingProcess<Gro
 		}
 	}
 
-	protected abstract String getKayValueGroupPackage();
-
-	private void validateKeyValueGroup() {
+	private void validateKeyValueGroup(Lock lock) {
 		synchronized (BaseOptimisticLockingProcess.class) {
-			String packageName = getKayValueGroupPackage();
+			String packageName = lock.keyValueGroupClass().getPackage().getName();
+
 			if (!keyValGroupMapValidated.containsKey(packageName)) {
 				List<Class<?>> classList = ClassUtils.getClassByAnnotation(KeyValueGroup.class, packageName);
+
 				validateKeyValueClass(classList);
+
 				keyValGroupMapValidated.put(packageName, true);
 			}
 		}

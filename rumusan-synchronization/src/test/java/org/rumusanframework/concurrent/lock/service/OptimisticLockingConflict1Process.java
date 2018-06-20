@@ -12,13 +12,8 @@ import org.rumusanframework.concurrent.lock.entityinvalid.GroupLockAConflict1;
  *
  */
 @Lock(keyValueGroupClass = GroupLockAConflict1.class)
-public class OptimisticLockingConflict1Process extends BaseTestLockingProcess {
+public class OptimisticLockingConflict1Process extends BaseOptimisticLockingProcess {
 	@Override
 	protected void executeInternal(ProcessContext<GroupLock> context) {
-	}
-
-	@Override
-	protected String getKayValueGroupPackage() {
-		return GroupLockAConflict1.class.getPackage().getName();
 	}
 }
