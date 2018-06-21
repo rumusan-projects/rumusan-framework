@@ -18,6 +18,7 @@ import javax.validation.Validator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
+import org.hibernate.proxy.HibernateProxy;
 import org.rumusanframework.validation.ConstraintViolationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -122,5 +123,17 @@ public abstract class DaoTemplate<E extends Serializable> implements BaseDao<E> 
 
 	Log logger() {
 		return logger;
+	}
+
+	@Override
+	public E getReference(Serializable id) {
+		return getEntityManager().getReference(entityType, id);
+	}
+
+	@Override
+	public void removeProxy(E object) {
+		if (object instanceof HibernateProxy) {
+			getEntityManager().detach(object);
+		}
 	}
 }

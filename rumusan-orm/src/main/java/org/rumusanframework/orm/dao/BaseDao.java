@@ -31,4 +31,8 @@ public interface BaseDao<E> {
 	public List<E> findAll();
 
 	public Date getSystemDate();
+
+	public E getReference(Serializable id);
+
+	public void removeProxy(E object);
 }
