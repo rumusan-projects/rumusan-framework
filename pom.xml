@@ -52,5 +52,6 @@
 		<postgresql.version>42.2.2</postgresql.version>
 		<ojdbc6.version>11.2.0.3</ojdbc6.version>
 		<commons-dbcp2.version>2.3.0</commons-dbcp2.version>
+		<antlr-complete.version>3.5.2</antlr-complete.version>
 	</properties>
 </project>
