@@ -4,8 +4,15 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.rumusanframework</groupId>
 	<artifactId>rumusan-framework</artifactId>
-	<version>1.1.x-SNAPSHOT</version>
+	<version>1.2.x-SNAPSHOT</version>
 	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.1.5.RELEASE</version>
+	</parent>
+
 	<modules>
 		<module>rumusan-core</module>
 		<module>rumusan-security-oauth2</module>
@@ -15,6 +22,7 @@
 		<module>rumusan-orm</module>
 		<module>rumusan-orm-test</module>
 	</modules>
+
 	<distributionManagement>
 		<repository>
 			<id>${repo.release.id}</id>
@@ -28,31 +36,43 @@
 		</snapshotRepository>
 	</distributionManagement>
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.8</jdk.version>
-		<maven-compiler.version>3.7.0</maven-compiler.version>
-		<maven-resources.version>3.0.1</maven-resources.version>
-		<spring.version>5.0.7.RELEASE</spring.version>
-		<spring-security-oauth2.version>2.2.0.RELEASE</spring-security-oauth2.version>
-		<spring-security-web.version>4.2.3.RELEASE</spring-security-web.version>
-		<junit.version>4.12</junit.version>
-		<jackson.version>2.9.6</jackson.version>
-		<mockito-all.version>1.9.5</mockito-all.version>
-		<log4j.version>2.11.0</log4j.version>
-		<validation-api.version>2.0.1.Final</validation-api.version>
-		<mysql-connector-java.version>8.0.11</mysql-connector-java.version>
-		<disruptor.version>3.4.2</disruptor.version>
-		<hibernate.version>5.3.1.Final</hibernate.version>
-		<hibernate-validator.version>6.0.10.Final</hibernate-validator.version>
-		<hibernate-jpa-2.1-api.version>1.0.2.Final</hibernate-jpa-2.1-api.version>
-		<javax.el-api-test.version>3.0.0</javax.el-api-test.version>
-		<javax.el-test.version>3.0.0</javax.el-test.version>
-		<jacoco-maven-plugin.version>0.8.1</jacoco-maven-plugin.version>
-		<maven-surefire-plugin.version>2.20</maven-surefire-plugin.version>
-		<postgresql.version>42.2.2</postgresql.version>
-		<ojdbc6.version>11.2.0.3</ojdbc6.version>
-		<commons-dbcp2.version>2.3.0</commons-dbcp2.version>
-		<antlr-complete.version>3.5.2</antlr-complete.version>
+		<jacoco.maven.plugin.version>0.7.9</jacoco.maven.plugin.version>
+		<maven.release.plugin.version>2.5.3</maven.release.plugin.version>
+		<skipTest>false</skipTest>
+		<skipIT>true</skipIT>
+		<skipUT>${skipTest}</skipUT>
+		<sonar.projectKey>${project.groupId}:${project.artifactId}</sonar.projectKey>
+		<sonar.qube.version>3.2</sonar.qube.version>
+		<sonar.projectVersion>1.0</sonar.projectVersion>
+		<sonar.language>java</sonar.language>
+		<sonar.login>fea21352a50558b9fda0e27d7630baea7fa9c1cc</sonar.login>
+		<sonar.junit.reportPaths>${project.build.directory}/surefire-reports</sonar.junit.reportPaths>
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<sonar.jacoco.reportPaths>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPaths>
+<!--		<jdk.version>1.8</jdk.version>-->
+<!--		<maven-compiler.version>3.7.0</maven-compiler.version>-->
+<!--		<maven-resources.version>3.0.1</maven-resources.version>-->
+<!--		<spring.version>5.0.7.RELEASE</spring.version>-->
+<!--		<spring-security-oauth2.version>2.2.0.RELEASE</spring-security-oauth2.version>-->
+<!--		<spring-security-web.version>4.2.3.RELEASE</spring-security-web.version>-->
+<!--		<junit.version>4.12</junit.version>-->
+<!--		<jackson.version>2.9.6</jackson.version>-->
+<!--		<mockito-all.version>1.9.5</mockito-all.version>-->
+<!--		<log4j.version>2.11.0</log4j.version>-->
+<!--		<validation-api.version>2.0.1.Final</validation-api.version>-->
+<!--		<mysql-connector-java.version>8.0.11</mysql-connector-java.version>-->
+<!--		<disruptor.version>3.4.2</disruptor.version>-->
+<!--		<hibernate.version>5.3.1.Final</hibernate.version>-->
+<!--		<hibernate-validator.version>6.0.10.Final</hibernate-validator.version>-->
+<!--		<hibernate-jpa-2.1-api.version>1.0.2.Final</hibernate-jpa-2.1-api.version>-->
+		<javax.el-api.version>3.0.0</javax.el-api.version>
+<!--		<javax.el-test.version>3.0.0</javax.el-test.version>-->
+<!--		<jacoco-maven-plugin.version>0.8.1</jacoco-maven-plugin.version>-->
+<!--		<maven-surefire-plugin.version>2.20</maven-surefire-plugin.version>-->
+<!--		<postgresql.version>42.2.2</postgresql.version>-->
+<!--		<ojdbc6.version>11.2.0.3</ojdbc6.version>-->
+<!--		<commons-dbcp2.version>2.3.0</commons-dbcp2.version>-->
+<!--		<antlr-complete.version>3.5.2</antlr-complete.version>-->
 		<repo.snapshot.id>snaphost.id</repo.snapshot.id>
 		<repo.snapshot.url>snapshot.url</repo.snapshot.url>
 		<repo.release.id>release.id</repo.release.id>
@@ -60,4 +80,29 @@
 		<skip.unit.tests>false</skip.unit.tests>
 		<surefireArgLine> </surefireArgLine>
 	</properties>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>${jacoco.maven.plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.sonarsource.scanner.maven</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>${sonar.qube.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
 </project>

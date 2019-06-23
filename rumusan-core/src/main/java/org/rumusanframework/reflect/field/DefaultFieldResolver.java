@@ -10,61 +10,60 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 
  * @author Harvan Irsyadi
  * @version 1.0.0
  * @since 1.0.0 (7 Sept 2017)
- *
  */
 abstract class DefaultFieldResolver implements FieldResolver {
-	private final Class<? extends Annotation>[] annotationFields;
-	private final Class<?> classUsage;
-	private final String concater;
 
-	@SuppressWarnings("unchecked")
-	DefaultFieldResolver(Class<?> classUsage, String concater, Class<?>... annotationFields) {
-		this.classUsage = classUsage;
-		this.annotationFields = (Class<? extends Annotation>[]) annotationFields;
-		this.concater = concater;
-		getClassCache().put(classUsage, new ConcurrentHashMap<>());
-	}
+  private final Class<? extends Annotation>[] annotationFields;
+  private final Class<?> classUsage;
+  private final String concater;
 
-	public String resolve() {
-		StringBuilder buff = new StringBuilder();
+  @SuppressWarnings("unchecked")
+  DefaultFieldResolver(Class<?> classUsage, String concater, Class<?>... annotationFields) {
+    this.classUsage = classUsage;
+    this.annotationFields = (Class<? extends Annotation>[]) annotationFields;
+    this.concater = concater;
+    getClassCache().put(classUsage, new ConcurrentHashMap<>());
+  }
 
-		for (Class<? extends Annotation> annotationField : annotationFields) {
-			String name = getCacheFieldName(annotationField);
+  public String resolve() {
+    StringBuilder buff = new StringBuilder();
 
-			if (name != null) {
-				if (buff.length() == 0) {
-					buff.append(name);
-				} else {
-					buff.append(concater).append(name);
-				}
-			}
-		}
+    for (Class<? extends Annotation> annotationField : annotationFields) {
+      String name = getCacheFieldName(annotationField);
 
-		return buff.toString();
-	}
+      if (name != null) {
+        if (buff.length() == 0) {
+          buff.append(name);
+        } else {
+          buff.append(concater).append(name);
+        }
+      }
+    }
 
-	public String getCacheFieldName(Class<? extends Annotation> annotationField) {
-		Map<Object, String> cacheField = getClassCache().get(classUsage);
-		String fieldName = cacheField.get(annotationField);
+    return buff.toString();
+  }
 
-		if (fieldName == null) {
-			Class<?> parent = annotationField.getEnclosingClass();
-			Field[] fields = parent.getDeclaredFields();
+  public String getCacheFieldName(Class<? extends Annotation> annotationField) {
+    Map<Object, String> cacheField = getClassCache().get(classUsage);
+    String fieldName = cacheField.get(annotationField);
 
-			for (Field field : fields) {
-				if (field.isAnnotationPresent(annotationField)) {
-					cacheField.put(annotationField, field.getName());
-					return field.getName();
-				}
-			}
-		}
+    if (fieldName == null) {
+      Class<?> parent = annotationField.getEnclosingClass();
+      Field[] fields = parent.getDeclaredFields();
 
-		return fieldName;
-	}
+      for (Field field : fields) {
+        if (field.isAnnotationPresent(annotationField)) {
+          cacheField.put(annotationField, field.getName());
+          return field.getName();
+        }
+      }
+    }
 
-	abstract Map<Class<?>, Map<Object, String>> getClassCache();
+    return fieldName;
+  }
+
+  abstract Map<Class<?>, Map<Object, String>> getClassCache();
 }

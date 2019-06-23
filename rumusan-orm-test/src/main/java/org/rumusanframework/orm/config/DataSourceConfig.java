@@ -5,9 +5,7 @@
 package org.rumusanframework.orm.config;
 
 import java.util.Properties;
-
 import javax.persistence.EntityManagerFactory;
-
 import org.hibernate.cfg.AvailableSettings;
 import org.rumusanframework.orm.jpa.validation.BeanValidationExceptionTranslator;
 import org.rumusanframework.orm.jpa.vendor.ChainedHibernateJpaDialect;
@@ -21,94 +19,96 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 /**
- * 
  * @author Harvan Irsyadi
  * @version 1.0.0
  * @since 1.0.0 (16 Jun 2018)
- *
  */
 public abstract class DataSourceConfig {
-	@Value("${" + AvailableSettings.DIALECT + "}")
-	private String dialect;
-	@Value("${" + AvailableSettings.SHOW_SQL + "}")
-	private String showSql;
-	@Value("${" + AvailableSettings.STATEMENT_BATCH_SIZE + "}")
-	private String batchSize;
-	@Value("${" + AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS + "}")
-	private String sessionContextClass;
 
-	protected abstract String getLogConfigLocation();
+  @Value("${" + AvailableSettings.DIALECT + "}")
+  private String dialect;
 
-	protected abstract String getDatasourceDriverClassName();
+  @Value("${" + AvailableSettings.SHOW_SQL + "}")
+  private String showSql;
 
-	protected abstract String getDatasourceUrl();
+  @Value("${" + AvailableSettings.STATEMENT_BATCH_SIZE + "}")
+  private String batchSize;
 
-	protected abstract String getDatasourceUsername();
+  @Value("${" + AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS + "}")
+  private String sessionContextClass;
 
-	protected abstract String getDatasourcePassword();
+  protected abstract String getLogConfigLocation();
 
-	@Bean
-	public LocalValidatorFactoryBean validator() {
-		return new LocalValidatorFactoryBean();
-	}
+  protected abstract String getDatasourceDriverClassName();
 
-	private DataSourceContext getDataSourceContext() {
-		DataSourceContext context = new DataSourceContext();
+  protected abstract String getDatasourceUrl();
 
-		context.setDriverClassName(getDatasourceDriverClassName());
-		context.setUrl(getDatasourceUrl());
-		context.setUsername(getDatasourceUsername());
-		context.setPassword(getDatasourcePassword());
+  protected abstract String getDatasourceUsername();
 
-		return context;
-	}
+  protected abstract String getDatasourcePassword();
 
-	private Properties getHibernateProperties() {
-		Properties properties = new Properties();
-		properties.put(AvailableSettings.DIALECT, dialect);
-		properties.put(AvailableSettings.SHOW_SQL, showSql);
-		properties.put(AvailableSettings.STATEMENT_BATCH_SIZE, batchSize);
-		properties.put(AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS, sessionContextClass);
-		return properties;
-	}
+  @Bean
+  public LocalValidatorFactoryBean validator() {
+    return new LocalValidatorFactoryBean();
+  }
 
-	private JpaDialect jpaDialect() {
-		ChainedHibernateJpaDialect jpaDialect = new ChainedHibernateJpaDialect();
-		jpaDialect.addTranslator(new BeanValidationExceptionTranslator());
+  private DataSourceContext getDataSourceContext() {
+    DataSourceContext context = new DataSourceContext();
 
-		return jpaDialect;
-	}
+    context.setDriverClassName(getDatasourceDriverClassName());
+    context.setUrl(getDatasourceUrl());
+    context.setUsername(getDatasourceUsername());
+    context.setPassword(getDatasourcePassword());
 
-	private HibernateJpaVendorAdapter jpaVendorAdapter() {
-		HibernateJpaVendorAdapter jpaVendor = new HibernateJpaVendorAdapter();
-		jpaVendor.setDatabase(Database.HSQL);
-		jpaVendor.setDatabasePlatform(dialect);
+    return context;
+  }
 
-		return jpaVendor;
-	}
+  private Properties getHibernateProperties() {
+    Properties properties = new Properties();
+    properties.put(AvailableSettings.DIALECT, dialect);
+    properties.put(AvailableSettings.SHOW_SQL, showSql);
+    properties.put(AvailableSettings.STATEMENT_BATCH_SIZE, batchSize);
+    properties.put(AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS, sessionContextClass);
+    return properties;
+  }
 
-	@Bean
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-		DataSourceFactory dataSourceFactory = new DataSourceFactory();
+  private JpaDialect jpaDialect() {
+    ChainedHibernateJpaDialect jpaDialect = new ChainedHibernateJpaDialect();
+    jpaDialect.addTranslator(new BeanValidationExceptionTranslator());
 
-		em.setDataSource(dataSourceFactory.getDataSource(getDataSourceContext()));
-		em.setJpaDialect(jpaDialect());
-		em.setJpaVendorAdapter(jpaVendorAdapter());
-		em.setPackagesToScan(getPackageToScan());
-		em.setJpaProperties(getHibernateProperties());
+    return jpaDialect;
+  }
 
-		return em;
-	}
+  private HibernateJpaVendorAdapter jpaVendorAdapter() {
+    HibernateJpaVendorAdapter jpaVendor = new HibernateJpaVendorAdapter();
+    jpaVendor.setDatabase(Database.HSQL);
+    jpaVendor.setDatabasePlatform(dialect);
 
-	@Bean
-	public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
-		JpaTransactionManager txManager = new JpaTransactionManager();
-		txManager.setEntityManagerFactory(entityManagerFactory);
-		txManager.setJpaDialect(jpaDialect());
+    return jpaVendor;
+  }
 
-		return txManager;
-	}
+  @Bean
+  public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+    LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+    DataSourceFactory dataSourceFactory = new DataSourceFactory();
 
-	protected abstract String[] getPackageToScan();
+    em.setDataSource(dataSourceFactory.getDataSource(getDataSourceContext()));
+    em.setJpaDialect(jpaDialect());
+    em.setJpaVendorAdapter(jpaVendorAdapter());
+    em.setPackagesToScan(getPackageToScan());
+    em.setJpaProperties(getHibernateProperties());
+
+    return em;
+  }
+
+  @Bean
+  public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+    JpaTransactionManager txManager = new JpaTransactionManager();
+    txManager.setEntityManagerFactory(entityManagerFactory);
+    txManager.setJpaDialect(jpaDialect());
+
+    return txManager;
+  }
+
+  protected abstract String[] getPackageToScan();
 }

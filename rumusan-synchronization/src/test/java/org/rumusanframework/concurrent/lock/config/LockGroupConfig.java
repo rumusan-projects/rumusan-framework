@@ -6,16 +6,15 @@ import org.rumusanframework.concurrent.lock.entity.BasePackageRumusanConcurrentL
 import org.springframework.context.annotation.ComponentScan;
 
 /**
- * 
  * @author Harvan Irsyadi
  * @version 1.0.0
  * @since 1.0.0 (11 Mar 2018)
- *
  */
-@ComponentScan(basePackages = { BasePackageRumusanConcurrentLock.PACKAGE })
+@ComponentScan(basePackages = {BasePackageRumusanConcurrentLock.PACKAGE})
 public class LockGroupConfig extends DefaultTestConfig {
-	@Override
-	protected String[] getPackageToScan() {
-		return new String[] { BasePackageRumusanConcurrentLockEntity.PACKAGE };
-	}
+
+  @Override
+  protected String[] getPackageToScan() {
+    return new String[]{BasePackageRumusanConcurrentLockEntity.PACKAGE};
+  }
 }

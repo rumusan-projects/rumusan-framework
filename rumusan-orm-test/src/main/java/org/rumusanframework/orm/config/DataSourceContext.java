@@ -5,66 +5,64 @@
 package org.rumusanframework.orm.config;
 
 /**
- * 
  * @author Harvan Irsyadi
  * @version 1.0.0
  * @since 1.0.0 (11 Jun 2018)
- *
- */
-/**
- * @author Harvan Irsyadi
- *
  */
 public class DataSourceContext {
-	private String driverClassName;
-	private String url;
-	private String username;
-	private String password;
 
-	public String getDriverClassName() {
-		return driverClassName;
-	}
+  private String driverClassName;
 
-	public void setDriverClassName(String driverClassName) {
-		this.driverClassName = driverClassName;
-	}
+  private String url;
 
-	public String getUrl() {
-		return url;
-	}
+  private String username;
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+  private String password;
 
-	public String getUsername() {
-		return username;
-	}
+  public String getDriverClassName() {
+    return driverClassName;
+  }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+  public void setDriverClassName(String driverClassName) {
+    this.driverClassName = driverClassName;
+  }
 
-	public String getPassword() {
-		return password;
-	}
+  public String getUrl() {
+    return url;
+  }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+  public void setUrl(String url) {
+    this.url = url;
+  }
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("DataSourceContext [driverClassName=");
-		builder.append(driverClassName);
-		builder.append(", url=");
-		builder.append(url);
-		builder.append(", username=");
-		builder.append(username);
-		builder.append(", password=");
-		builder.append(password);
-		builder.append("]");
-		return builder.toString();
-	}
+  public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("DataSourceContext [driverClassName=");
+    builder.append(driverClassName);
+    builder.append(", url=");
+    builder.append(url);
+    builder.append(", username=");
+    builder.append(username);
+    builder.append(", password=");
+    builder.append(password);
+    builder.append("]");
+    return builder.toString();
+  }
 }

@@ -8,13 +8,11 @@ import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.validation.Validator;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
@@ -23,117 +21,116 @@ import org.rumusanframework.validation.ConstraintViolationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * 
  * @param <E> Entity type
- * 
  * @author Harvan Irsyadi
  * @version 1.0.0
  * @since 1.0.0 (11 Mar 2018)
- * 
  */
 public abstract class DaoTemplate<E extends Serializable> implements BaseDao<E> {
-	private final Log logger = LogFactory.getLog(DaoTemplate.class);
-	protected Class<E> entityType = getEntityClass();
-	protected DaoUtils daoUtils = new DaoUtils();
-	private Validator validator;
 
-	/**
-	 * Please add an annotation {@link PersistenceContext} with specific unitName.
-	 * 
-	 * @param entityManager
-	 */
-	protected abstract void setEntityManager(EntityManager entityManager);
+  private final Log logger = LogFactory.getLog(DaoTemplate.class);
 
-	protected abstract EntityManager getEntityManager();
+  protected Class<E> entityType = getEntityClass();
 
-	@SuppressWarnings("unchecked")
-	private Class<E> getEntityClass() {
-		ParameterizedType thisType = (ParameterizedType) getClass().getGenericSuperclass();
-		return (Class<E>) thisType.getActualTypeArguments()[0];
-	}
+  protected DaoUtils daoUtils = new DaoUtils();
 
-	public Session getSession() {
-		return (Session) getEntityManager().getDelegate();
-	}
+  private Validator validator;
 
-	@Autowired
-	public void setValidator(Validator validator) {
-		this.validator = validator;
-	}
+  /**
+   * Please add an annotation {@link PersistenceContext} with specific unitName.
+   */
+  protected abstract void setEntityManager(EntityManager entityManager);
 
-	@Override
-	public void refresh(E object) {
-		validateContext(object);
-		getSession().refresh(object);
-	}
+  protected abstract EntityManager getEntityManager();
 
-	public Serializable save(E object) {
-		validateContext(object);
-		return getSession().save(object);
-	}
+  @SuppressWarnings("unchecked")
+  private Class<E> getEntityClass() {
+    ParameterizedType thisType = (ParameterizedType) getClass().getGenericSuperclass();
+    return (Class<E>) thisType.getActualTypeArguments()[0];
+  }
 
-	protected abstract ValidatedEntity getValidatedEntity(E object);
+  public Session getSession() {
+    return (Session) getEntityManager().getDelegate();
+  }
 
-	protected void validateContext(E object) {
-		ValidatedEntity entity = getValidatedEntity(object);
+  @Autowired
+  public void setValidator(Validator validator) {
+    this.validator = validator;
+  }
 
-		if (entity != null) {
-			ConstraintViolationUtils.performChecking(validator.validate(entity));
-		}
-	}
+  @Override
+  public void refresh(E object) {
+    validateContext(object);
+    getSession().refresh(object);
+  }
 
-	public void update(E object) {
-		validateContext(object);
-		getSession().update(object);
-	}
+  public Serializable save(E object) {
+    validateContext(object);
+    return getSession().save(object);
+  }
 
-	public void delete(E object) {
-		validateContext(object);
-		getSession().delete(object);
-	}
+  protected abstract ValidatedEntity getValidatedEntity(E object);
 
-	@Override
-	public E findById(Serializable id) {
-		return getSession().get(entityType, id);
-	}
+  protected void validateContext(E object) {
+    ValidatedEntity entity = getValidatedEntity(object);
 
-	protected CriteriaQuery<E> getEntityCriteriaQuery() {
-		CriteriaBuilder cb = getSession().getCriteriaBuilder();
-		CriteriaQuery<E> cq = cb.createQuery(entityType);
-		cq.from(entityType);
+    if (entity != null) {
+      ConstraintViolationUtils.performChecking(validator.validate(entity));
+    }
+  }
 
-		return cq;
-	}
+  public void update(E object) {
+    validateContext(object);
+    getSession().update(object);
+  }
 
-	/**
-	 * Fastest than :<br/>
-	 * <code>
-	 * return getSession().createCriteria(clazz).list();
-	 * </code>
-	 */
-	@Override
-	public List<E> findAll() {
-		return getSession().createQuery(getEntityCriteriaQuery()).getResultList();
-	}
+  public void delete(E object) {
+    validateContext(object);
+    getSession().delete(object);
+  }
 
-	@Override
-	public Date getSystemDate() {
-		return new Date();
-	}
+  @Override
+  public E findById(Serializable id) {
+    return getSession().get(entityType, id);
+  }
 
-	Log logger() {
-		return logger;
-	}
+  protected CriteriaQuery<E> getEntityCriteriaQuery() {
+    CriteriaBuilder cb = getSession().getCriteriaBuilder();
+    CriteriaQuery<E> cq = cb.createQuery(entityType);
+    cq.from(entityType);
 
-	@Override
-	public E getReference(Serializable id) {
-		return getEntityManager().getReference(entityType, id);
-	}
+    return cq;
+  }
 
-	@Override
-	public void removeProxy(E object) {
-		if (object instanceof HibernateProxy) {
-			getEntityManager().detach(object);
-		}
-	}
+  /**
+   * Fastest than :<br/>
+   * <code>
+   * return getSession().createCriteria(clazz).list();
+   * </code>
+   */
+  @Override
+  public List<E> findAll() {
+    return getSession().createQuery(getEntityCriteriaQuery()).getResultList();
+  }
+
+  @Override
+  public Date getSystemDate() {
+    return new Date();
+  }
+
+  Log logger() {
+    return logger;
+  }
+
+  @Override
+  public E getReference(Serializable id) {
+    return getEntityManager().getReference(entityType, id);
+  }
+
+  @Override
+  public void removeProxy(E object) {
+    if (object instanceof HibernateProxy) {
+      getEntityManager().detach(object);
+    }
+  }
 }

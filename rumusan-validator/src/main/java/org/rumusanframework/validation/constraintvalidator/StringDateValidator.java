@@ -6,55 +6,52 @@ package org.rumusanframework.validation.constraintvalidator;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.rumusanframework.validation.constraint.StringDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author Harvan Irsyadi
  * @version 1.0.0
  * @since 1.0.0 (18 Feb 2018)
- *
  */
 public class StringDateValidator implements ConstraintValidator<StringDate, String> {
-	private static final Log LOGGER = LogFactory.getLog(StringDateValidator.class);
-	private SimpleDateFormat format;
 
-	@Override
-	public void initialize(StringDate annotation) {
-		if (logger().isDebugEnabled()) {
-			logger().debug("Initialize...");
-			logger().debug("dateFormat : " + annotation.dateFormat());
-		}
+  private static final Logger LOGGER = LoggerFactory.getLogger(StringDateValidator.class);
+  private SimpleDateFormat format;
 
-		format = new SimpleDateFormat(annotation.dateFormat());
-	}
+  @Override
+  public void initialize(StringDate annotation) {
+    if (logger().isDebugEnabled()) {
+      logger().debug("Initialize...");
+      logger().debug("dateFormat : " + annotation.dateFormat());
+    }
 
-	@Override
-	public boolean isValid(String value, ConstraintValidatorContext context) {
-		if (logger().isDebugEnabled()) {
-			logger().debug("Validating : " + value);
-		}
+    format = new SimpleDateFormat(annotation.dateFormat());
+  }
 
-		try {
-			format.parse(value);
+  @Override
+  public boolean isValid(String value, ConstraintValidatorContext context) {
+    if (logger().isDebugEnabled()) {
+      logger().debug("Validating : " + value);
+    }
 
-			return true;
-		} catch (ParseException e) {
-			if (logger().isErrorEnabled()) {
-				logger().error("Error when parsing field.", e);
-			}
+    try {
+      format.parse(value);
 
-			return false;
-		}
-	}
+      return true;
+    } catch (ParseException e) {
+      if (logger().isErrorEnabled()) {
+        logger().error("Error when parsing field.", e);
+      }
 
-	Log logger() {
-		return LOGGER;
-	}
+      return false;
+    }
+  }
+
+  Logger logger() {
+    return LOGGER;
+  }
 }

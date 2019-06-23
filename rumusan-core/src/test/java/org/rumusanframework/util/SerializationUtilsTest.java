@@ -1,128 +1,130 @@
 package org.rumusanframework.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.Date;
-
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class SerializationUtilsTest {
-	private static final String SERIALIZE_TO_FILE = "SERIALIZE_TO_FILE";
-	private static final String SERIALIZE_TO_STRING_FILE = "SERIALIZE_TO_STRING_FILE";
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
 
-	@Test
-	public void testPrivateConstructor() throws Exception {
-		Constructor<SerializationUtils> constructor = SerializationUtils.class.getDeclaredConstructor();
-		Assert.assertTrue(Modifier.isPrivate(constructor.getModifiers()));
-		constructor.setAccessible(true);
-		constructor.newInstance();
-	}
+  private static final String SERIALIZE_TO_FILE = "SERIALIZE_TO_FILE";
+  private static final String SERIALIZE_TO_STRING_FILE = "SERIALIZE_TO_STRING_FILE";
+  @Rule
+  public ExpectedException expectedException = ExpectedException.none();
 
-	@Test
-	public void testSuccessSerializeToFile() throws IOException {
-		String string = "serialized to file.";
-		String fileName = "/" + SerializationUtilsTest.class.getName() + SERIALIZE_TO_FILE;
+  @Test
+  public void testPrivateConstructor() throws Exception {
+    Constructor<SerializationUtils> constructor = SerializationUtils.class.getDeclaredConstructor();
+    Assert.assertTrue(Modifier.isPrivate(constructor.getModifiers()));
+    constructor.setAccessible(true);
+    constructor.newInstance();
+  }
 
-		SerializationUtils.serializeToFile(fileName, string);
-	}
+  @Test
+  public void testSuccessSerializeToFile() throws IOException {
+    String string = "serialized to file.";
+    String fileName = "/" + SerializationUtilsTest.class.getName() + SERIALIZE_TO_FILE;
 
-	@Test
-	public void testExceptionSerializeToFile() throws IOException {
-		expectedException.expect(IOException.class);
+    SerializationUtils.serializeToFile(fileName, string);
+  }
 
-		String string = "serialized to file.";
-		String fileName = "";
+  @Test
+  public void testExceptionSerializeToFile() throws IOException {
+    expectedException.expect(IOException.class);
 
-		SerializationUtils.serializeToFile(fileName, string);
-	}
+    String string = "serialized to file.";
+    String fileName = "";
 
-	@Test
-	public void testSuccessDeserializeFromFile() throws IOException {
-		String string = "serialized to file.";
-		String fileName = "/" + SerializationUtilsTest.class.getName() + SERIALIZE_TO_FILE;
+    SerializationUtils.serializeToFile(fileName, string);
+  }
 
-		SerializationUtils.serializeToFile(fileName, string);
-		String deserializedString = SerializationUtils.deserializeFromFile(fileName, string.getClass());
+  @Test
+  public void testSuccessDeserializeFromFile() throws IOException {
+    String string = "serialized to file.";
+    String fileName = "/" + SerializationUtilsTest.class.getName() + SERIALIZE_TO_FILE;
 
-		Assert.assertNotNull(deserializedString);
-		Assert.assertEquals(string, deserializedString);
-	}
+    SerializationUtils.serializeToFile(fileName, string);
+    String deserializedString = SerializationUtils.deserializeFromFile(fileName, string.getClass());
 
-	@Test
-	public void testExceptionDeserializeFromFile() throws IOException {
-		expectedException.expect(IOException.class);
-		SerializationUtils.deserializeFromFile(SerializationUtilsTest.class.getName() + new Date().toString(),
-				String.class);
-	}
+    Assert.assertNotNull(deserializedString);
+    Assert.assertEquals(string, deserializedString);
+  }
 
-	@Test
-	public void testSuccessWriteToStringFile() throws IOException {
-		String string = "serialized to file.";
-		String fileName = "/" + SerializationUtilsTest.class.getName() + SERIALIZE_TO_STRING_FILE;
-		ObjectMapper mapper = new ObjectMapper();
+  @Test
+  public void testExceptionDeserializeFromFile() throws IOException {
+    expectedException.expect(IOException.class);
+    SerializationUtils
+        .deserializeFromFile(SerializationUtilsTest.class.getName() + new Date().toString(),
+            String.class);
+  }
 
-		SerializationUtils.writeToStringFile(fileName, string, mapper);
-	}
+  @Test
+  public void testSuccessWriteToStringFile() throws IOException {
+    String string = "serialized to file.";
+    String fileName = "/" + SerializationUtilsTest.class.getName() + SERIALIZE_TO_STRING_FILE;
+    ObjectMapper mapper = new ObjectMapper();
 
-	@Test
-	public void testExceptionwriteToStringFile() throws IOException {
-		expectedException.expect(IOException.class);
-		ObjectMapper mapper = new ObjectMapper();
+    SerializationUtils.writeToStringFile(fileName, string, mapper);
+  }
 
-		String string = "serialized to file.";
-		String fileName = "";
+  @Test
+  public void testExceptionwriteToStringFile() throws IOException {
+    expectedException.expect(IOException.class);
+    ObjectMapper mapper = new ObjectMapper();
 
-		SerializationUtils.writeToStringFile(fileName, string, mapper);
-	}
+    String string = "serialized to file.";
+    String fileName = "";
 
-	@Test
-	public void testSuccessReadFromStringFile() throws IOException {
-		String string = "serialized to file.";
-		String fileName = "/" + SerializationUtilsTest.class.getName() + SERIALIZE_TO_STRING_FILE;
-		ObjectMapper mapper = new ObjectMapper();
+    SerializationUtils.writeToStringFile(fileName, string, mapper);
+  }
 
-		SerializationUtils.writeToStringFile(fileName, string, mapper);
-		String deserializedString = SerializationUtils.readFromStringFile(fileName, string.getClass(), mapper);
+  @Test
+  public void testSuccessReadFromStringFile() throws IOException {
+    String string = "serialized to file.";
+    String fileName = "/" + SerializationUtilsTest.class.getName() + SERIALIZE_TO_STRING_FILE;
+    ObjectMapper mapper = new ObjectMapper();
 
-		Assert.assertNotNull(deserializedString);
-		Assert.assertEquals(string, deserializedString);
-	}
+    SerializationUtils.writeToStringFile(fileName, string, mapper);
+    String deserializedString = SerializationUtils
+        .readFromStringFile(fileName, string.getClass(), mapper);
 
-	@Test
-	public void testExceptionReadFromStringFile() throws IOException {
-		expectedException.expect(IOException.class);
-		String fileName = SerializationUtilsTest.class.getName() + new Date().toString();
-		ObjectMapper mapper = new ObjectMapper();
+    Assert.assertNotNull(deserializedString);
+    Assert.assertEquals(string, deserializedString);
+  }
 
-		SerializationUtils.readFromStringFile(fileName, String.class, mapper);
-	}
+  @Test
+  public void testExceptionReadFromStringFile() throws IOException {
+    expectedException.expect(IOException.class);
+    String fileName = SerializationUtilsTest.class.getName() + new Date().toString();
+    ObjectMapper mapper = new ObjectMapper();
 
-	@Test
-	public void testEmptyReadFromStringFile() throws IOException {
-		String fileName = "/" + SerializationUtilsTest.class.getName() + SERIALIZE_TO_STRING_FILE;
-		ObjectMapper mapper = new ObjectMapper();
-		File file = new File(fileName);
-		boolean exist = file.exists();
+    SerializationUtils.readFromStringFile(fileName, String.class, mapper);
+  }
 
-		if (exist) {
-			file.delete();
-		}
+  @Test
+  public void testEmptyReadFromStringFile() throws IOException {
+    String fileName = "/" + SerializationUtilsTest.class.getName() + SERIALIZE_TO_STRING_FILE;
+    ObjectMapper mapper = new ObjectMapper();
+    File file = new File(fileName);
+    boolean exist = file.exists();
 
-		boolean created = file.createNewFile();
+    if (exist) {
+      file.delete();
+    }
 
-		Assert.assertTrue(created);
+    boolean created = file.createNewFile();
 
-		String deserializedString = SerializationUtils.readFromStringFile(fileName, String.class, mapper);
+    Assert.assertTrue(created);
 
-		Assert.assertNull(deserializedString);
-	}
+    String deserializedString = SerializationUtils
+        .readFromStringFile(fileName, String.class, mapper);
+
+    Assert.assertNull(deserializedString);
+  }
 }

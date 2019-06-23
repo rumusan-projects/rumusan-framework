@@ -6,34 +6,33 @@ package org.rumusanframework.validation.constraintvalidator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.rumusanframework.validation.constraint.StringTrimNotEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author Harvan Irsyadi
  * @version 1.0.0
  * @since 1.0.0 (18 Feb 2018)
- *
  */
 public class StringTrimValidator implements ConstraintValidator<StringTrimNotEmpty, CharSequence> {
-	private static final Log LOGGER = LogFactory.getLog(StringTrimValidator.class);
 
-	@Override
-	public boolean isValid(CharSequence charSequence, ConstraintValidatorContext constraintValidatorContext) {
-		if (logger().isDebugEnabled()) {
-			logger().debug("Validating : " + charSequence);
-		}
+  private static final Logger LOGGER = LoggerFactory.getLogger(StringTrimValidator.class);
 
-		if (charSequence == null) {
-			return false;
-		}
-		return charSequence.toString().trim().length() > 0;
-	}
+  @Override
+  public boolean isValid(CharSequence charSequence,
+      ConstraintValidatorContext constraintValidatorContext) {
+    if (logger().isDebugEnabled()) {
+      logger().debug("Validating : " + charSequence);
+    }
 
-	Log logger() {
-		return LOGGER;
-	}
+    if (charSequence == null) {
+      return false;
+    }
+    return charSequence.toString().trim().length() > 0;
+  }
+
+  Logger logger() {
+    return LOGGER;
+  }
 }

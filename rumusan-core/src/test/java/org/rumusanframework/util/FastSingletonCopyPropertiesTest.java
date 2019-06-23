@@ -12,58 +12,58 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * 
  * @author Harvan Irsyadi
  * @version 1.0.0
  * @since 1.0.0 (5 Jun 2018)
- *
  */
 public class FastSingletonCopyPropertiesTest {
-	private TestParent obj;
 
-	@Before
-	public void before() {
-		obj = new TestParent();
-		obj.setFieldParent2(123L);
-		obj.setFieldParent1("value");
-	}
+  private TestParent obj;
 
-	/**
-	 * Copy All.
-	 */
-	@Test
-	public void testCopy() {
-		FastSingletonCopyProperties copyProperties = new FastSingletonCopyProperties(obj.getClass());
-		// cover 2 condition
-		copyProperties = new FastSingletonCopyProperties(obj.getClass());
-		TestParent copy = new TestParent();
+  @Before
+  public void before() {
+    obj = new TestParent();
+    obj.setFieldParent2(123L);
+    obj.setFieldParent1("value");
+  }
 
-		assertNull(copy.getFieldParent1());
-		assertNull(copy.getFieldParent2());
-		copyProperties.copy(obj, copy);
+  /**
+   * Copy All.
+   */
+  @Test
+  public void testCopy() {
+    FastSingletonCopyProperties copyProperties = new FastSingletonCopyProperties(obj.getClass());
+    // cover 2 condition
+    copyProperties = new FastSingletonCopyProperties(obj.getClass());
+    TestParent copy = new TestParent();
 
-		assertNotNull(copy.getFieldParent1());
-		assertNotNull(copy.getFieldParent2());
-		assertEquals(obj.getFieldParent1(), copy.getFieldParent1());
-		assertEquals(obj.getFieldParent2(), copy.getFieldParent2());
+    assertNull(copy.getFieldParent1());
+    assertNull(copy.getFieldParent2());
+    copyProperties.copy(obj, copy);
 
-		copyProperties.copy(null, copy);
-		copyProperties.copy(obj, null);
-	}
+    assertNotNull(copy.getFieldParent1());
+    assertNotNull(copy.getFieldParent2());
+    assertEquals(obj.getFieldParent1(), copy.getFieldParent1());
+    assertEquals(obj.getFieldParent2(), copy.getFieldParent2());
 
-	@Test
-	public void testCopySelected() {
-		String[] excludes = { "fieldParent1", "wrongField", null };
-		FastSingletonCopyProperties copyProperties = new FastSingletonCopyProperties(obj.getClass(), excludes);
+    copyProperties.copy(null, copy);
+    copyProperties.copy(obj, null);
+  }
 
-		TestParent copy = new TestParent();
+  @Test
+  public void testCopySelected() {
+    String[] excludes = {"fieldParent1", "wrongField", null};
+    FastSingletonCopyProperties copyProperties = new FastSingletonCopyProperties(obj.getClass(),
+        excludes);
 
-		assertNull(copy.getFieldParent1());
-		assertNull(copy.getFieldParent2());
-		copyProperties.copy(obj, copy);
+    TestParent copy = new TestParent();
 
-		assertNull(copy.getFieldParent1());
-		assertNotNull(copy.getFieldParent2());
-		assertEquals(obj.getFieldParent2(), copy.getFieldParent2());
-	}
+    assertNull(copy.getFieldParent1());
+    assertNull(copy.getFieldParent2());
+    copyProperties.copy(obj, copy);
+
+    assertNull(copy.getFieldParent1());
+    assertNotNull(copy.getFieldParent2());
+    assertEquals(obj.getFieldParent2(), copy.getFieldParent2());
+  }
 }

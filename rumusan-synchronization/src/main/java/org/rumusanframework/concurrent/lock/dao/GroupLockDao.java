@@ -5,11 +5,9 @@
 package org.rumusanframework.concurrent.lock.dao;
 
 import java.io.Serializable;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
-
 import org.hibernate.query.Query;
 import org.rumusanframework.concurrent.lock.context.LockingProcess;
 import org.rumusanframework.concurrent.lock.entity.GroupLock;
@@ -19,107 +17,113 @@ import org.rumusanframework.orm.dao.ValidatedEntity;
 import org.springframework.stereotype.Repository;
 
 /**
- * 
  * @author Harvan Irsyadi
  * @version 1.0.0
  * @since 1.0.0 (11 Mar 2018)
- *
  */
 @Repository
 public class GroupLockDao extends DaoTemplate<GroupLock> implements IGroupLockDao {
-	private static final String KEY_1 = "key1";
-	private static final String KEY_2 = "key2";
-	private EntityManager entityManager;
 
-	@PersistenceContext(unitName = "entityManagerFactory")
-	@Override
-	protected void setEntityManager(EntityManager entityManager) {
-		this.entityManager = entityManager;
-	}
+  private static final String KEY_1 = "key1";
 
-	@Override
-	protected EntityManager getEntityManager() {
-		return entityManager;
-	}
+  private static final String KEY_2 = "key2";
 
-	private static final String UPDATE_SAME_PROCESS = "" + //
-			"update GroupLock set processName = :processName" + //
-			", machineName = :machineName, processId = :processId, lastUpdateTime = :lastUpdateTime" + //
-			", lastUpdateProcessName = :lastUpdateProcessName, lastUpdateProcessId = :lastUpdateProcessId " + //
-			"where groupId = :" + KEY_1 + " and (processName is null or processName = :" + KEY_2 + ")";
-	private static final String UPDATE_UNIQUE_PROCESS = "" + //
-			"update GroupLock set processName = :processName" + //
-			", machineName = :machineName, processId = :processId, lastUpdateTime = :lastUpdateTime" + //
-			", lastUpdateProcessName = :lastUpdateProcessName, lastUpdateProcessId = :lastUpdateProcessId " + //
-			"where groupId = :" + KEY_1 + " and (processId is null or processId = :" + KEY_2 + ")";
+  private static final String UPDATE_SAME_PROCESS = "" + //
+      "update GroupLock set processName = :processName" + //
+      ", machineName = :machineName, processId = :processId, lastUpdateTime = :lastUpdateTime" + //
+      ", lastUpdateProcessName = :lastUpdateProcessName, lastUpdateProcessId = :lastUpdateProcessId "
+      + //
+      "where groupId = :" + KEY_1 + " and (processName is null or processName = :" + KEY_2 + ")";
 
-	@Override
-	public int optimisticCheckIn(GroupLock groupLock, Class<? extends LockingProcess<GroupLock>> classCaller,
-			boolean ignoreSameProces) {
-		validateContext(groupLock);
+  private static final String UPDATE_UNIQUE_PROCESS = "" + //
+      "update GroupLock set processName = :processName" + //
+      ", machineName = :machineName, processId = :processId, lastUpdateTime = :lastUpdateTime" + //
+      ", lastUpdateProcessName = :lastUpdateProcessName, lastUpdateProcessId = :lastUpdateProcessId "
+      + //
+      "where groupId = :" + KEY_1 + " and (processId is null or processId = :" + KEY_2 + ")";
 
-		Query<?> query = null;
+  private static final String UPDATE_RESET_LOCK = "" + //
+      "update GroupLock set processName = :processName, machineName = :machineName" + //
+      ", processId = :processId where processId = :" + KEY_1;
 
-		if (ignoreSameProces) {
-			query = getSession().createQuery(UPDATE_SAME_PROCESS);
+  private EntityManager entityManager;
 
-			setQueryParameter(query, groupLock);
+  @Override
+  protected EntityManager getEntityManager() {
+    return entityManager;
+  }
 
-			query.setParameter(KEY_1, groupLock.getGroupId());
-			query.setParameter(KEY_2, groupLock.getProcessName());
+  @PersistenceContext(unitName = "entityManagerFactory")
+  @Override
+  protected void setEntityManager(EntityManager entityManager) {
+    this.entityManager = entityManager;
+  }
 
-			return query.executeUpdate();
-		} else {
-			query = getSession().createQuery(UPDATE_UNIQUE_PROCESS);
+  @Override
+  public int optimisticCheckIn(GroupLock groupLock,
+      Class<? extends LockingProcess<GroupLock>> classCaller,
+      boolean ignoreSameProces) {
+    validateContext(groupLock);
 
-			setQueryParameter(query, groupLock);
+    Query<?> query = null;
 
-			query.setParameter(KEY_1, groupLock.getGroupId());
-			query.setParameter(KEY_2, groupLock.getProcessId());
+    if (ignoreSameProces) {
+      query = getSession().createQuery(UPDATE_SAME_PROCESS);
 
-			return query.executeUpdate();
-		}
-	}
+      setQueryParameter(query, groupLock);
 
-	private void setQueryParameter(Query<?> query, GroupLock groupLock) {
-		query.setParameter(GroupLock_.PROCESS_NAME, groupLock.getProcessName());
-		query.setParameter(GroupLock_.MACHINE_NAME, groupLock.getMachineName());
-		query.setParameter(GroupLock_.PROCESS_ID, groupLock.getProcessId());
-		query.setParameter(GroupLock_.LAST_UPDATE_TIME, groupLock.getLastUpdateTime());
-		query.setParameter(GroupLock_.LAST_UPDATE_PROCESS_NAME, groupLock.getLastUpdateProcessName());
-		query.setParameter(GroupLock_.LAST_UPDATE_PROCESS_ID, groupLock.getLastUpdateProcessId());
+      query.setParameter(KEY_1, groupLock.getGroupId());
+      query.setParameter(KEY_2, groupLock.getProcessName());
 
-	}
+      return query.executeUpdate();
+    } else {
+      query = getSession().createQuery(UPDATE_UNIQUE_PROCESS);
 
-	private static final String UPDATE_RESET_LOCK = "" + //
-			"update GroupLock set processName = :processName, machineName = :machineName" + //
-			", processId = :processId where processId = :" + KEY_1;
+      setQueryParameter(query, groupLock);
 
-	@Override
-	public int resetLock(GroupLock groupLock) {
-		validateContext(groupLock);
+      query.setParameter(KEY_1, groupLock.getGroupId());
+      query.setParameter(KEY_2, groupLock.getProcessId());
 
-		Query<?> query = getSession().createQuery(UPDATE_RESET_LOCK);
+      return query.executeUpdate();
+    }
+  }
 
-		query.setParameter(GroupLock_.PROCESS_NAME, null);
-		query.setParameter(GroupLock_.MACHINE_NAME, null);
-		query.setParameter(GroupLock_.PROCESS_ID, null);
-		query.setParameter(KEY_1, groupLock.getProcessId());
+  private void setQueryParameter(Query<?> query, GroupLock groupLock) {
+    query.setParameter(GroupLock_.PROCESS_NAME, groupLock.getProcessName());
+    query.setParameter(GroupLock_.MACHINE_NAME, groupLock.getMachineName());
+    query.setParameter(GroupLock_.PROCESS_ID, groupLock.getProcessId());
+    query.setParameter(GroupLock_.LAST_UPDATE_TIME, groupLock.getLastUpdateTime());
+    query.setParameter(GroupLock_.LAST_UPDATE_PROCESS_NAME, groupLock.getLastUpdateProcessName());
+    query.setParameter(GroupLock_.LAST_UPDATE_PROCESS_ID, groupLock.getLastUpdateProcessId());
 
-		return query.executeUpdate();
-	}
+  }
 
-	class GroupLockValidatedEntity implements ValidatedEntity {
-		@NotNull(message = "Group lock instance cannot be null.")
-		private Serializable object;
+  @Override
+  public int resetLock(GroupLock groupLock) {
+    validateContext(groupLock);
 
-		GroupLockValidatedEntity(Serializable object) {
-			this.object = object;
-		}
-	}
+    Query<?> query = getSession().createQuery(UPDATE_RESET_LOCK);
 
-	@Override
-	protected ValidatedEntity getValidatedEntity(GroupLock object) {
-		return new GroupLockValidatedEntity(object);
-	}
+    query.setParameter(GroupLock_.PROCESS_NAME, null);
+    query.setParameter(GroupLock_.MACHINE_NAME, null);
+    query.setParameter(GroupLock_.PROCESS_ID, null);
+    query.setParameter(KEY_1, groupLock.getProcessId());
+
+    return query.executeUpdate();
+  }
+
+  @Override
+  protected ValidatedEntity getValidatedEntity(GroupLock object) {
+    return new GroupLockValidatedEntity(object);
+  }
+
+  class GroupLockValidatedEntity implements ValidatedEntity {
+
+    @NotNull(message = "Group lock instance cannot be null.")
+    private Serializable object;
+
+    GroupLockValidatedEntity(Serializable object) {
+      this.object = object;
+    }
+  }
 }

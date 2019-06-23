@@ -6,16 +6,15 @@ import org.rumusanframework.concurrent.lock.entity.GroupLockA;
 import org.springframework.stereotype.Service;
 
 /**
- * 
  * @author Harvan Irsyadi
  * @version 1.0.0
  * @since 1.0.0 (11 Mar 2018)
- *
  */
 @Service
 @Lock(keyValueGroupClass = GroupLockA.class, ignoreSameProcess = true)
 public class OptimisticLockingSameProcess extends BaseOptimisticLockingProcess {
-	@Override
-	protected void executeInternal(ProcessContext<GroupLock> context) {
-	}
+
+  @Override
+  protected void executeInternal(ProcessContext<GroupLock> context) {
+  }
 }
