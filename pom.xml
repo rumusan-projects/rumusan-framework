@@ -53,5 +53,11 @@
 		<ojdbc6.version>11.2.0.3</ojdbc6.version>
 		<commons-dbcp2.version>2.3.0</commons-dbcp2.version>
 		<antlr-complete.version>3.5.2</antlr-complete.version>
+		<repo.snapshot.id>snaphost.id</repo.snapshot.id>
+		<repo.snapshot.url>snapshot.url</repo.snapshot.url>
+		<repo.release.id>release.id</repo.release.id>
+		<repo.release.url>release.url</repo.release.url>
+		<skip.unit.tests>false</skip.unit.tests>
+		<surefireArgLine> </surefireArgLine>
 	</properties>
 </project>
