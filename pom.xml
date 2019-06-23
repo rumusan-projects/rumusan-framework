@@ -13,6 +13,13 @@
 		<version>2.1.5.RELEASE</version>
 	</parent>
 
+	<scm>
+		<connection>scm:git:git@github.com:rumusan-projects/rumusan-framework.git</connection>
+		<developerConnection>scm:git:git@github.com:rumusan-projects/rumusan-framework.git</developerConnection>
+		<url>https://github.com/rumusan-projects/rumusan-framework.git</url>
+		<tag>HEAD</tag>
+	</scm>
+
 	<modules>
 		<module>rumusan-core</module>
 		<module>rumusan-security-oauth2</module>
