@@ -170,6 +170,11 @@
 			<version>${disruptor.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr-complete</artifactId>
+			<version>${antlr-complete.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
